@@ -57,32 +57,35 @@ include BASE_PATH . '/includes/header.php';
             <div class="card-body">
               <form action="" method="post" id="hotel_form" enctype="multipart/form-data">
                 <div class="mb-3">
-                  <label class="form-label" for="basic-default-company">Hotel Name</label>
-                  <input type="text" class="form-control" name="hotel_name" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  <div class="col-md">
+                    <label class="form-label" for="basic-default-company">Hotel Name</label>
+                    <input type="text" class="form-control" name="hotel_name" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  </div>
+
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Owner Name</label>
                     <input type="text" class="form-control" name="owner_name" value="<?php echo htmlspecialchars($edit ? $data['owner_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
                   </div>
-                
-                
-                <div class="col-md">
-                  <label class="form-label" for="basic-default-email">Hotel Category</label>
-                  <div class="input-group">
-                    <label class="input-group-text" for="inputGroupSelect01">Options</label>
-                    <select class="form-select" id="inputGroupSelect01" >
-                      <option selected="">Choose...</option>
-                      <option>Budget</option>
-                      <option>Standard</option>
-                      <option>Deluxe</option>
-                      <option>Super Deluxe</option>
-                      <option>Premium</option>
-                      
-                    </select>
+
+
+                  <div class="col-md">
+                    <label class="form-label" for="basic-default-email">Hotel Category</label>
+                    <div class="input-group">
+                      <label class="input-group-text" for="inputGroupSelect01">Options</label>
+                      <select class="form-select" id="inputGroupSelect01" name="category">
+                        <option selected="">Choose...</option>
+                        <?php $categories =  getCategories();
+                        foreach ($categories as $category) {
+                          $select = ($edit && $category == $data['category']) ? "selected" : "";
+                          echo  "<option value=\"$category\" $select>$category</option>";
+                        }
+                        ?>
+                      </select>
+                    </div>
                   </div>
                 </div>
-</div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Email ID</label>
@@ -94,6 +97,19 @@ include BASE_PATH . '/includes/header.php';
                   </div>
                   <input type="hidden" name="id" value="<?php echo $id ?>" />
                 </div>
+
+                <div class="row mb-3">
+                  <div class="col-md">
+                    <label class="form-label" for="basic-default-company">Hotel Name</label>
+                    <input type="text" class="form-control" name="hotel_name" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  </div>
+
+                  <div class="col-md">
+                    <label class="form-label" for="basic-default-company">Website</label>
+                    <input type="text" class="form-control" name="website" value="<?php echo htmlspecialchars($edit ? $data['website'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Save</button>
               </form>
             </div>

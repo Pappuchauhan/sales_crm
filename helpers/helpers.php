@@ -131,3 +131,7 @@ function encryptId($id) {
 function decryptId($id) {
     return base64_decode($id);
 }
+
+function getCategories(){
+	return array("Budget", "Standard", "Deluxe", "Super Deluxe", "Luxury", "Luxury Plus", "Premium", "Premium Plus");
+}

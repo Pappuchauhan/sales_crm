@@ -19,7 +19,7 @@ foreach($results as $result):
         <span class="fw-medium">#00<?=$result['id']?></span>
     </td>
     <td><?=$result['package_name']?></td>
-    <td><?=$result['package_name']?></td>
+    <td><?=$result['duration']?></td>
     <td>
         <select class="form-select">
             <option>Hotel Category</option>
