@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'config/config.php';
-require_once BASE_PATH . '/includes/auth_validate.php';
+//require_once BASE_PATH . '/includes/auth_validate.php';
 
 //serve POST method, After successful insert, redirect to customers.php page.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

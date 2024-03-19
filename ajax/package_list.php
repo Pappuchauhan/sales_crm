@@ -16,10 +16,10 @@ foreach($results as $result):
         </div>
     </td>
     <td>
-        <span class="fw-medium">#001</span>
+        <span class="fw-medium">#00<?=$result['id']?></span>
     </td>
     <td><?=$result['package_name']?></td>
-    <td>6 Days 5 Nights</td>
+    <td><?=$result['package_name']?></td>
     <td>
         <select class="form-select">
             <option>Hotel Category</option>
