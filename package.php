@@ -22,7 +22,7 @@ if (!$filter_col) {
   $filter_col = 'id';
 }
 if (!$order_by) {
-  $order_by = 'asc';
+  $order_by = 'desc';
 }
 
 //Get DB instance. i.e instance of MYSQLiDB Library
@@ -84,7 +84,15 @@ include BASE_PATH . '/includes/header.php';
           </div>
       </form>
     </div>
-    <h4 class="py-3 mb-4">View All Packages</h4>
+    <div class="row">
+    <div class="col">
+        <h4 class="py-3 mb-4">View All Packages</h4>
+    </div>
+    <div class="col-auto">
+        <a href="add_package.php" class="btn btn-primary">Add Package</a>
+      </div>
+  </div>
+
     <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
     <!-- Basic Layout -->
     <div class="row">
@@ -95,6 +103,7 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
+                    <th class="text-white border-right-white">#</th>
                     <th class="text-white border-right-white">Package Code</th>
                     <th class="text-white border-right-white">Package Name</th>
                     <th class="text-white border-right-white">Duration</th>
@@ -102,20 +111,25 @@ include BASE_PATH . '/includes/header.php';
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                  <?php foreach ($rows as $row) : ?>
+                  <?php 
+                  $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
+                  foreach ($rows as $row) : ?>
                     <tr>
-                      <td class="border-right-dark"><?php echo xss_clean($row['id']); ?></td>
+                    <td class="border-right-dark"><?=$k?></td>
+                      <td class="border-right-dark">#<?php echo xss_clean($row['id']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['package_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
                       <td class="border-right-dark"><a href="add_package.php?crm=<?php echo encryptId($row['id']); ?>">Edit</a></td>
                     </tr>
-                  <?php endforeach; ?>
+                  <?php
+                $k++;
+                endforeach; ?>
 
                 </tbody>
               </table>
             </div>
             <!-- Pagination -->
-            <div class="text-center">
+            <div class="text-right">
               <?php echo paginationLinks($page, $total_pages, 'package.php'); ?>
             </div>
           </div>

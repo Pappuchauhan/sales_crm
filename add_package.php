@@ -125,6 +125,15 @@ if (!empty($id)) {
   $quad_sharing = $db->getOne("package_details");
 }
 
+$db = getDbInstance(); 
+$db->where('location', "","<>");
+$db->groupBy('location');
+$locations = $db->get("hotels", null, 'location');
+$locationOptions = "<option value=''>Choose location..</option>";
+foreach($locations as $location){
+  $locationOptions.="<option>".$location['location']."</option>";
+}
+
 include BASE_PATH . '/includes/header.php';
 ?>
 <div class="layout-page">
@@ -208,7 +217,8 @@ include BASE_PATH . '/includes/header.php';
                     <thead>
                       <tr class="text-nowrap bg-dark align-middle">
                         <th class="text-white border-right-white sticky-col">Day</th>
-                        <th class="text-white border-right-white sticky-col">Itineary</th>
+                        <th class="text-white border-right-white sticky-col">Location</th>
+                        <th class="text-white border-right-white sticky-col">Itineary</th>                        
                         <th class="text-white border-right-white">Budget</th>
                         <th class="text-white border-right-white">Standard</th>
                         <th class="text-white border-right-white">Deluxe</th>
@@ -235,14 +245,22 @@ include BASE_PATH . '/includes/header.php';
 
                           <tr>
                             <td class="border-right-dark sticky-col"><input type="number" class="form-control phone-mask w-px-75" value="<?= $pack['day'] ?>" name="detail[<?= $j ?>][day]" placeholder="Day" /></td>
+                            <td class="border-right-dark sticky-col"> 
+                              <select class="form-select"  name="detail[<?= $j ?>][location]" >
+                               <?php foreach($locations as $location){ ?>  
+                                <option  <?php echo ($location['location']==$pack['location'])? "selected":"" ?>><?=$location['location']?></option> 
+                                <?php } ?>
+                              </select>
+                            </td>
                             <td class="border-right-dark sticky-col"><textarea class="form-control w-px-300 h-px-75" name="detail[<?= $j ?>][itineary]" placeholder="Enter Short Itineary"><?= $pack['itineary'] ?></textarea></td>
+                            
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['budget'] ?>" name="detail[<?= $j ?>][budget]" onchange="calculateBudgetSum()" placeholder="" /></td>
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['standard'] ?>" name="detail[<?= $j ?>][standard]" onchange="calculateStandardSum()" placeholder="" /></td>
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['deluxe'] ?>" name="detail[<?= $j ?>][deluxe]" onchange="calculateDeluxeSum()" placeholder="" /></td>
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['super_deluxe'] ?>" name="detail[<?= $j ?>][super_deluxe]" onchange="calculateSuperDeluxeSum()" placeholder="" /></td>
 
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['luxury'] ?>" name="detail[<?= $j ?>][luxury]" onchange="calculateLuxurySum()" placeholder="" /></td>
-                            <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['luxury_plus'] ?>" name="detail[<?= $j ?>][luxury_plus'] ?>" name="detail]" onchange="calculateLuxuryPlusSum()" placeholder="" /></td>
+                            <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['luxury_plus'] ?>" name="detail[<?= $j ?>][luxury_plus]" onchange="calculateLuxuryPlusSum()" placeholder="" /></td>
 
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['premium'] ?>" name="detail[<?= $j ?>][premium]" onchange="calculatePremiumSum()" placeholder="" /></td>
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['premium_plus'] ?>" name="detail[<?= $j ?>][premium_plus]" onchange="calculatePremiumPlusSum()" placeholder="" /></td>
@@ -264,6 +282,7 @@ include BASE_PATH . '/includes/header.php';
 
                       <tr>
                         <td class="border-right-dark sticky-col"></td>
+                        <td class="border-right-dark sticky-col"></td>
                         <td class="border-right-dark sticky-col">TWIN</td>
                         <td class="border-right-dark" id="twin-budget">₹<?= $twin['budget'] ?? "" ?></td>
                         <td class="border-right-dark" id="twin-standard">₹<?= $twin['standard'] ?? "" ?></td>
@@ -281,6 +300,7 @@ include BASE_PATH . '/includes/header.php';
                         <td class="border-right-dark" id="twin-zyalo_ertiga"></td>
                         <td class="border-right-dark" id="twin-eco"></td>
                         <input type="hidden" value="" name="twin[day]" />
+                        <input type="hidden" value="" name="twin[location]" />
                         <input type="hidden" value="TWIN Fixed" name="twin[itineary]" />
                         <input type="hidden" value="<?= $twin['budget'] ?? "" ?>" name="twin[budget]" />
                         <input type="hidden" value="<?= $twin['standard'] ?? "" ?>" name="twin[standard]" />
@@ -300,6 +320,7 @@ include BASE_PATH . '/includes/header.php';
                       </tr>
                       <tr>
                         <td class="border-right-dark sticky-col"></td>
+                        <td class="border-right-dark sticky-col"></td>
                         <td class="border-right-dark sticky-col">CWB</td>
                         <td class="border-right-dark" id="cwb-budget">₹<?= $cwb['budget'] ?? "" ?></td>
                         <td class="border-right-dark" id="cwb-standard">₹<?= $cwb['standard'] ?? "" ?></td>
@@ -316,6 +337,7 @@ include BASE_PATH . '/includes/header.php';
                         <td class="border-right-dark" id="cwb-zyalo_ertiga"></td>
                         <td class="border-right-dark" id="cwb-eco"></td>
                         <input type="hidden" value="" name="cwb[day]" />
+                        <input type="hidden" value="" name="cwb[location]" />
                         <input type="hidden" value="CWB Fixed" name="cwb[itineary]" />
                         <input type="hidden" value="<?= $cwb['budget'] ?? "" ?>" name="cwb[budget]" />
                         <input type="hidden" value="<?= $cwb['standard'] ?? "" ?>" name="cwb[standard]" />
@@ -335,6 +357,7 @@ include BASE_PATH . '/includes/header.php';
                       </tr>
                       <tr>
                         <td class="border-right-dark sticky-col"></td>
+                        <td class="border-right-dark sticky-col"></td>
                         <td class="border-right-dark sticky-col">CNB</td>
                         <td class="border-right-dark" id="cnb-budget">₹<?= $cnb['budget'] ?? ""  ?></td>
                         <td class="border-right-dark" id="cnb-standard">₹<?= $cnb['standard'] ?? ""  ?></td>
@@ -353,6 +376,7 @@ include BASE_PATH . '/includes/header.php';
                         <td class="border-right-dark" id="cnb-eco"></td>
 
                         <input type="hidden" value="" name="cnb[day]" />
+                        <input type="hidden" value="" name="cnb[location]" />
                         <input type="hidden" value="CNB Fixed" name="cnb[itineary]" />
                         <input type="hidden" value="<?= $cnb['budget'] ?? ""  ?>" name="cnb[budget]" />
                         <input type="hidden" value="<?= $cnb['standard'] ?? ""  ?>" name="cnb[standard]" />
@@ -372,6 +396,7 @@ include BASE_PATH . '/includes/header.php';
                       </tr>
                       <tr>
                         <td class="border-right-dark sticky-col"></td>
+                        <td class="border-right-dark sticky-col"></td>
                         <td class="border-right-dark sticky-col">TRIPLE</td>
                         <td class="border-right-dark" id="triple-budget">₹<?= $triple['budget'] ?? ""  ?></td>
                         <td class="border-right-dark" id="triple-standard">₹<?= $triple['standard'] ?? ""  ?></td>
@@ -390,6 +415,7 @@ include BASE_PATH . '/includes/header.php';
                         <td class="border-right-dark" id="triple-eco"></td>
 
                         <input type="hidden" value="" name="triple[day]" />
+                        <input type="hidden" value="" name="triple[location]" />
                         <input type="hidden" value="TRIPLE Fixed" name="triple[itineary]" />
                         <input type="hidden" value="<?= $triple['budget'] ?? ""  ?>" name="triple[budget]" />
                         <input type="hidden" value="<?= $triple['standard'] ?? ""  ?>" name="triple[standard]" />
@@ -409,6 +435,7 @@ include BASE_PATH . '/includes/header.php';
                       </tr>
                       <tr>
                         <td class="border-right-dark sticky-col"></td>
+                        <td class="border-right-dark sticky-col"></td>
                         <td class="border-right-dark sticky-col">SINGLE</td>
                         <td class="border-right-dark" id="single-budget">₹<?= $single['budget'] ?? ""  ?></td>
                         <td class="border-right-dark" id="single-standard">₹<?= $single['standard'] ?? ""  ?></td>
@@ -426,6 +453,7 @@ include BASE_PATH . '/includes/header.php';
                         <td class="border-right-dark" id="single-zyalo_ertiga"></td>
                         <td class="border-right-dark" id="single-eco"></td>
                         <input type="hidden" value="" name="single[day]" />
+                        <input type="hidden" value="" name="single[location]" />
                         <input type="hidden" value="SINGLE Fixed" name="single[itineary]" />
                         <input type="hidden" value="<?= $single['budget'] ?? ""  ?>" name="single[budget]" />
                         <input type="hidden" value="<?= $single['standard'] ?? ""  ?>" name="single[standard]" />
@@ -445,6 +473,7 @@ include BASE_PATH . '/includes/header.php';
 
                       <tr>
                         <td class="border-right-dark sticky-col"></td>
+                        <td class="border-right-dark sticky-col"></td>
                         <td class="border-right-dark sticky-col">QUAD SHARING</td>
                         <td class="border-right-dark" id="quad_sharing-budget">₹<?= $quad_sharing['budget'] ?? ""  ?></td>
                         <td class="border-right-dark" id="quad_sharing-standard">₹<?= $quad_sharing['standard'] ?? ""  ?></td>
@@ -462,6 +491,7 @@ include BASE_PATH . '/includes/header.php';
                         <td class="border-right-dark" id="quad_sharing-zyalo_ertiga"></td>
                         <td class="border-right-dark" id="quad_sharing-eco"></td>
                         <input type="hidden" value="" name="quad_sharing[day]" />
+                        <input type="hidden" value="" name="quad_sharing[location]" />
                         <input type="hidden" value="QUAD SHARING Fixed" name="quad_sharing[itineary]" />
                         <input type="hidden" value="<?= $quad_sharing['budget'] ?? ""  ?>" name="quad_sharing[budget]" />
                         <input type="hidden" value="<?= $quad_sharing['standard'] ?? ""  ?>" name="quad_sharing[standard]" />
@@ -515,6 +545,11 @@ include BASE_PATH . '/includes/header.php';
       row.classList.add('new-row');
       row.innerHTML = `
      <td class="border-right-dark sticky-col"><input type="number" class="form-control phone-mask w-px-75" name="detail[${j}][day]" placeholder="Day" /></td>
+     <td class="border-right-dark sticky-col"> 
+      <select class="form-select"  name="detail[${j}][location]" >
+        <?=$locationOptions?>
+      </select>
+    </td>
 		<td class="border-right-dark sticky-col"><textarea class="form-control w-px-300 h-px-75" name="detail[${j}][itineary]" placeholder="Enter Short Itineary"></textarea></td>
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][budget]" onchange="calculateBudgetSum()" placeholder="" /></td>
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][standard]" onchange="calculateStandardSum()" placeholder="" /></td>
@@ -732,5 +767,4 @@ include BASE_PATH . '/includes/header.php';
 
  
 </script>
-<?php include BASE_PATH . '/includes/footer.php'; ?>
-<!-- <?php //include BASE_PATH . '/footer.php'; ?>includes -->
+<?php include BASE_PATH . '/includes/footer.php'; ?> 

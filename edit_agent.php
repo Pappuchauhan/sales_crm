@@ -68,7 +68,7 @@ include BASE_PATH . '/includes/header.php';
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Agent Mobile No.</label>
-                    <input type="text" name="mobile" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" name="mobile" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -76,10 +76,10 @@ include BASE_PATH . '/includes/header.php';
                   <label class="form-label" for="basic-default-phone">Type</label>
                   <div class="input-group">
                     <label class="input-group-text" for="inputGroupSelect01">Options</label>
-                    <select class="form-select" id="inputGroupSelect01" >
+                    <select class="form-select" name="status" >
                       <option selected="">Choose...</option>
-                      <option>Active</option>
-                      <option>Inactive</option>
+                      <option <?= ($edit && $data['status']=="Active")?"selected":"" ?>>Active</option>
+                      <option <?= ($edit && $data['status']=="Inactive")?"selected":"" ?>>Inactive</option>
                     </select>
                   </div>
                 </div>

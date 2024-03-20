@@ -59,12 +59,12 @@ include BASE_PATH . '/includes/header.php';
               <form action="" method="post" id="guide_form" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Guide Name</label>
-                  <input type="text" name="guide_name" class="form-control" value="<?php echo htmlspecialchars($edit ? $data['guide_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  <input required type="text" name="guide_name" class="form-control" value="<?php echo htmlspecialchars($edit ? $data['guide_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Guide Mobile No.</label>
-                    <input type="text" name="mobile" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input required type="number" name="mobile" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
                   </div>
                 </div>
                 <input type="hidden" name="id" value="<?php echo $id ?>" />

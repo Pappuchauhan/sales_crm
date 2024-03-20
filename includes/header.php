@@ -43,11 +43,7 @@ $filename = basename($current_url);
           <!-- Forms -->
           <li class="menu-item active open">
             <ul class="menu-sub">
-              <li class="menu-item <?php echo $filename == 'add_package.php' ? 'active' : '' ?>">
-                <a href="add_package.php" class="menu-link">
-                  <div data-i18n="Basic Inputs">Add Package</div>
-                </a>
-              </li>
+              
               <li class="menu-item <?php echo $filename == 'package.php' ? 'active' : '' ?>">
                 <a href="package.php" class="menu-link">
                   <div data-i18n="Basic Inputs">View Package</div>
@@ -73,31 +69,18 @@ $filename = basename($current_url);
                   <div data-i18n="Input groups">Agent Information</div>
                 </a>
               </li>
-              <li class="menu-item <?php echo $filename == 'add_hotel.php' ? 'active' : '' ?>">
-                <a href="add_hotel.php" class="menu-link">
-                  <div data-i18n="Input groups">Add Hotel Information</div>
-                </a>
-              </li>
+              
               <li class="menu-item <?php echo $filename == 'hotel.php' ? 'active' : '' ?>">
                 <a href="hotel.php" class="menu-link">
                   <div data-i18n="Input groups">View Hotel Information</div>
                 </a>
-              </li>
-              <li class="menu-item <?php echo $filename == 'add_vehicle.php' ? 'active' : '' ?>">
-                <a href="add_vehicle.php" class="menu-link">
-                  <div data-i18n="Input groups">Add vehicle details</div>
-                </a>
-              </li>
+              </li> 
               <li class="menu-item <?php echo $filename == 'vehicle.php' ? 'active' : '' ?>">
                 <a href="vehicle.php" class="menu-link">
                   <div data-i18n="Input groups">View vehicle details</div>
                 </a>
               </li>
-              <li class="menu-item <?php echo  $filename == 'add_guide.php' ? 'active' : '' ?> ">
-                <a href="add_guide.php" class="menu-link">
-                  <div data-i18n="Input groups">Add Guide details</div>
-                </a>
-              </li>
+               
               <li class="menu-item <?php echo $filename == 'guide.php' ? 'active' : '' ?>">
                 <a href="guide.php" class="menu-link">
                   <div data-i18n="Input groups">View Guide details</div>

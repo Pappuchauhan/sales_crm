@@ -100,8 +100,8 @@ include BASE_PATH . '/includes/header.php';
 
                 <div class="row mb-3">
                   <div class="col-md">
-                    <label class="form-label" for="basic-default-company">Hotel Name</label>
-                    <input type="text" class="form-control" name="hotel_name" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <label class="form-label" for="basic-default-company">Location</label>
+                    <input type="text" class="form-control" name="location" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
                   </div>
 
                   <div class="col-md">

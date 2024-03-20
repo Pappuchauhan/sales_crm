@@ -85,7 +85,15 @@ include BASE_PATH . '/includes/header.php';
           </div>
       </form>
     </div>
-    <h4 class="py-3 mb-4">View Vehicle Details</h4>
+
+    <div class="row">
+      <div class="col">
+        <h4 class="py-3 mb-4">View Vehicle Details</h4>
+      </div>
+      <div class="col-auto">
+        <a href="add_vehicle.php" class="btn btn-primary">Add Vehicle</a>
+      </div>
+    </div> 
     <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
     <!-- Basic Layout -->
     <div class="row">

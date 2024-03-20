@@ -53,66 +53,60 @@ function clean_input($data) {
 
 function paginationLinks($current_page, $total_pages, $base_url) {
 
-	if ($total_pages <= 1) {
-		return false;
-	}
+    if ($total_pages <= 1) {
+        return false;
+    }
 
-	$html = '';
+    $html = '';
 
-	if (!empty($_GET)) {
-		// We must unset $_GET[page] if previously built by http_build_query function
-		unset($_GET['page']);
-		// To keep the query sting parameters intact while navigating to next/prev page,
-		$http_query = "?" . http_build_query($_GET);
-	} else {
-		$http_query = "?";
-	}
+    if (!empty($_GET)) {
+        // We must unset $_GET['page'] if previously built by http_build_query function
+        unset($_GET['page']);
+        // To keep the query string parameters intact while navigating to next/prev page,
+        $http_query = "?" . http_build_query($_GET);
+    } else {
+        $http_query = "?";
+    }
 
-	$html = '<ul class="pagination text-center">';
+    $html .= '<ul class="pagination text-right">';
 
-	if ($current_page == 1) {
+    if ($current_page == 1) {
+        $html .= '<li class="page-item disabled"><span class="page-link">First</span></li>';
+    } else {
+        $html .= '<li class="page-item"><a class="page-link" href="' . $base_url . $http_query . '&page=1">First</a></li>';
+    }
 
-		$html .= '<li class="disabled"><a>First</a></li>';
-	} else {
-		$html .= '<li><a href="' . $base_url . $http_query . '&page=1">First</a></li>';
-	}
+    // Show pagination links
 
-	// Show pagination links
+    if ($current_page > 5) {
+        $i = $current_page - 4;
+    } else {
+        $i = 1;
+    }
 
-	//var i = (Number(data.page) > 5 ? Number(data.page) - 4 : 1);
+    for (; $i <= ($current_page + 4) && ($i <= $total_pages); $i++) {
+        $li_class = ($current_page == $i) ? ' active' : '';
 
-	if ($current_page > 5) {
-		$i = $current_page - 4;
-	} else {
-		$i = 1;
-	}
+        $link = $base_url . $http_query . '&page=' . $i;
 
-	for (; $i <= ($current_page + 4) && ($i <= $total_pages); $i++) {
-		($current_page == $i) ? $li_class = ' class="active"' : $li_class = '';
+        $html .= '<li class="page-item' . $li_class . '"><a class="page-link" href="' . $link . '">' . $i . '</a></li>';
 
-		$link = $base_url . $http_query;
+        if ($i == $current_page + 4 && $i < $total_pages) {
+            $html .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
+        }
+    }
 
-		$html = $html . '<li' . $li_class . '><a href="' . $link . '&page=' . $i . '">' . $i . '</a></li>';
+    if ($current_page == $total_pages) {
+        $html .= '<li class="page-item disabled"><span class="page-link">Last</span></li>';
+    } else {
+        $html .= '<li class="page-item"><a class="page-link" href="' . $base_url . $http_query . '&page=' . $total_pages . '">Last</a></li>';
+    }
 
-		if ($i == $current_page + 4 && $i < $total_pages) {
+    $html .= '</ul>';
 
-			$html = $html . '<li class="disabled"><a>...</a></li>';
-
-		}
-
-	}
-
-	if ($current_page == $total_pages) {
-		$html .= '<li class="disabled"><a>Last</a></li>';
-	} else {
-
-		$html .= '<li><a href="' . $base_url . $http_query . '&page=' . $total_pages . '">Last</a></li>';
-	}
-
-	$html = $html . '</ul>';
-
-	return $html;
+    return $html;
 }
+
 
 /**
  * to prevent xss
