@@ -24,7 +24,7 @@ if (!$order_by) {
 }
 
 $db = getDbInstance();
-$select = array('id', 'email_id', 'full_name', 'mobile', 'created_at', 'updated_at');
+$select = array('id', 'email_id', 'full_name', 'mobile', 'created_at', 'updated_at','status');
 
 // If search string
 if ($search_string) {
@@ -96,6 +96,7 @@ include BASE_PATH . '/includes/header.php';
                                             <th class="text-white border-right-white">Email Id</th>
                                             <th class="text-white border-right-white">Mobile Number</th>
                                             <th class="text-white border-right-white">Agent Name</th>
+                                            <th class="text-white border-right-white">Status</th>
                                             <!-- <th class="text-white border-right-white">Company Name</th> -->
                                             <th class="text-white border-right-white">Actions</th>
                                         </tr>
@@ -110,17 +111,13 @@ include BASE_PATH . '/includes/header.php';
                                                 <td class="border-right-dark"><?php echo xss_clean($row['email_id']); ?></td>
                                                 <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
                                                 <td class="border-right-dark"><?php echo xss_clean($row['full_name']); ?></td>
-
                                                 <td class="border-right-dark">
-                                                    <div class="dropdown pos-relative">
-                                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow toggle-options">
-                                                            <i class="bx bx-dots-vertical-rounded"><span></span></i>
-                                                        </button>
-                                                        <div class="dropdown-menu custom-dd-menu">
-                                                            <a class="dropdown-item" href="edit_agent.php?crm=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> Edit Details</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Deactive</a>
-                                                        </div>
-                                                    </div>
+                                                <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" <?= ($row['status']=='Active')? 'checked':'' ?>> 
+                                                </div>        
+                                            </td>
+                                                <td class="border-right-dark">
+                                                <a class="dropdown-item" href="edit_agent.php?crm=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> Edit Details</a>
                                                 </td>
                                             </tr>
                                         <?php
