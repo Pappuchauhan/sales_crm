@@ -20,7 +20,7 @@ if (!$filter_col) {
     $filter_col = 'id';
 }
 if (!$order_by) {
-    $order_by = 'Desc';
+    $order_by = 'asc';
 }
 
 $db = getDbInstance();

@@ -158,50 +158,50 @@ include BASE_PATH . '/includes/header.php';
 
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Package Name</label>
-                  <input type="text" class="form-control" name="package_name" value="<?php echo htmlspecialchars($edit ? $data['package_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  <input type="text" class="form-control" name="package_name" value="<?php echo htmlspecialchars($edit ? $data['package_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Permit</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="permit" value="<?php echo htmlspecialchars($edit ? $data['permit'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="permit" value="<?php echo htmlspecialchars($edit ? $data['permit'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Guide</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="guide" value="<?php echo htmlspecialchars($edit ? $data['guide'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="guide" value="<?php echo htmlspecialchars($edit ? $data['guide'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Bike</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="bike" value="<?php echo htmlspecialchars($edit ? $data['bike'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="bike" value="<?php echo htmlspecialchars($edit ? $data['bike'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Lunch</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="lunch" value="<?php echo htmlspecialchars($edit ? $data['lunch'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="lunch" value="<?php echo htmlspecialchars($edit ? $data['lunch'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Water bottle</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="water_bottle" value="<?php echo htmlspecialchars($edit ? $data['water_bottle'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="water_bottle" value="<?php echo htmlspecialchars($edit ? $data['water_bottle'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Tea</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="tea" value="<?php echo htmlspecialchars($edit ? $data['tea'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="tea" value="<?php echo htmlspecialchars($edit ? $data['tea'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Bon fire</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="bon_fire" value="<?php echo htmlspecialchars($edit ? $data['bon_fire'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="bon_fire" value="<?php echo htmlspecialchars($edit ? $data['bon_fire'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Oxygen Cyliender</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="oxygen_cyliender" value="<?php echo htmlspecialchars($edit ? $data['oxygen_cyliender'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="oxygen_cyliender" value="<?php echo htmlspecialchars($edit ? $data['oxygen_cyliender'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                 </div>
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-email">Select Duration</label>
                   <div class="input-group">
                     <label class="input-group-text" for="inputGroupSelect01">Options</label>
-                    <select class="form-select" id="duration" name="duration" <?php echo  $edit ? "disabled" : "" ?>>
-                      <option>Choose...</option>
+                    <select class="form-select" id="duration" name="duration" <?php echo  $edit ? "disabled" : "" ?> required>
+                      <option value="" >Choose...</option>
                       <option value="2 Days 1 Nights" <?php echo ($edit &&  $data['duration'] == "2 Days 1 Nights") ? 'selected' : '' ?>>2 Days 1 Nights</option>
                       <option value="3 Days 2 Nights" <?php echo ($edit &&  $data['duration'] == "3 Days 2 Nights") ? 'selected' : '' ?>>3 Days 2 Nights</option>
                       <option value="4 Days 3 Nights" <?php echo ($edit &&  $data['duration'] == "4 Days 3 Nights") ? 'selected' : '' ?>>4 Days 3 Nights</option>
@@ -252,7 +252,7 @@ include BASE_PATH . '/includes/header.php';
                                 <?php } ?>
                               </select>
                             </td>
-                            <td class="border-right-dark sticky-col"><textarea class="form-control w-px-300 h-px-75" name="detail[<?= $j ?>][itineary]" placeholder="Enter Short Itineary"><?= $pack['itineary'] ?></textarea></td>
+                            <td class="border-right-dark sticky-col"><textarea class="form-control w-px-300 h-px-75" name="detail[<?= $j ?>][itineary]" placeholder="Enter Short Itineary" ><?= $pack['itineary'] ?></textarea></td>
                             
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['budget'] ?>" name="detail[<?= $j ?>][budget]" onchange="calculateBudgetSum()" placeholder="" /></td>
                             <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" value="<?= $pack['standard'] ?>" name="detail[<?= $j ?>][standard]" onchange="calculateStandardSum()" placeholder="" /></td>
@@ -538,19 +538,18 @@ include BASE_PATH . '/includes/header.php';
     }
 
     var insertAfterRow = '';
-    console.log(insertAfterRow)
 
     for (var j = 0; j < numberOfRows; j++) {
       var row = existingTable.insertRow(insertAfterRow.rowIndex + j);
       row.classList.add('new-row');
       row.innerHTML = `
-     <td class="border-right-dark sticky-col"><input type="number" class="form-control phone-mask w-px-75" name="detail[${j}][day]" placeholder="Day" /></td>
+     <td class="border-right-dark sticky-col"><input type="number" class="form-control phone-mask w-px-75" name="detail[${j}][day]" placeholder="Day" required/></td>
      <td class="border-right-dark sticky-col"> 
       <select class="form-select"  name="detail[${j}][location]" >
         <?=$locationOptions?>
       </select>
     </td>
-		<td class="border-right-dark sticky-col"><textarea class="form-control w-px-300 h-px-75" name="detail[${j}][itineary]" placeholder="Enter Short Itineary"></textarea></td>
+		<td class="border-right-dark sticky-col"><textarea class="form-control w-px-300 h-px-75" name="detail[${j}][itineary]" placeholder="Enter Short Itineary" ></textarea></td>
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][budget]" onchange="calculateBudgetSum()" placeholder="" /></td>
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][standard]" onchange="calculateStandardSum()" placeholder="" /></td>
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][deluxe]" onchange="calculateDeluxeSum()"  placeholder="" /></td>
@@ -558,7 +557,7 @@ include BASE_PATH . '/includes/header.php';
     <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][luxury]" onchange="calculateLuxurySum()"  placeholder="" /></td>
     <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][luxury_plus]" onchange="calculateLuxuryPlusSum()"  placeholder="" /></td>
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][premium]" onchange="calculatePremiumSum()"  placeholder="" /></td>
-    <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][premium_plus]" onchange="calculatePremiumPlusSum()"  placeholder="" /></td>
+    <td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][premium_plus]" onchange="calculatePremiumPlusSum()"  placeholder=""/></td>
 		 
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][coach]" /></td>
 		<td class="border-right-dark"><input type="number" class="form-control phone-mask w-px-100" name="detail[${j}][tempo]" /></td>
@@ -580,19 +579,19 @@ include BASE_PATH . '/includes/header.php';
         budgetSum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-budget').innerHTML = `₹${budgetSum}`;
-    document.getElementById('cwb-budget').innerHTML = `₹${budgetSum * 0.4}`;
-    document.getElementById('cnb-budget').innerHTML = `₹${budgetSum * 0.25}`;
-    document.getElementById('triple-budget').innerHTML = `₹${(budgetSum * 0.4) + budgetSum}`;
-    document.getElementById('single-budget').innerHTML = `₹${budgetSum * 0.75}`;
-    document.getElementById('quad_sharing-budget').innerHTML = `₹${(budgetSum * 0.75)  + budgetSum}`;
+    document.getElementById('twin-budget').innerHTML = `₹${Math.round(budgetSum)}`;
+    document.getElementById('cwb-budget').innerHTML = `₹${Math.round(budgetSum * 0.4)}`;
+    document.getElementById('cnb-budget').innerHTML = `₹${Math.round(budgetSum * 0.25)}`;
+    document.getElementById('triple-budget').innerHTML = `₹${Math.round((budgetSum * 0.4) + budgetSum)}`;
+    document.getElementById('single-budget').innerHTML = `₹${Math.round(budgetSum * 0.75)}`;
+    document.getElementById('quad_sharing-budget').innerHTML = `₹${Math.round((budgetSum * 0.75)  + budgetSum)}`;
 
-    document.querySelector('input[name="twin[budget]"]').value = budgetSum;
-    document.querySelector('input[name="cwb[budget]"]').value = budgetSum * 0.4;
-    document.querySelector('input[name="cnb[budget]"]').value = budgetSum * 0.25;
-    document.querySelector('input[name="triple[budget]"]').value = (budgetSum * 0.4) + budgetSum;
-    document.querySelector('input[name="single[budget]"]').value = budgetSum * 0.75;
-    document.querySelector('input[name="quad_sharing[budget]"]').value = (budgetSum * 0.75) + budgetSum;
+    document.querySelector('input[name="twin[budget]"]').value = Math.round(budgetSum);
+    document.querySelector('input[name="cwb[budget]"]').value = Math.round(budgetSum * 0.4);
+    document.querySelector('input[name="cnb[budget]"]').value = Math.round(budgetSum * 0.25);
+    document.querySelector('input[name="triple[budget]"]').value = Math.round( (budgetSum * 0.4) + budgetSum);
+    document.querySelector('input[name="single[budget]"]').value = Math.round(budgetSum * 0.75);
+    document.querySelector('input[name="quad_sharing[budget]"]').value = Math.round((budgetSum * 0.75) + budgetSum);
     return budgetSum;
   }
 

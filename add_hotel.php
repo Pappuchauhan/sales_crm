@@ -59,14 +59,14 @@ include BASE_PATH . '/includes/header.php';
                 <div class="mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-company">Hotel Name</label>
-                    <input type="text" class="form-control" name="hotel_name" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="text" class="form-control" name="hotel_name" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" required />
                   </div>
 
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Owner Name</label>
-                    <input type="text" class="form-control" name="owner_name" value="<?php echo htmlspecialchars($edit ? $data['owner_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="text" class="form-control" name="owner_name" value="<?php echo htmlspecialchars($edit ? $data['owner_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" required />
                   </div>
 
 
@@ -74,8 +74,8 @@ include BASE_PATH . '/includes/header.php';
                     <label class="form-label" for="basic-default-email">Hotel Category</label>
                     <div class="input-group">
                       <label class="input-group-text" for="inputGroupSelect01">Options</label>
-                      <select class="form-select" id="inputGroupSelect01" name="category">
-                        <option selected="">Choose...</option>
+                      <select class="form-select" id="inputGroupSelect01" name="category" required>
+                        <option value="">Choose...</option>
                         <?php $categories =  getCategories();
                         foreach ($categories as $category) {
                           $select = ($edit && $category == $data['category']) ? "selected" : "";
@@ -89,11 +89,11 @@ include BASE_PATH . '/includes/header.php';
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Email ID</label>
-                    <input type="text" class="form-control phone-mask" name="email_id" value="<?php echo htmlspecialchars($edit ? $data['email_id'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="text" class="form-control phone-mask" name="email_id" value="<?php echo htmlspecialchars($edit ? $data['email_id'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Mobile No.</label>
-                    <input type="text" class="form-control phone-mask" name="mobile" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" class="form-control phone-mask" name="mobile" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
                   <input type="hidden" name="id" value="<?php echo $id ?>" />
                 </div>
@@ -101,7 +101,7 @@ include BASE_PATH . '/includes/header.php';
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-company">Location</label>
-                    <input type="text" class="form-control" name="location" value="<?php echo htmlspecialchars($edit ? $data['hotel_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="text" class="form-control" name="location" value="<?php echo htmlspecialchars($edit ? $data['location'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
                   </div>
 
                   <div class="col-md">
