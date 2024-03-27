@@ -1,28 +1,29 @@
 <?php
 session_start();
-require_once 'config/config.php';
-//require_once BASE_PATH . '/includes/auth_validate.php';
-
-//serve POST method, After successful insert, redirect to customers.php page.
+require_once 'config/config.php'; 
+ 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    //Mass Insert Data. Keep "name" attribute in html form same as column name in mysql table.
+    
     $data_to_store = array_filter($_POST);
-    //print_r($data_to_store); die;
+   
     $db = getDbInstance();
     $data_to_store['password'] = password_hash($data_to_store['password'], PASSWORD_DEFAULT);
+    $data_to_store['status'] = 'Incomplete';
+    $data_to_store['email_otp'] = generateOTP();
+    $data_to_store['mobile_otp'] = generateOTP();
+           
     $last_id = $db->insert('agents', $data_to_store);
 
     if ($last_id) {
-        $_SESSION['success'] = "Agent successfully registered!";
-        header('location: login.php');
+        $_SESSION['agent_id'] = $last_id;        
+        header('location: verify_otp_agent.php');
         exit();
     } else {
         echo 'insert failed: ' . $db->getLastError();
         exit();
     }
 }
-
-//We are using same form for adding and editing. This is a create form so declare $edit = false.
+ 
 $edit = false;
 ?>
 
@@ -50,6 +51,7 @@ $edit = false;
 
 <body>
     <div class="login-page-wrapper">
+    <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
         <form action="" method="post" id="guide_form" enctype="multipart/form-data">
             <div class="block">
                 <div class="logo-area"><img src="assets/img/black-logo.png" alt="logo" /></div>
@@ -61,49 +63,50 @@ $edit = false;
                     <div class="row mb-3">
                         <div class="col-md">
                             <label class="form-label" for="basic-default-phone">Email id</label>
-                            <input type="text" id="basic-default-phone" name="email_id" class="form-control phone-mask" placeholder="">
+                            <input type="text" id="basic-default-phone" name="email_id" class="form-control phone-mask">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md">
                             <label class="form-label" for="basic-default-phone">Full Name</label>
-                            <input type="text" id="basic-default-phone" name="full_name" class="form-control phone-mask" placeholder="">
+                            <input type="text" id="basic-default-phone" name="full_name" class="form-control phone-mask">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md">
                             <label class="form-label" for="basic-default-phone">Username</label>
-                            <input type="text" id="basic-default-phone" name="user_name" class="form-control phone-mask" placeholder="">
+                            <input type="text" id="basic-default-phone" name="user_name" class="form-control phone-mask">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md">
                             <label class="form-label" for="basic-default-phone">Password</label>
-                            <input type="password" id="basic-default-phone" name="password" class="form-control phone-mask" placeholder="">
+                            <input type="password" id="basic-default-phone" name="password" class="form-control phone-mask">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md">
                             <label class="form-label" for="basic-default-phone">Mobile No.</label>
-                            <input type="text" id="basic-default-phone" name="mobile" class="form-control phone-mask" placeholder="">
+                            <input type="number" id="basic-default-phone" name="mobile" class="form-control phone-mask">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md">
-                            <label class="form-label" for="basic-default-phone">Please Enter OTP</label>
-                            <input type="text" id="basic-default-phone" class="form-control phone-mask" placeholder="">
-                            <div class="text-end mt-2"><a href="#">Regenerte OTP</a></div>
+                            <label class="form-label" for="basic-default-phone">Agent Code</label>
+                            <input type="text" id="basic-default-phone" name="agent_code" class="form-control phone-mask">
                         </div>
                     </div>
 
+                        
+
                     <div class="row">
                         <div class="col-md custom-login-btn">
-                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                            <button type="submit" class="btn btn-primary">Next</button>
                         </div>
                     </div>
 

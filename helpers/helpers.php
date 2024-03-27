@@ -129,3 +129,9 @@ function decryptId($id) {
 function getCategories(){
 	return array("Budget", "Standard", "Deluxe", "Super Deluxe", "Luxury", "Luxury Plus", "Premium", "Premium Plus");
 }
+
+function generateOTP() { 
+    $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+   // return $otp;
+   return '123456';
+}
