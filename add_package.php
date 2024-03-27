@@ -168,34 +168,8 @@ include BASE_PATH . '/includes/header.php';
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Guide</label>
                     <input type="number" id="basic-default-phone" class="form-control phone-mask" name="guide" value="<?php echo htmlspecialchars($edit ? $data['guide'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
-                  </div>
-                  <div class="col-md">
-                    <label class="form-label" for="basic-default-phone">Bike</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="bike" value="<?php echo htmlspecialchars($edit ? $data['bike'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
-                  </div>
-                  <div class="col-md">
-                    <label class="form-label" for="basic-default-phone">Lunch</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="lunch" value="<?php echo htmlspecialchars($edit ? $data['lunch'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md">
-                    <label class="form-label" for="basic-default-phone">Water bottle</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="water_bottle" value="<?php echo htmlspecialchars($edit ? $data['water_bottle'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
-                  </div>
-                  <div class="col-md">
-                    <label class="form-label" for="basic-default-phone">Tea</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="tea" value="<?php echo htmlspecialchars($edit ? $data['tea'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
-                  </div>
-                  <div class="col-md">
-                    <label class="form-label" for="basic-default-phone">Bon fire</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="bon_fire" value="<?php echo htmlspecialchars($edit ? $data['bon_fire'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
-                  </div>
-                  <div class="col-md">
-                    <label class="form-label" for="basic-default-phone">Oxygen Cyliender</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="oxygen_cyliender" value="<?php echo htmlspecialchars($edit ? $data['oxygen_cyliender'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
-                  </div>
-                </div>
+                  </div>                  
+                </div> 
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-email">Select Duration</label>
                   <div class="input-group">

@@ -27,7 +27,7 @@ if (!$order_by) {
 
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
-$select = array('id', 'package_name', 'permit', 'guide', 'bike', 'lunch', 'water_bottle', 'tea', 'bon_fire', 'oxygen_cyliender', 'duration',  'created_at', 'updated_at');
+$select = array('id', 'package_name', 'permit', 'guide', 'duration',  'created_at', 'updated_at');
 
 //Start building query according to input parameters.
 // If search string
