@@ -22,7 +22,7 @@ $order_by = filter_input(INPUT_GET, 'order_by');
 $del_id = filter_input(INPUT_GET, 'del_id');
 
 // Per page limit for pagination.
-$pagelimit = 20;
+$pagelimit = 15;
 
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');

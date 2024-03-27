@@ -7,7 +7,7 @@ $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by'); 
  
-$pagelimit = 2;
+$pagelimit = 15;
 
  
 $page = filter_input(INPUT_GET, 'page');
