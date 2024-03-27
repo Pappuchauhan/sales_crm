@@ -86,6 +86,17 @@ $filename = basename($current_url);
                   <div data-i18n="Input groups">View Guide details</div>
                 </a>
               </li>
+              <li class="menu-item <?php echo $filename == 'service.php' ? 'active' : '' ?>">
+                <a href="service.php" class="menu-link">
+                  <div data-i18n="Input groups">View Service details</div>
+                </a>
+              </li>
+
+              <li class="menu-item">
+                <a href="logout.php" class="menu-link">
+                  <div data-i18n="Input groups">Logout</div>
+                </a>
+              </li>
             </ul>
           </li>
         </ul>
