@@ -31,6 +31,8 @@ if ($search_string) {
     $db->where("$filter_col", '%' . $search_string . '%', 'like');
 }
 
+$db->where('status','Incomplete','!=');
+
 //If order by option selected
 if ($order_by) {
     $db->orderBy($filter_col, $order_by);
@@ -113,7 +115,7 @@ include BASE_PATH . '/includes/header.php';
                                                 <td class="border-right-dark"><?php echo xss_clean($row['full_name']); ?></td>
                                                 <td class="border-right-dark">
                                                 <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" <?= ($row['status']=='Active')? 'checked':'' ?>> 
+                                                <input class="form-check-input" disabled type="checkbox" id="flexSwitchCheckChecked" <?= ($row['status']=='Active')? 'checked':'' ?>> 
                                                 </div>        
                                             </td>
                                                 <td class="border-right-dark">

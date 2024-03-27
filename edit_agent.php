@@ -71,6 +71,14 @@ include BASE_PATH . '/includes/header.php';
                     <input type="number" name="mobile" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
                   </div>
                 </div>
+
+                <div class="row mb-3">
+                  <div class="col-md">
+                    <label class="form-label" for="basic-default-phone">Agent Code</label>
+                    <input type="number" name="agent_code" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['agent_code'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  </div>
+                </div>
+
                 <div class="row mb-3">
                   <div class="col-md">
                   <label class="form-label" for="basic-default-phone">Type</label>
