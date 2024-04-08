@@ -12,6 +12,14 @@ $edit = false;
                     <div class="left-part">
                       <div class="card">
                         <h1>Quick Booking</h1>
+
+                        <div class="row mb-3">
+                          <div class="col-md">
+                            <label class="form-label">Guest Name</label>
+                            <input type="text" class="form-control" placeholder="">
+                          </div>
+                        </div>
+
                         <div class="row mb-3">
                           <div class="col-md">
                             <label class="form-label">Select Duration</label>
@@ -34,6 +42,55 @@ $edit = false;
                             <input class="form-control" type="date" value="2021-06-18">
                           </div>
                         </div>
+
+                        <div class="row mb-3">
+                          <div class="col-md">
+                            <label class="form-label">Twin</label>
+                            <small class="text-muted float-end set-padding-top">2 Pax</small>
+                            <div class="input-group">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
+                              <input type="text" class="form-control text-center" placeholder="" value="1">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
+                            </div>
+                          </div>
+                          <div class="col-md">
+                            <label class="form-label">Triple</label>
+                            <small class="text-muted float-end set-padding-top">3 Pax</small>
+                            <div class="input-group">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
+                              <input type="text" class="form-control text-center" placeholder="" value="1">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
+                            </div>
+                          </div>
+                          <div class="col-md">
+                            <label class="form-label">Child No Bed</label>
+                            <small class="text-muted float-end set-padding-top">1 Pax</small>
+                            <div class="input-group">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
+                              <input type="text" class="form-control text-center" placeholder="" value="1">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
+                            </div>
+                          </div>
+                          <div class="col-md">
+                            <label class="form-label">Single</label>
+                            <small class="text-muted float-end set-padding-top">1 Pax</small>
+                            <div class="input-group">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
+                              <input type="text" class="form-control text-center" placeholder="" value="1">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
+                            </div>
+                          </div>
+                          <div class="col-md">
+                            <label class="form-label">Infant</label>
+                            <small class="text-muted float-end set-padding-top">1 Pax</small>
+                            <div class="input-group">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
+                              <input type="text" class="form-control text-center" placeholder="" value="1">
+                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <h3 class="mt-3 mb-3">Select Package</h3>
                         <div class="row mb-3">
                           <div class="table-responsive">
@@ -183,59 +240,8 @@ $edit = false;
                             </table>
                           </div>
                         </div>
-                        <div class="row mb-3">
-                          <div class="col-md">
-                            <label class="form-label">Guest Name</label>
-                            <input type="text" class="form-control" placeholder="">
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <div class="col-md">
-                            <label class="form-label">Twin</label>
-                            <small class="text-muted float-end set-padding-top">2 Pax</small>
-                            <div class="input-group">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
-                              <input type="text" class="form-control text-center" placeholder="" value="1">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
-                            </div>
-                          </div>
-                          <div class="col-md">
-                            <label class="form-label">Triple</label>
-                            <small class="text-muted float-end set-padding-top">3 Pax</small>
-                            <div class="input-group">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
-                              <input type="text" class="form-control text-center" placeholder="" value="1">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
-                            </div>
-                          </div>
-                          <div class="col-md">
-                            <label class="form-label">Child No Bed</label>
-                            <small class="text-muted float-end set-padding-top">1 Pax</small>
-                            <div class="input-group">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
-                              <input type="text" class="form-control text-center" placeholder="" value="1">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
-                            </div>
-                          </div>
-                          <div class="col-md">
-                            <label class="form-label">Single</label>
-                            <small class="text-muted float-end set-padding-top">1 Pax</small>
-                            <div class="input-group">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
-                              <input type="text" class="form-control text-center" placeholder="" value="1">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
-                            </div>
-                          </div>
-                          <div class="col-md">
-                            <label class="form-label">Infant</label>
-                            <small class="text-muted float-end set-padding-top">1 Pax</small>
-                            <div class="input-group">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">-</button>
-                              <input type="text" class="form-control text-center" placeholder="" value="1">
-                              <button class="btn btn-outline-primary border-lighter add-custom-padding" type="button">+</button>
-                            </div>
-                          </div>
-                        </div>
+                       
+                        
                         <div class="row mb-3">
                             <h3 class="mt-3 mb-3">Extra Services</h3>
                             <div class="col-md-3">

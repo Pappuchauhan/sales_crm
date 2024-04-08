@@ -48,7 +48,7 @@ include BASE_PATH . '/includes/header.php';
 
     <div class="container-xxl flex-grow-1 container-p-y">
 
-      <h4 class="py-3 mb-4">Add Hotel Information</h4>
+      <h4 class="py-3 mb-4"><?=$edit?'Edit':"Add"?> Hotel Information</h4>
 
       <!-- Basic Layout -->
       <div class="row">

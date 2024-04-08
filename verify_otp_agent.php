@@ -33,7 +33,6 @@ $db = getDbInstance();
 $db->where('id', $_SESSION['agent_id']);
 $data = $db->getOne("agents");
 
-//We are using same form for adding and editing. This is a create form so declare $edit = false.
 $edit = false;
 ?>
 
@@ -57,6 +56,7 @@ $edit = false;
     <link rel="stylesheet" href="assets/vendor/css/core.css" />
     <link rel="stylesheet" href="assets/css/login-register.min.css" />
     <link rel="stylesheet" href="assets/vendor/css/theme-default.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -74,7 +74,7 @@ $edit = false;
                         <div class="col-md">
                             <label class="form-label" for="basic-default-phone">Please Enter Mobile OTP (<?=$data['mobile'] ?>)</label>
                             <input type="text" name="mobile_otp" id="basic-default-phone" class="form-control phone-mask">
-                            <div class="text-end mt-2"><a href="#">Regenerte Mobile OTP</a></div>
+                            <div class="text-end mt-2" ><a href="javascript:void(0)" id="regenerate-motp" data-type="mobile">Regenerte Mobile OTP</a></div>
                         </div>
                     </div>
 
@@ -82,7 +82,7 @@ $edit = false;
                         <div class="col-md">
                             <label class="form-label" for="basic-default-phone">Please Enter Email OTP (<?=$data['email_id'] ?>)</label>
                             <input type="text" name="email_otp" id="basic-default-phone" class="form-control phone-mask">
-                            <div class="text-end mt-2"><a href="#">Regenerte Email OTP</a></div>
+                            <div class="text-end mt-2" ><a href="javascript:void(0)" id="regenerate-eotp" data-type="email">Regenerte Email OTP</a></div>
                         </div>
                     </div>
 
@@ -96,7 +96,24 @@ $edit = false;
             </div>
         </form>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#regenerate-motp , #regenerate-eotp').click(function(e) {                
+                let type = $(this).attr("data-type");
+                let agent_id = "<?=$_SESSION['agent_id']?>";
+                $.ajax({
+                    url: 'ajax/regenerate_otp.php',
+                    type: 'POST',
+                    dataType: 'html',
+                    data:{type:type,agent_id:agent_id},
+                    success: function(response){
+                        alert(response); 
+                    },
+                });
+            });
 
+        });
+    </script> 
 </body>
 
 </html>

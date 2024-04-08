@@ -49,7 +49,7 @@ require_once 'includes/header.php';
 
     <div class="container-xxl flex-grow-1 container-p-y">
 
-      <h4 class="py-3 mb-4">Add Vehicle Details</h4>
+      <h4 class="py-3 mb-4"><?=$edit?'Edit':"Add"?> Vehicle Details</h4>
 
       <!-- Basic Layout -->
       <div class="row">

@@ -37,7 +37,6 @@ if (!empty($id)) {
   $data = $db->getOne("guides");
 }
 
-
 include BASE_PATH . '/includes/header.php';
 ?>
 <!-- Layout container -->
@@ -49,13 +48,15 @@ include BASE_PATH . '/includes/header.php';
 
     <div class="container-xxl flex-grow-1 container-p-y">
 
-      <h4 class="py-3 mb-4">Add Guide Details</h4>
+     <h4 class="py-3 mb-4"><?=$edit?'Edit':"Add"?> Guide Details</h4>
+      
 
       <!-- Basic Layout -->
       <div class="row">
         <div class="col-xl">
           <div class="card mb-4">
             <div class="card-body">
+              
               <form action="" method="post" id="guide_form" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Guide Name</label>

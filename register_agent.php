@@ -10,7 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data_to_store['password'] = password_hash($data_to_store['password'], PASSWORD_DEFAULT);
     $data_to_store['status'] = 'Incomplete';
     $data_to_store['email_otp'] = generateOTP();
+    sendEmail( $data_to_store['email_otp'], $data_to_store['email_id']);
+
     $data_to_store['mobile_otp'] = generateOTP();
+    sendOTPMessage($data_to_store['mobile_otp'], $data_to_store['mobile']);
+    
            
     $last_id = $db->insert('agents', $data_to_store);
 

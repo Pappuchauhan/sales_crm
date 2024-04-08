@@ -2,6 +2,7 @@
 /**
  * Function to generate random string.
  */
+require 'vendor/autoload.php';
 function randomString($n) {
 
 	$generated_string = "";
@@ -132,6 +133,78 @@ function getCategories(){
 
 function generateOTP() { 
     $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-   // return $otp;
-   return '123456';
+    return $otp;
+   //return '123456';
+   
 }
+
+function sendOTPMessage($otp,$mobile) {
+    $url = 'https://api.interakt.ai/v1/public/message/';
+    $authorizationHeader = 'Authorization: Basic THY3QlBYcHhFTUg4eS1kc1NWWFoxWksxdlN0ZlhNQm5YTlZoSjdtUk5pWTo=';
+    $contentTypeHeader = 'Content-Type: application/json';
+    $data = array(
+        'countryCode' => '+91',
+        'phoneNumber' => $mobile,
+        'callbackData' => 'some text here',
+        'type' => 'Template',
+        'template' => array(
+            'name' => 'verification_otp',
+            'languageCode' => 'en',
+            'bodyValues' => array(
+                "$otp"
+            )
+        )
+    );
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array($authorizationHeader, $contentTypeHeader));
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+    $error = curl_error($ch);
+
+    curl_close($ch);
+
+    if ($error) {
+        return "Error: $error";
+    } else {
+        return $response;
+    }
+}
+
+function sendEmail($otp, $to) { 
+
+    $mail = new PHPMailer\PHPMailer\PHPMailer(); 
+    $mail->SMTPDebug = 0; 
+    $mail->isSMTP(); 
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->SMTPSecure = 'tls'; 
+    $mail->Port = 587;  
+    $mail->isHTML(true);
+    $mail->Username = 'agent@go2ladakh.in';
+    $mail->Password = 'uyxh thzu huwg sleq';
+
+    // Set sender and recipient
+    $mail->setFrom('agent@go2ladakh.in', "Ladakh DMC");
+    $mail->addAddress($to);
+
+    // Set email subject and body
+    $mail->Subject = 'Your One-Time Password (OTP) for Verification';
+    $mail->Body = "<p>Dear Agent,</p>
+
+    <p>Your One-Time Password (OTP) for verification is: $otp.</p>
+    
+    <p>Please use this OTP to proceed with your verification.</p>
+    
+    <p>Thank you,</p>
+    <p>Ladakh DMC</p>";
+
+    return $mail->send();
+} 
+ 
+
