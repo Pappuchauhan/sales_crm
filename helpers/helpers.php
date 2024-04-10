@@ -206,5 +206,15 @@ function sendEmail($otp, $to) {
 
     return $mail->send();
 } 
- 
+
+function addOneDay($date){
+    //$date = "2021-06-18";
+    $timestamp = strtotime($date);
+    $timestamp_plus_one_day = strtotime("+1 day", $timestamp);
+   return  date("d-m-Y", $timestamp_plus_one_day); 
+}
+
+function setTransportation(){
+    return ["COACH"=>"4","TEMPO"=>"5","CRYISTA"=>"6","INNOVA"=>"7","ZYALO / ERTIGA"=>"8","ECO"=>"9"];
+}
 
