@@ -81,52 +81,8 @@ $per_services = $db->get("services");
               <input type="hidden" name="package_id">
               <input type="hidden" name="category">
 
-              <div class="row mb-3">
-                <div class="col-md">
-                  <label class="form-label">Twin</label>
-                  <small class="text-muted float-end set-padding-top">2 Pax</small>
-                  <div class="input-group">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding decrement" type="button">-</button>
-                    <input type="text" class="form-control text-center quantity" placeholder="" value="1">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding increment" type="button">+</button>
-                  </div>
-                </div>
-                <div class="col-md">
-                  <label class="form-label">Triple</label>
-                  <small class="text-muted float-end set-padding-top">3 Pax</small>
-                  <div class="input-group">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding decrement" type="button">-</button>
-                    <input type="text" class="form-control text-center quantity" placeholder="" value="1">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding increment" type="button">+</button>
-                  </div>
-                </div>
-                <div class="col-md">
-                  <label class="form-label">Child No Bed</label>
-                  <small class="text-muted float-end set-padding-top">1 Pax</small>
-                  <div class="input-group">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding decrement" type="button">-</button>
-                    <input type="text" class="form-control text-center quantity" placeholder="" value="1">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding increment" type="button">+</button>
-                  </div>
-                </div>
-                <div class="col-md">
-                  <label class="form-label">Single</label>
-                  <small class="text-muted float-end set-padding-top">1 Pax</small>
-                  <div class="input-group">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding decrement" type="button">-</button>
-                    <input type="text" class="form-control text-center quantity" placeholder="" value="1">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding increment" type="button">+</button>
-                  </div>
-                </div>
-                <div class="col-md">
-                  <label class="form-label">Infant</label>
-                  <small class="text-muted float-end set-padding-top">1 Pax</small>
-                  <div class="input-group">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding decrement" type="button">-</button>
-                    <input type="text" class="form-control text-center quantity" placeholder="" value="1">
-                    <button class="btn btn-outline-primary border-lighter add-custom-padding increment" type="button">+</button>
-                  </div>
-                </div>
+              <div class="row mb-3" id="package-other-details">
+
               </div>
 
 
@@ -144,33 +100,25 @@ $per_services = $db->get("services");
                     <label class="form-check-label" for="guide">Guide </label>
                   </div>
                 </div>
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" checked type="checkbox" value="" id="monument">
-                    <label class="form-check-label" for="monument">Monument </label>
-                  </div>
-                </div>
               </div>
 
               <?php foreach ($cumulative_service as $cumulative) : ?>
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                      <input class="form-check-input" type="checkbox" value="" id="lunch">
+                      <input class="form-check-input" type="checkbox" name="cumulative[]" value="<?= $cumulative['amount'] ?>" id="cumulative_<?= $cumulative['id'] ?>">
                       <label class="form-check-label" for="lunch"><?= $cumulative['name'] ?> </label>
                     </div>
                   </div>
-                  <div class="col-md-9" id="dateInputsContainer">
+                  <div class="col-md-9" id="cumulative-<?= str_replace(" ", "_", $cumulative['name']) ?>">
                     <div class="row" id="dateInputRow">
-                      <div class="col-md">
-                        <input type="text" class="form-control phone-mask" placeholder="No. of Days">
-                      </div>
+
                       <div class="col-md">
                         <input type="text" class="form-control phone-mask" placeholder="No. of Person">
                       </div>
                       <div class="col-md text-end">
-                        <input class="form-control" type="date" value="2021-06-18">
-                        <small><a href="#" id="addMoreDate">Add More Date</a></small>
+                        <input class="form-control" type="date" value="<?= date("Y-m-d") ?>">
+                        <small><a href="#" class="addMoreDate cumulative" data-id="cumulative-<?= str_replace(" ", "_", $cumulative['name']) ?>">Add More Date</a></small>
                       </div>
                     </div>
                   </div>
@@ -181,11 +129,11 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                      <input class="form-check-input" type="checkbox" value="" id="lunch">
+                      <input class="form-check-input" type="checkbox" name="per_person[]" value="<?= $per_person['amount'] ?>" id="per_person_<?= $per_person['id'] ?>">
                       <label class="form-check-label" for="lunch"><?= $per_person['name'] ?> </label>
                     </div>
                   </div>
-                  <div class="col-md-9" id="dateInputsContainer">
+                  <div class="col-md-9" id="per-person-<?= str_replace(" ", "_", $per_person['name']) ?>">
                     <div class="row" id="dateInputRow">
                       <div class="col-md">
                         <input type="text" class="form-control phone-mask" placeholder="No. of Days">
@@ -194,8 +142,8 @@ $per_services = $db->get("services");
                         <input type="text" class="form-control phone-mask" placeholder="No. of Person">
                       </div>
                       <div class="col-md text-end">
-                        <input class="form-control" type="date" value="2021-06-18">
-                        <small><a href="#" id="addMoreDate">Add More Date</a></small>
+                        <input class="form-control" type="date" value="<?= date("Y-m-d") ?>">
+                        <small><a href="#" class="addMoreDate per-person" data-id="per-person-<?= str_replace(" ", "_", $per_person['name']) ?>">Add More Date</a></small>
                       </div>
                     </div>
                   </div>
@@ -206,11 +154,11 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                      <input class="form-check-input" type="checkbox" value="" id="lunch">
+                      <input class="form-check-input" type="checkbox" name="per_service[]" value="<?= $per_service['amount'] ?>" id="per_service_<?= $per_service['id'] ?>">
                       <label class="form-check-label" for="lunch"><?= $per_service['name'] ?> </label>
                     </div>
                   </div>
-                  <div class="col-md-9" id="dateInputsContainer">
+                  <div class="col-md-9" id="per-service-<?= str_replace(" ", "_", $per_person['name']) ?>">
                     <div class="row" id="dateInputRow">
                       <div class="col-md">
                         <input type="text" class="form-control phone-mask" placeholder="No. of Days">
@@ -219,8 +167,8 @@ $per_services = $db->get("services");
                         <input type="text" class="form-control phone-mask" placeholder="No. of Person">
                       </div>
                       <div class="col-md text-end">
-                        <input class="form-control" type="date" value="2021-06-18">
-                        <small><a href="#" id="addMoreDate">Add More Date</a></small>
+                        <input class="form-control" type="date" value="<?= date("Y-m-d") ?>">
+                        <small><a href="#" class="addMoreDate per-service" data-id="per-service-<?= str_replace(" ", "_", $per_person['name']) ?>">Add More Date</a></small>
                       </div>
                     </div>
                   </div>
@@ -250,15 +198,11 @@ $per_services = $db->get("services");
                 </div>
                 <div class="col-md-9">
                   <div class="row">
-                    <div class="col-md">
-                      <input type="text" class="form-control phone-mask" placeholder="No. of Bike">
-                    </div>
+                     
                     <div class="col-md">
                       <input type="text" class="form-control phone-mask" placeholder="No. of Day">
                     </div>
-                    <div class="col-md">
-                      <input type="text" class="form-control phone-mask" placeholder="Remarks">
-                    </div>
+                     
                   </div>
                 </div>
               </div>
@@ -268,49 +212,29 @@ $per_services = $db->get("services");
                   <table class="table table-bordered">
                     <tbody class="table-border-bottom-0">
                       <tr>
-                        <td>Bike</td>
-                        <td>
-                          <select class="form-select">
-                            <option>Select Number of Day</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="3">4</option>
-                            <option value="3">5</option>
-                            <option value="3">6</option>
-                            <option value="3">7</option>
-                            <option value="3">8</option>
-                            <option value="3">9</option>
-                            <option value="3">10</option>
-                            <option value="3">11</option>
-                            <option value="3">12</option>
-                          </select>
-                        </td>
-                        <td>
-                          <select class="form-select">
-                            <option>Select Riding Plan</option>
-                            <option value="1">Single</option>
-                            <option value="2">Double</option>
-                          </select>
-                        </td>
+                        <td>Twin Bike</td>
+                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
+                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
+                       
+                      </tr>
+                      <tr>
+                        <td>Twin Bike</td>
+                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
+                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
+                       
+                      </tr>
+                      <tr>
+                        <td>Twin Bike</td>
+                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
+                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
+                       
                       </tr>
                       <tr>
                         <td>Mechanic</td>
                         <td colspan="2">
                           <select class="form-select">
-                            <option>Select Number of Day</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="3">4</option>
-                            <option value="3">5</option>
-                            <option value="3">6</option>
-                            <option value="3">7</option>
-                            <option value="3">8</option>
-                            <option value="3">9</option>
-                            <option value="3">10</option>
-                            <option value="3">11</option>
-                            <option value="3">12</option>
+                            <option>No</option>
+                            <option>Yes</option> 
                           </select>
                         </td>
                       </tr>
@@ -318,66 +242,27 @@ $per_services = $db->get("services");
                         <td>Marshal with Bike</td>
                         <td colspan="2">
                           <select class="form-select">
-                            <option>Number of Day</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="3">4</option>
-                            <option value="3">5</option>
-                            <option value="3">6</option>
-                            <option value="3">7</option>
-                            <option value="3">8</option>
-                            <option value="3">9</option>
-                            <option value="3">10</option>
-                            <option value="3">11</option>
-                            <option value="3">12</option>
+                            <option>No</option>
+                            <option>Yes</option> 
                           </select>
                         </td>
                       </tr>
                       <tr>
                         <td>Fuel</td>
-                        <td>
-                          <select class="form-select">
-                            <option>Number of Day</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="3">4</option>
-                            <option value="3">5</option>
-                            <option value="3">6</option>
-                            <option value="3">7</option>
-                            <option value="3">8</option>
-                            <option value="3">9</option>
-                            <option value="3">10</option>
-                            <option value="3">11</option>
-                            <option value="3">12</option>
+                        <td colspan="2">
+                        <select class="form-select">
+                            <option>No</option>
+                            <option>Yes</option> 
                           </select>
                         </td>
-                        <td>
-                          <select class="form-select">
-                            <option>Select Riding Plan</option>
-                            <option value="1">Single</option>
-                            <option value="2">Double</option>
-                          </select>
-                        </td>
+                         
                       </tr>
                       <tr>
                         <td>Backup</td>
                         <td colspan="2">
-                          <select class="form-select">
-                            <option>Number of Day</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="3">4</option>
-                            <option value="3">5</option>
-                            <option value="3">6</option>
-                            <option value="3">7</option>
-                            <option value="3">8</option>
-                            <option value="3">9</option>
-                            <option value="3">10</option>
-                            <option value="3">11</option>
-                            <option value="3">12</option>
+                        <select class="form-select">
+                            <option>No</option>
+                            <option>Yes</option> 
                           </select>
                         </td>
                       </tr>
@@ -385,53 +270,7 @@ $per_services = $db->get("services");
                   </table>
                 </div>
               </div>
-              <div class="row mb-3 align-items-top">
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" type="checkbox" value="" id="bonfire">
-                    <label class="form-check-label" for="bonfire">Bonfire </label>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="row">
-                    <div class="col-md">
-                      <input class="form-control" type="date" value="2021-06-18">
-                      <small><a href="#">Add More Date</a></small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row mb-3 align-items-top">
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" type="checkbox" value="" id="marshal">
-                    <label class="form-check-label" for="marshal">Marshal </label>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="row">
-                    <div class="col-md">
-                      <input type="text" class="form-control phone-mask" placeholder="No. of Day">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row mb-3 align-items-top">
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" type="checkbox" value="" id="cultural">
-                    <label class="form-check-label" for="cultural">Cultural Show </label>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="row">
-                    <div class="col-md">
-                      <input class="form-control" type="date" value="2021-06-18">
-                      <small><a href="#">Add More Date</a></small>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
 
               <h3 class="mt-3 mb-3">Itinerary</h3>
               <div class="row mb-3">
@@ -498,15 +337,12 @@ $per_services = $db->get("services");
                         <th class="text-white px-2">Check in Date</th>
                         <th class="text-white px-2">Check out Date</th>
                         <th class="text-white px-2">Night</th>
-                        <th class="text-white px-2">Meal Plan</th>
-                        <th class="text-white px-2">Status</th>
                         <th class="text-white px-2">Location</th>
-                        <th class="text-white px-2">Google Map</th>
                         <th class="text-white px-2">Manager Cont.</th>
                       </tr>
                     </thead>
                     <tbody class="table-border-bottom-0" id="hotel-list">
-                       
+
                     </tbody>
                   </table>
                 </div>
@@ -598,97 +434,21 @@ $per_services = $db->get("services");
               <h3 class="mt-3 mb-3">Final Quotation</h3>
               <div class="row mb-3">
                 <div class="table-responsive">
-                  <table class="table table-bordered">
+                  <table class="table table-bordered" id="final_quotation">
                     <thead class="table-dark">
                       <tr>
                         <th colspan="4" class="text-white">Your query 01133 Details Quotation in INR</th>
                       </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
-                      <tr>
+                    <tr>
                         <td class="dark-col"><strong>Plan</strong></td>
                         <td class="dark-col"><strong>Amount</strong></td>
                         <td class="dark-col"><strong>Pax</strong></td>
                         <td class="dark-col"><strong>Total amount</strong></td>
                       </tr>
-                      <tr>
-                        <td>Twin sharing basis</td>
-                        <td>20000</td>
-                        <td>20</td>
-                        <td>400000</td>
-                      </tr>
-                      <tr>
-                        <td>Triple</td>
-                        <td>20000</td>
-                        <td>20</td>
-                        <td>400000</td>
-                      </tr>
-                      <tr>
-                        <td>Extra bed</td>
-                        <td>20000</td>
-                        <td>20</td>
-                        <td>400000</td>
-                      </tr>
-                      <tr>
-                        <td>Single</td>
-                        <td>20000</td>
-                        <td>1</td>
-                        <td>400000</td>
-                      </tr>
-                      <tr>
-                        <td>Quiad</td>
-                        <td>20000</td>
-                        <td>20</td>
-                        <td>400000</td>
-                      </tr>
-                      <tr>
-                        <td>Extra Services</td>
-                        <td>Bike</td>
-                        <td>7 Days</td>
-                        <td>100000</td>
-                      </tr>
-                      <tr>
-                        <td>Extra Services</td>
-                        <td>Rafting</td>
-                        <td>7 Days</td>
-                        <td>100000</td>
-                      </tr>
-                      <tr>
-                        <td>Extra Services</td>
-                        <td>Course show</td>
-                        <td>7 Days</td>
-                        <td>100000</td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td colspan="2">Total amount</td>
-                        <td>1560000</td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td colspan="2">IGST 2.5%</td>
-                        <td>390000</td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td colspan="2">SGST 2.5%</td>
-                        <td>390000</td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td colspan="2">Total net amount payable</td>
-                        <td>93600000</td>
-                      </tr>
-                      <tr>
-                        <td><strong>Agent Commission</strong></td>
-                        <td colspan="2"><input type="text" class="form-control phone-mask" placeholder="In percentage"></td>
-                        <td>80000</td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td colspan="2" class="dark-col"><strong>Saleable Price</strong></td>
-                        <td class="dark-col"><strong>4340000</strong></td>
-                      </tr>
+                      
+                      
                     </tbody>
                   </table>
                 </div>
@@ -767,7 +527,7 @@ $per_services = $db->get("services");
       setTimeout(function() {
         hotel_list();
       }, 10);
-    }else{
+    } else {
       alert("Please select package name")
     }
   }
@@ -775,6 +535,8 @@ $per_services = $db->get("services");
   function itinerary_list() {
     let tour_date = $('input[name="tour_start_date"]').val()
     let package_id = $('input[name="package_id"]').val()
+
+    
     $.ajax({
       url: 'ajax/itinerary_list.php',
       type: 'POST',
@@ -791,10 +553,30 @@ $per_services = $db->get("services");
     });
   }
 
+  function package_other_details(package_id, category) {
+    $.ajax({
+      url: 'ajax/package_other_details.php',
+      type: 'POST',
+      data: {
+        package_id: package_id,
+        category:category
+      },
+      success: function(data) {
+        $('#package-other-details').html(data);
+      },
+      error: function(xhr, status, error) {
+        console.error('Error:', error);
+        $('#package-other-details').html(error);
+      }
+    });
+  }
+
   function hotel_list() {
     let tour_date = $('input[name="tour_start_date"]').val()
     let package_id = $('input[name="package_id"]').val()
     let category = $('input[name="category"]').val()
+
+    package_other_details(package_id, category)
     $.ajax({
       url: 'ajax/hotel_list.php',
       type: 'POST',
@@ -812,64 +594,127 @@ $per_services = $db->get("services");
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const incrementButtons = document.querySelectorAll('.increment');
-    const decrementButtons = document.querySelectorAll('.decrement');
-    const quantityInputs = document.querySelectorAll('.quantity');
 
-    incrementButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const input = this.parentElement.querySelector('.quantity');
-        input.value = parseInt(input.value) + 1;
-      });
-    });
+  function handleIncrement() {
+    const input = this.parentElement.querySelector('.quantity');
+    input.value = parseInt(input.value) + 1;
+    
+    calculateTotal();
+  }
 
-    decrementButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const input = this.parentElement.querySelector('.quantity');
-        if (parseInt(input.value) > 1) {
-          input.value = parseInt(input.value) - 1;
-        }
-      });
-    });
+  function handleDecrement() {
+    const input = this.parentElement.querySelector('.quantity');
+    if (parseInt(input.value) > 0) {
+      input.value = parseInt(input.value) - 1;
+      
+      calculateTotal();
+    }
+  }
+
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('increment')) {
+      handleIncrement.call(event.target);
+    }
+  });
+
+
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('decrement')) {
+      handleDecrement.call(event.target);
+      
+    }
   });
 
   document.addEventListener('DOMContentLoaded', function() {
-    const addMoreDateButton = document.getElementById('addMoreDate');
-    const dateInputsContainer = document.getElementById('dateInputsContainer');
 
-    addMoreDateButton.addEventListener('click', function(event) {
-      event.preventDefault(); // Prevent default behavior of the anchor tag
+    //cumulative
+    const addMoreDateButtons = document.querySelectorAll('.cumulative');
+    addMoreDateButtons.forEach(function(button) {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        const dateInputsContainer = document.getElementById(this.getAttribute("data-id"));
 
-      const newRow = document.createElement('div');
-      newRow.classList.add('row');
+        const newRow = document.createElement('div');
+        newRow.classList.add('row');
 
-      newRow.innerHTML = `
-            <div class="col-md">
-                <input type="text" class="form-control phone-mask" placeholder="No. of Days">
-            </div>
-            <div class="col-md">
-                <input type="text" class="form-control phone-mask" placeholder="No. of Person">
-            </div>
-            <div class="col-md text-end">
-                <input class="form-control" type="date" value="2021-06-18">
-                <small><a href="#" class="removeDate">Remove</a></small>
-            </div>
-        `;
+        newRow.innerHTML = `
+                <div class="col-md">
+                    <input type="text" class="form-control phone-mask" placeholder="No. of Days">
+                </div>
+                <div class="col-md">
+                    <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                </div>
+                <div class="col-md text-end">
+                    <input class="form-control" type="date" value="2021-06-18">
+                    <small><a href="#" class="removeDate">Remove</a></small>
+                </div>
+            `;
 
-      dateInputsContainer.appendChild(newRow);
+        dateInputsContainer.append(newRow);
+      });
+    });
+    //per-person
+    const addMorePerPerson = document.querySelectorAll('.per-person');
+    addMorePerPerson.forEach(function(button) {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        const dateInputsContainer = document.getElementById(this.getAttribute("data-id"));
+
+        const newRow = document.createElement('div');
+        newRow.classList.add('row');
+
+        newRow.innerHTML = `
+                <div class="col-md">
+                    <input type="text" class="form-control phone-mask" placeholder="No. of Days">
+                </div>
+                <div class="col-md">
+                    <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                </div>
+                <div class="col-md text-end">
+                    <input class="form-control" type="date" value="2021-06-18">
+                    <small><a href="#" class="removeDate">Remove</a></small>
+                </div>
+            `;
+
+        dateInputsContainer.append(newRow);
+      });
+    });
+    //per-service
+    const addMorePerService = document.querySelectorAll('.per-service');
+    addMorePerService.forEach(function(button) {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        const dateInputsContainer = document.getElementById(this.getAttribute("data-id"));
+
+        const newRow = document.createElement('div');
+        newRow.classList.add('row');
+
+        newRow.innerHTML = `
+                <div class="col-md">
+                    <input type="text" class="form-control phone-mask" placeholder="No. of Days">
+                </div>
+                <div class="col-md">
+                    <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                </div>
+                <div class="col-md text-end">
+                    <input class="form-control" type="date" value="2021-06-18">
+                    <small><a href="#" class="removeDate">Remove</a></small>
+                </div>
+            `;
+
+        dateInputsContainer.append(newRow);
+      });
     });
 
-    // Event delegation for dynamically added elements
-    dateInputsContainer.addEventListener('click', function(event) {
+    // Remove for all the three
+    document.addEventListener('click', function(event) {
       if (event.target.classList.contains('removeDate')) {
         event.preventDefault();
         event.target.closest('.row').remove();
       }
     });
   });
-</script>
-<script>
+ 
   document.addEventListener('DOMContentLoaded', function() {
     // Function to update maximum number of persons
     function updateMaxPersons() {
@@ -898,5 +743,76 @@ $per_services = $db->get("services");
     // Event delegation for dynamically added elements
     $('.table').on('change', '.transportation-select', updateMaxPersons);
   });
+
+  function calculateTotal() {
+    const packageDetails = document.querySelectorAll('#package-other-details .col-md');
+    const targetTableBody = document.querySelector('#final_quotation tbody');
+
+    let totalAmount = 0;
+
+    const existingRows = targetTableBody.querySelectorAll('tr:not(:first-child)');
+    existingRows.forEach(row => row.remove());
+
+    packageDetails.forEach(detail => {
+        const label = detail.querySelector('.form-label').textContent;
+        const price = parseFloat(detail.querySelector('input').dataset.amount);
+        const quantity = parseInt(detail.querySelector('input').value);
+        const total = price * quantity;
+        if(quantity > 0){
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${label}</td>
+                <td>${price}</td>
+                <td>${quantity}</td>
+                <td>${total}</td>
+            `;
+            targetTableBody.appendChild(newRow);
+            totalAmount += total; // Accumulate total amount
+        }
+    });
+
+    // Add total rows
+    const totalRows = `
+        <tr>
+            <td></td>
+            <td colspan="2">Total amount</td>
+            <td>${totalAmount}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2">IGST 2.5%</td>
+            <td>${totalAmount * 0.025}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2">SGST 2.5%</td>
+            <td>${totalAmount * 0.025}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2">Saleable Price</td>
+            <td>${totalAmount}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2" class="dark-col"><strong>Saleable Price</strong></td>
+            <td>${totalAmount * 1.05}</td>
+        </tr>
+    `;
+
+    targetTableBody.insertAdjacentHTML('beforeend', totalRows);
+}
+
+
+ 
+//calculateTotal();
+ /*
+document.addEventListener('input', function(event) { 
+    if (event.target.classList.contains('quantity')) {
+        calculateTotal(); 
+    }
+});
+*/
+
 </script>
 <?php include  'includes/agent_footer.php'; ?>
