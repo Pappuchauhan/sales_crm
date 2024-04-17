@@ -106,7 +106,7 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                      <input class="form-check-input" type="checkbox" name="cumulative[]" value="<?= $cumulative['amount'] ?>" id="cumulative_<?= $cumulative['id'] ?>">
+                      <input class="form-check-input" onClick="return calculateTotal()" type="checkbox" name="cumulative[]" amount-cumulative="<?= $cumulative['amount'] ?>" id="cumulative_<?= $cumulative['id'] ?>">
                       <label class="form-check-label" for="lunch"><?= $cumulative['name'] ?> </label>
                     </div>
                   </div>
@@ -129,15 +129,13 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                      <input class="form-check-input" type="checkbox" name="per_person[]" value="<?= $per_person['amount'] ?>" id="per_person_<?= $per_person['id'] ?>">
+                     <input class="form-check-input" type="checkbox" name="per_person['<?= $per_person['name'] ?>']" amount-per-person="<?= $per_person['amount'] ?>" id="per_person_<?= $per_person['id'] ?>">
+                      
                       <label class="form-check-label" for="lunch"><?= $per_person['name'] ?> </label>
                     </div>
                   </div>
                   <div class="col-md-9" id="per-person-<?= str_replace(" ", "_", $per_person['name']) ?>">
-                    <div class="row" id="dateInputRow">
-                      <div class="col-md">
-                        <input type="text" class="form-control phone-mask" placeholder="No. of Days">
-                      </div>
+                    <div class="row" id="dateInputRow">                      
                       <div class="col-md">
                         <input type="text" class="form-control phone-mask" placeholder="No. of Person">
                       </div>
@@ -154,21 +152,19 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                      <input class="form-check-input" type="checkbox" name="per_service[]" value="<?= $per_service['amount'] ?>" id="per_service_<?= $per_service['id'] ?>">
+                    <input class="form-check-input" type="checkbox" name="per_service['<?= $per_service['name'] ?>']" amount-per-service="<?= $per_service['amount'] ?>" id="per_service_<?= $per_service['id'] ?>">                       
                       <label class="form-check-label" for="lunch"><?= $per_service['name'] ?> </label>
                     </div>
                   </div>
-                  <div class="col-md-9" id="per-service-<?= str_replace(" ", "_", $per_person['name']) ?>">
+                  <div class="col-md-9" id="per-service-<?= str_replace(" ", "_", $per_service['name']) ?>">
                     <div class="row" id="dateInputRow">
-                      <div class="col-md">
-                        <input type="text" class="form-control phone-mask" placeholder="No. of Days">
-                      </div>
+                      
                       <div class="col-md">
                         <input type="text" class="form-control phone-mask" placeholder="No. of Person">
                       </div>
                       <div class="col-md text-end">
                         <input class="form-control" type="date" value="<?= date("Y-m-d") ?>">
-                        <small><a href="#" class="addMoreDate per-service" data-id="per-service-<?= str_replace(" ", "_", $per_person['name']) ?>">Add More Date</a></small>
+                        <small><a href="#" class="addMoreDate per-service" data-id="per-service-<?= str_replace(" ", "_", $per_service['name']) ?>">Add More Date</a></small>
                       </div>
                     </div>
                   </div>
@@ -637,10 +633,7 @@ $per_services = $db->get("services");
         const newRow = document.createElement('div');
         newRow.classList.add('row');
 
-        newRow.innerHTML = `
-                <div class="col-md">
-                    <input type="text" class="form-control phone-mask" placeholder="No. of Days">
-                </div>
+        newRow.innerHTML = ` 
                 <div class="col-md">
                     <input type="text" class="form-control phone-mask" placeholder="No. of Person">
                 </div>
@@ -663,10 +656,7 @@ $per_services = $db->get("services");
         const newRow = document.createElement('div');
         newRow.classList.add('row');
 
-        newRow.innerHTML = `
-                <div class="col-md">
-                    <input type="text" class="form-control phone-mask" placeholder="No. of Days">
-                </div>
+        newRow.innerHTML = ` 
                 <div class="col-md">
                     <input type="text" class="form-control phone-mask" placeholder="No. of Person">
                 </div>
@@ -689,12 +679,9 @@ $per_services = $db->get("services");
         const newRow = document.createElement('div');
         newRow.classList.add('row');
 
-        newRow.innerHTML = `
+        newRow.innerHTML = ` 
                 <div class="col-md">
-                    <input type="text" class="form-control phone-mask" placeholder="No. of Days">
-                </div>
-                <div class="col-md">
-                    <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                    <input type="number" class="form-control phone-mask" placeholder="No. of Service">
                 </div>
                 <div class="col-md text-end">
                     <input class="form-control" type="date" value="2021-06-18">
@@ -770,7 +757,32 @@ $per_services = $db->get("services");
             totalAmount += total; // Accumulate total amount
         }
     });
+//cumulative
+    const checkboxes = document.querySelectorAll('input[name="cumulative[]"]:checked');    
+    checkboxes.forEach(checkbox => {
+        const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
+        const amount = parseFloat(checkbox.getAttribute('amount-cumulative'));
+        let quantity = 0;
+        const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+             quantity = quantity + parseInt(input.value);  
+        });
+        const total = amount * quantity;
+        totalAmount = totalAmount + total;
+        const targetTableBody = document.querySelector('#final_quotation tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${label}</td>
+            <td>${amount}</td>
+            <td>${quantity}</td>
+            <td>${total}</td>
+        `;
+        targetTableBody.appendChild(newRow);
+    });
 
+    //per person
+
+    //per Service
     // Add total rows
     const totalRows = `
         <tr>
