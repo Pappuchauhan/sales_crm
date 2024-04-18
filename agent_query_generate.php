@@ -129,7 +129,7 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                     <input class="form-check-input" type="checkbox" name="per_person['<?= $per_person['name'] ?>']" amount-per-person="<?= $per_person['amount'] ?>" id="per_person_<?= $per_person['id'] ?>">
+                     <input class="form-check-input" onClick="return calculateTotal()" type="checkbox" name="per_person[]" amount-per-person="<?= $per_person['amount'] ?>" id="per_person_<?= $per_person['id'] ?>">
                       
                       <label class="form-check-label" for="lunch"><?= $per_person['name'] ?> </label>
                     </div>
@@ -152,7 +152,7 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                    <input class="form-check-input" type="checkbox" name="per_service['<?= $per_service['name'] ?>']" amount-per-service="<?= $per_service['amount'] ?>" id="per_service_<?= $per_service['id'] ?>">                       
+                    <input class="form-check-input" onClick="return calculateTotal()" type="checkbox" name="per_service[]" amount-per-service="<?= $per_service['amount'] ?>" id="per_service_<?= $per_service['id'] ?>">                       
                       <label class="form-check-label" for="lunch"><?= $per_service['name'] ?> </label>
                     </div>
                   </div>
@@ -301,7 +301,7 @@ $per_services = $db->get("services");
                     <tbody class="table-border-bottom-0">
                       <tr class="transport-row">
                         <td>
-                          <select class="form-select transportation-select">
+                          <select class="form-select transportation-select" onChange="return calculateTotal();">
                             <option>Select Transport</option>
                             <?php foreach ($transportations as $name => $val) : ?>
                               <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
@@ -758,8 +758,8 @@ $per_services = $db->get("services");
         }
     });
 //cumulative
-    const checkboxes = document.querySelectorAll('input[name="cumulative[]"]:checked');    
-    checkboxes.forEach(checkbox => {
+    const cumulatives = document.querySelectorAll('input[name="cumulative[]"]:checked');    
+    cumulatives.forEach(checkbox => {
         const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
         const amount = parseFloat(checkbox.getAttribute('amount-cumulative'));
         let quantity = 0;
@@ -780,9 +780,81 @@ $per_services = $db->get("services");
         targetTableBody.appendChild(newRow);
     });
 
-    //per person
+    //per_person
+    const per_person = document.querySelectorAll('input[name="per_person[]"]:checked');    
+    per_person.forEach(checkbox => {
+        const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
+        const amount = parseFloat(checkbox.getAttribute('amount-per-person'));
+        let quantity = 0;
+        const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+             quantity = quantity + parseInt(input.value);  
+        });
+        const total = amount * quantity;
+        totalAmount = totalAmount + total;
+        const targetTableBody = document.querySelector('#final_quotation tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${label}</td>
+            <td>${amount}</td>
+            <td>${quantity}</td>
+            <td>${total}</td>
+        `;
+        targetTableBody.appendChild(newRow);
+    });
 
-    //per Service
+    //per_service
+    const per_service = document.querySelectorAll('input[name="per_service[]"]:checked');    
+    per_service.forEach(checkbox => {
+        const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
+        const amount = parseFloat(checkbox.getAttribute('amount-per-service'));
+        let quantity = 0;
+        const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+             quantity = quantity + parseInt(input.value);  
+        });
+        const total = amount * quantity;
+        totalAmount = totalAmount + total;
+        const targetTableBody = document.querySelector('#final_quotation tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${label}</td>
+            <td>${amount}</td>
+            <td>${quantity}</td>
+            <td>${total}</td>
+        `;
+        targetTableBody.appendChild(newRow);
+    });
+
+    //per person
+    const transportationSelects = document.querySelectorAll('.transportation-select');
+    transportationSelects.forEach(select => {
+      console.log(select)
+    //select.addEventListener('change', function() {
+      
+        const label = select.value;
+        const detailId = 'detail_' + select.value.replace(' / ', '_'); 
+        const amount = parseFloat( document.getElementById(detailId).value);
+        const quantity = 1; // Quantity is always 1
+        const total = amount * quantity;
+
+        // Generate id for detail element
+        
+
+        // Append to the table
+        const targetTableBody = document.querySelector('#final_quotation tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${label}</td>
+            <td>${amount}</td>
+            <td>${quantity}</td>
+            <td>${total}</td>
+        `;
+        targetTableBody.appendChild(newRow);
+      
+   // });
+});
+ 
     // Add total rows
     const totalRows = `
         <tr>

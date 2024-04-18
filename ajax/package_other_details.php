@@ -54,4 +54,19 @@ foreach ($results as $key => $result) :
         </div>
     </div>
 <?php
-endforeach; ?>
+endforeach; 
+
+$db = getDbInstance();
+$db->where('package_id', $_POST['package_id']);
+$db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "NOT IN");
+$db->orderBy('id','ASC');
+$results = $db->getOne("package_details");
+ 
+
+?>
+<input type="hidden" name="detail_COACH" id="detail_COACH" value="<?=$results['coach']?>" />
+<input type="hidden" name="detail_TEMPO" id="detail_TEMPO" value="<?=$results['tempo']?>" />
+<input type="hidden" name="detail_CRYISTA" id="detail_CRYISTA" value="<?=$results['cryista']?>" />
+<input type="hidden" name="detail_INNOVA" id="detail_INNOVA" value="<?=$results['innova']?>" />
+<input type="hidden" name="detail_ZYALO_ERTIGA" id="detail_ZYALO_ERTIGA" value="<?=$results['zyalo_ertiga']?>" />
+<input type="hidden" name="detail_ECO" id="detail_ECO" value="<?=$results['eco']?>" />
