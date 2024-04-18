@@ -10,18 +10,52 @@ $results = $db->get("package_details");
 $tour_date =  date('d-m-Y', strtotime($_POST['tour_date']));
 $location = "";
 $checkIn = $tour_date;
+$day =0;
+//print_r($results);
 foreach ($results as $key => $result) :
+    $night = 0;
+
+    switch (strtolower($_POST['category'])) {
+        case 'budget':
+            $amount = $result['budget'];
+            break;
+        case 'standard':
+            $amount = $result['standard'];
+            break;
+        case 'deluxe':
+            $amount = $result['deluxe'];
+            break;
+        case 'super_deluxe':
+            $amount = $result['super_deluxe'];
+            break;
+        case 'premium':
+            $amount = $result['premium'];
+            break;
+        case 'premium_plus':
+            $amount = $result['premium_plus'];
+            break;
+        case 'luxury':
+            $amount = $result['luxury'];
+            break;
+        case 'luxury_plus':
+            $amount = $result['luxury_plus'];
+            break;
+        default:
+            $amount = 0;
+            break;
+    }
 
     if ($result['location'] != $location) {
         $location = $result['location'];
         $checkOut = addOneDay($checkIn);
         $i = $key + 1;
-        if ($results[$i]['location']) {
-            while ($result['location'] == $results[$i]['location']) {
+        $night++;
+            while (isset($results[$i]['location']) && $result['location'] == $results[$i]['location']) {
                 $checkOut =  addOneDay($checkOut);
                 $i++;
+                $night++;
             }
-        }
+       
 
         $db = getDbInstance();
         $db->where('location', $result['location']);
@@ -31,11 +65,15 @@ foreach ($results as $key => $result) :
 ?>
 
             <tr>
-                <td>1</td>
+                <td><?=$day = $day+$night?> 
+                <input type="hidden" name="hotel_night[]" value="<?=$night?>" /> 
+                <input type="hidden" name="hotel_amount[]" value="<?=$amount?>" />
+                <input type="hidden" name="hotel_name[]" value="<?=$hotel['hotel_name']?>" />
+            </td>
                 <td><?= $hotel['hotel_name'] ?></td>
                 <td><?= $checkIn ?></td>
                 <td><?= $checkOut ?></td>
-                <td>2</td>
+                <td><?= $night?></td>
                 <td><?= $hotel['location'] ?></td>
                 <td><?= $hotel['mobile'] ?></td>
             </tr>

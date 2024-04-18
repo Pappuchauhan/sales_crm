@@ -114,7 +114,7 @@ $per_services = $db->get("services");
                     <div class="row" id="dateInputRow">
 
                       <div class="col-md">
-                        <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                        <input type="text" class="form-control phone-mask" onChange="return calculateTotal();" placeholder="No. of Person">
                       </div>
                       <div class="col-md text-end">
                         <input class="form-control" type="date" value="<?= date("Y-m-d") ?>">
@@ -129,15 +129,15 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                     <input class="form-check-input" onClick="return calculateTotal()" type="checkbox" name="per_person[]" amount-per-person="<?= $per_person['amount'] ?>" id="per_person_<?= $per_person['id'] ?>">
-                      
+                      <input class="form-check-input" onClick="return calculateTotal()" type="checkbox" name="per_person[]" amount-per-person="<?= $per_person['amount'] ?>" id="per_person_<?= $per_person['id'] ?>">
+
                       <label class="form-check-label" for="lunch"><?= $per_person['name'] ?> </label>
                     </div>
                   </div>
                   <div class="col-md-9" id="per-person-<?= str_replace(" ", "_", $per_person['name']) ?>">
-                    <div class="row" id="dateInputRow">                      
+                    <div class="row" id="dateInputRow">
                       <div class="col-md">
-                        <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                        <input type="text" class="form-control phone-mask" onChange="return calculateTotal();" placeholder="No. of Person">
                       </div>
                       <div class="col-md text-end">
                         <input class="form-control" type="date" value="<?= date("Y-m-d") ?>">
@@ -152,15 +152,15 @@ $per_services = $db->get("services");
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
-                    <input class="form-check-input" onClick="return calculateTotal()" type="checkbox" name="per_service[]" amount-per-service="<?= $per_service['amount'] ?>" id="per_service_<?= $per_service['id'] ?>">                       
+                      <input class="form-check-input" onClick="return calculateTotal()" type="checkbox" name="per_service[]" amount-per-service="<?= $per_service['amount'] ?>" id="per_service_<?= $per_service['id'] ?>">
                       <label class="form-check-label" for="lunch"><?= $per_service['name'] ?> </label>
                     </div>
                   </div>
                   <div class="col-md-9" id="per-service-<?= str_replace(" ", "_", $per_service['name']) ?>">
                     <div class="row" id="dateInputRow">
-                      
+
                       <div class="col-md">
-                        <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                        <input type="text" class="form-control phone-mask" onChange="return calculateTotal();" placeholder="No. of Person">
                       </div>
                       <div class="col-md text-end">
                         <input class="form-control" type="date" value="<?= date("Y-m-d") ?>">
@@ -194,11 +194,11 @@ $per_services = $db->get("services");
                 </div>
                 <div class="col-md-9">
                   <div class="row">
-                     
+
                     <div class="col-md">
                       <input type="text" class="form-control phone-mask" placeholder="No. of Day">
                     </div>
-                     
+
                   </div>
                 </div>
               </div>
@@ -211,26 +211,26 @@ $per_services = $db->get("services");
                         <td>Twin Bike</td>
                         <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
                         <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
-                       
+
                       </tr>
                       <tr>
                         <td>Twin Bike</td>
                         <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
                         <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
-                       
+
                       </tr>
                       <tr>
                         <td>Twin Bike</td>
                         <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
                         <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
-                       
+
                       </tr>
                       <tr>
                         <td>Mechanic</td>
                         <td colspan="2">
                           <select class="form-select">
                             <option>No</option>
-                            <option>Yes</option> 
+                            <option>Yes</option>
                           </select>
                         </td>
                       </tr>
@@ -239,26 +239,26 @@ $per_services = $db->get("services");
                         <td colspan="2">
                           <select class="form-select">
                             <option>No</option>
-                            <option>Yes</option> 
+                            <option>Yes</option>
                           </select>
                         </td>
                       </tr>
                       <tr>
                         <td>Fuel</td>
                         <td colspan="2">
-                        <select class="form-select">
+                          <select class="form-select">
                             <option>No</option>
-                            <option>Yes</option> 
+                            <option>Yes</option>
                           </select>
                         </td>
-                         
+
                       </tr>
                       <tr>
                         <td>Backup</td>
                         <td colspan="2">
-                        <select class="form-select">
+                          <select class="form-select">
                             <option>No</option>
-                            <option>Yes</option> 
+                            <option>Yes</option>
                           </select>
                         </td>
                       </tr>
@@ -266,7 +266,6 @@ $per_services = $db->get("services");
                   </table>
                 </div>
               </div>
-              
 
               <h3 class="mt-3 mb-3">Itinerary</h3>
               <div class="row mb-3">
@@ -437,14 +436,14 @@ $per_services = $db->get("services");
                       </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
-                    <tr>
+                      <tr>
                         <td class="dark-col"><strong>Plan</strong></td>
                         <td class="dark-col"><strong>Amount</strong></td>
                         <td class="dark-col"><strong>Pax</strong></td>
                         <td class="dark-col"><strong>Total amount</strong></td>
                       </tr>
-                      
-                      
+
+
                     </tbody>
                   </table>
                 </div>
@@ -532,7 +531,7 @@ $per_services = $db->get("services");
     let tour_date = $('input[name="tour_start_date"]').val()
     let package_id = $('input[name="package_id"]').val()
 
-    
+
     $.ajax({
       url: 'ajax/itinerary_list.php',
       type: 'POST',
@@ -555,7 +554,7 @@ $per_services = $db->get("services");
       type: 'POST',
       data: {
         package_id: package_id,
-        category:category
+        category: category
       },
       success: function(data) {
         $('#package-other-details').html(data);
@@ -594,7 +593,7 @@ $per_services = $db->get("services");
   function handleIncrement() {
     const input = this.parentElement.querySelector('.quantity');
     input.value = parseInt(input.value) + 1;
-    
+
     calculateTotal();
   }
 
@@ -602,7 +601,7 @@ $per_services = $db->get("services");
     const input = this.parentElement.querySelector('.quantity');
     if (parseInt(input.value) > 0) {
       input.value = parseInt(input.value) - 1;
-      
+
       calculateTotal();
     }
   }
@@ -617,7 +616,7 @@ $per_services = $db->get("services");
   document.addEventListener('click', function(event) {
     if (event.target.classList.contains('decrement')) {
       handleDecrement.call(event.target);
-      
+
     }
   });
 
@@ -635,7 +634,7 @@ $per_services = $db->get("services");
 
         newRow.innerHTML = ` 
                 <div class="col-md">
-                    <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                    <input type="text" class="form-control phone-mask" onChange="return calculateTotal();" placeholder="No. of Person">
                 </div>
                 <div class="col-md text-end">
                     <input class="form-control" type="date" value="2021-06-18">
@@ -658,7 +657,7 @@ $per_services = $db->get("services");
 
         newRow.innerHTML = ` 
                 <div class="col-md">
-                    <input type="text" class="form-control phone-mask" placeholder="No. of Person">
+                    <input type="text" class="form-control phone-mask" onChange="return calculateTotal();" placeholder="No. of Person">
                 </div>
                 <div class="col-md text-end">
                     <input class="form-control" type="date" value="2021-06-18">
@@ -681,7 +680,7 @@ $per_services = $db->get("services");
 
         newRow.innerHTML = ` 
                 <div class="col-md">
-                    <input type="number" class="form-control phone-mask" placeholder="No. of Service">
+                    <input type="number" class="form-control phone-mask" onChange="return calculateTotal();" placeholder="No. of Service">
                 </div>
                 <div class="col-md text-end">
                     <input class="form-control" type="date" value="2021-06-18">
@@ -701,7 +700,7 @@ $per_services = $db->get("services");
       }
     });
   });
- 
+
   document.addEventListener('DOMContentLoaded', function() {
     // Function to update maximum number of persons
     function updateMaxPersons() {
@@ -741,106 +740,103 @@ $per_services = $db->get("services");
     existingRows.forEach(row => row.remove());
 
     packageDetails.forEach(detail => {
-        const label = detail.querySelector('.form-label').textContent;
-        const price = parseFloat(detail.querySelector('input').dataset.amount);
-        const quantity = parseInt(detail.querySelector('input').value);
-        const total = price * quantity;
-        if(quantity > 0){
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
+      const label = detail.querySelector('.form-label').textContent;
+      const price = parseFloat(detail.querySelector('input').dataset.amount);
+      const quantity = parseInt(detail.querySelector('input').value);
+      const total = price * quantity;
+      if (quantity > 0) {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
                 <td>${label}</td>
                 <td>${price}</td>
                 <td>${quantity}</td>
                 <td>${total}</td>
             `;
-            targetTableBody.appendChild(newRow);
-            totalAmount += total; // Accumulate total amount
-        }
+        targetTableBody.appendChild(newRow);
+        totalAmount += total; // Accumulate total amount
+      }
     });
-//cumulative
-    const cumulatives = document.querySelectorAll('input[name="cumulative[]"]:checked');    
+    //cumulative
+    const cumulatives = document.querySelectorAll('input[name="cumulative[]"]:checked');
     cumulatives.forEach(checkbox => {
-        const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
-        const amount = parseFloat(checkbox.getAttribute('amount-cumulative'));
-        let quantity = 0;
-        const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
-        inputs.forEach(input => {
-             quantity = quantity + parseInt(input.value);  
-        });
-        const total = amount * quantity;
-        totalAmount = totalAmount + total;
-        const targetTableBody = document.querySelector('#final_quotation tbody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
+      const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
+      const amount = parseFloat(checkbox.getAttribute('amount-cumulative'));
+      let quantity = 0;
+      const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
+      inputs.forEach(input => {
+        quantity = quantity + parseInt(input.value);
+      });
+      const total = amount * quantity;
+      totalAmount = totalAmount + total;
+      const targetTableBody = document.querySelector('#final_quotation tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
             <td>${label}</td>
             <td>${amount}</td>
             <td>${quantity}</td>
             <td>${total}</td>
         `;
-        targetTableBody.appendChild(newRow);
+      targetTableBody.appendChild(newRow);
     });
 
     //per_person
-    const per_person = document.querySelectorAll('input[name="per_person[]"]:checked');    
+    const per_person = document.querySelectorAll('input[name="per_person[]"]:checked');
     per_person.forEach(checkbox => {
-        const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
-        const amount = parseFloat(checkbox.getAttribute('amount-per-person'));
-        let quantity = 0;
-        const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
-        inputs.forEach(input => {
-             quantity = quantity + parseInt(input.value);  
-        });
-        const total = amount * quantity;
-        totalAmount = totalAmount + total;
-        const targetTableBody = document.querySelector('#final_quotation tbody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
+      const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
+      const amount = parseFloat(checkbox.getAttribute('amount-per-person'));
+      let quantity = 0;
+      const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
+      inputs.forEach(input => {
+        quantity = quantity + parseInt(input.value);
+      });
+      const total = amount * quantity;
+      totalAmount = totalAmount + total;
+      const targetTableBody = document.querySelector('#final_quotation tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
             <td>${label}</td>
             <td>${amount}</td>
             <td>${quantity}</td>
             <td>${total}</td>
         `;
-        targetTableBody.appendChild(newRow);
+      targetTableBody.appendChild(newRow);
     });
 
     //per_service
-    const per_service = document.querySelectorAll('input[name="per_service[]"]:checked');    
+    const per_service = document.querySelectorAll('input[name="per_service[]"]:checked');
     per_service.forEach(checkbox => {
-        const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
-        const amount = parseFloat(checkbox.getAttribute('amount-per-service'));
-        let quantity = 0;
-        const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
-        inputs.forEach(input => {
-             quantity = quantity + parseInt(input.value);  
-        });
-        const total = amount * quantity;
-        totalAmount = totalAmount + total;
-        const targetTableBody = document.querySelector('#final_quotation tbody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
+      const label = checkbox.parentElement.querySelector('.form-check-label').textContent;
+      const amount = parseFloat(checkbox.getAttribute('amount-per-service'));
+      let quantity = 0;
+      const inputs = checkbox.closest('.row').querySelectorAll('input[type="text"]');
+      inputs.forEach(input => {
+        quantity = quantity + parseInt(input.value);
+      });
+      const total = amount * quantity;
+      totalAmount = totalAmount + total;
+      const targetTableBody = document.querySelector('#final_quotation tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
             <td>${label}</td>
             <td>${amount}</td>
             <td>${quantity}</td>
             <td>${total}</td>
         `;
-        targetTableBody.appendChild(newRow);
+      targetTableBody.appendChild(newRow);
     });
 
-    //per person
+    //Transportation 
     const transportationSelects = document.querySelectorAll('.transportation-select');
     transportationSelects.forEach(select => {
-      console.log(select)
-    //select.addEventListener('change', function() {
-      
+      const detailId = 'detail_' + select.value.replace(' / ', '_');
+      console.log(detailId)
+      if (document.getElementById(detailId)) {
         const label = select.value;
-        const detailId = 'detail_' + select.value.replace(' / ', '_'); 
-        const amount = parseFloat( document.getElementById(detailId).value);
+
+        const amount = parseFloat(document.getElementById(detailId).value);
         const quantity = 1; // Quantity is always 1
         const total = amount * quantity;
-
-        // Generate id for detail element
-        
-
+        totalAmount = totalAmount + total;
         // Append to the table
         const targetTableBody = document.querySelector('#final_quotation tbody');
         const newRow = document.createElement('tr');
@@ -851,10 +847,33 @@ $per_services = $db->get("services");
             <td>${total}</td>
         `;
         targetTableBody.appendChild(newRow);
-      
-   // });
-});
- 
+      }
+    });
+
+
+    const hotelList = document.getElementById('hotel-list');
+    hotelList.querySelectorAll('tr').forEach(row => {
+
+      const nightInput = row.querySelector('input[name="hotel_night[]"]');
+      const amountInput = row.querySelector('input[name="hotel_amount[]"]');
+      const nameInput = row.querySelector('input[name="hotel_name[]"]');
+
+      const night = nightInput.value;
+      const amount = amountInput.value;
+      const name = nameInput.value;
+      const total = amount * night;
+      totalAmount = totalAmount + total;
+      const targetTableBody = document.querySelector('#final_quotation tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+            <td>${name}</td>
+            <td>${amount}</td>
+            <td>${night}</td>
+            <td>${total}</td>
+        `;
+      targetTableBody.appendChild(newRow);
+    });
+
     // Add total rows
     const totalRows = `
         <tr>
@@ -885,18 +904,17 @@ $per_services = $db->get("services");
     `;
 
     targetTableBody.insertAdjacentHTML('beforeend', totalRows);
-}
+  }
 
 
- 
-//calculateTotal();
- /*
+
+  //calculateTotal();
+  /*
 document.addEventListener('input', function(event) { 
     if (event.target.classList.contains('quantity')) {
         calculateTotal(); 
     }
 });
 */
-
 </script>
 <?php include  'includes/agent_footer.php'; ?>
