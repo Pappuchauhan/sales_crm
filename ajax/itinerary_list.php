@@ -20,4 +20,24 @@ foreach($results as $key=>$result):
 </tr>
 <?php 
  $tour_date = addOneDay($tour_date);
-endforeach; ?>
+endforeach;
+
+$db = getDbInstance();
+$db->where('id', $_POST['package_id']); 
+$result = $db->getOne("packages", 'permit, guide'); 
+?>
+
+break
+<h3 class="mt-3 mb-3">Extra Services</h3>
+<div class="col-md-3">
+    <div class="form-check mt-b">
+    <input class="form-check-input" checked type="checkbox" onClick="return calculateTotal();" data-permit="<?=$result['permit']?>" id="permit">
+    <label class="form-check-label" for="permit">Permit </label>
+    </div>
+</div>
+<div class="col-md-3">
+    <div class="form-check mt-b">
+    <input class="form-check-input" checked type="checkbox" onClick="return calculateTotal();" data-guide="<?=$result['guide']?>" id="guide">
+    <label class="form-check-label" for="guide">Guide </label>
+    </div>
+</div>

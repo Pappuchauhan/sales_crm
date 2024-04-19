@@ -86,20 +86,8 @@ $per_services = $db->get("services");
               </div>
 
 
-              <div class="row mb-3">
-                <h3 class="mt-3 mb-3">Extra Services</h3>
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" checked type="checkbox" value="" id="permit">
-                    <label class="form-check-label" for="permit">Permit </label>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" checked type="checkbox" value="" id="guide">
-                    <label class="form-check-label" for="guide">Guide </label>
-                  </div>
-                </div>
+              <div class="row mb-3" id="fixed-service">
+
               </div>
 
               <?php foreach ($cumulative_service as $cumulative) : ?>
@@ -170,21 +158,7 @@ $per_services = $db->get("services");
                   </div>
                 </div>
               <?php endforeach ?>
-              <div class="row mb-3 align-items-top">
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" type="checkbox" value="" id="bottles">
-                    <label class="form-check-label" for="bottles">Water Bottles </label>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="row">
-                    <div class="col-md">
-                      <input type="text" class="form-control phone-mask" placeholder="No. of Water Bottle">
-                    </div>
-                  </div>
-                </div>
-              </div>
+
               <div class="row mb-3 align-items-top">
                 <div class="col-md-3">
                   <div class="form-check mt-b">
@@ -540,7 +514,12 @@ $per_services = $db->get("services");
         tour_date: tour_date
       },
       success: function(data) {
-        $('#itinerary-list').html(data);
+        let dataArr = data.split("break")
+        $('#itinerary-list').html(dataArr[0]);
+        $('#fixed-service').html(dataArr[1]);
+        setTimeout(function() {
+          calculateTotal();
+        }, 2)
       },
       error: function(xhr, status, error) {
         console.error('Error:', error);
@@ -756,6 +735,38 @@ $per_services = $db->get("services");
         totalAmount += total; // Accumulate total amount
       }
     });
+    //Extra Services 
+    //permit
+    let permitElement = document.getElementById("permit");
+    if (permitElement.checked) {
+      let amount = permitElement.getAttribute("data-permit");
+      totalAmount += parseInt(amount);
+      const targetTableBody = document.querySelector('#final_quotation tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+            <td>Permit</td>
+            <td>${amount}</td>
+            <td>-</td>
+            <td>${amount}</td>
+        `;
+      targetTableBody.appendChild(newRow);
+    }
+    //guide
+    let guideElement = document.getElementById("guide");
+    if (guideElement.checked) {
+      let amount = guideElement.getAttribute("data-guide");
+      totalAmount += parseInt(amount);
+      const targetTableBody = document.querySelector('#final_quotation tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+            <td>Guide</td>
+            <td>${amount}</td>
+            <td>-</td>
+            <td>${amount}</td>
+        `;
+      targetTableBody.appendChild(newRow);
+    }
+
     //cumulative
     const cumulatives = document.querySelectorAll('input[name="cumulative[]"]:checked');
     cumulatives.forEach(checkbox => {
@@ -850,7 +861,7 @@ $per_services = $db->get("services");
       }
     });
 
-
+    // Hotel List
     const hotelList = document.getElementById('hotel-list');
     hotelList.querySelectorAll('tr').forEach(row => {
 

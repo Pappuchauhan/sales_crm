@@ -40,41 +40,4 @@
 
       <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
-          <!-- Menu -->
-  
-          <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-            <div class="menu-inner-shadow"></div>
-  
-            <ul class="menu-inner py-1 bg-dark pt-3">
-              <!-- Forms -->
-              <li class="menu-item active open">
-                <ul class="menu-sub">
-                  <li class="menu-item">
-                    <a href="agent_query_generate.php" class="menu-link">
-                      <div data-i18n="Basic Inputs">Query Generate</div>
-                    </a>
-                  </li>
-                  <li class="menu-item active">
-                    <a href="edit-profile.html" class="menu-link">
-                      <div data-i18n="Basic Inputs">Edit Profile</div>
-                    </a>
-                  </li>
-                  <li class="menu-item">
-                    <a href="agent_booking.php" class="menu-link">
-                      <div data-i18n="Input groups">Booking Summary</div>
-                    </a>
-                  </li>
-                  <li class="menu-item">
-                    <a href="agent_query.php" class="menu-link">
-                      <div data-i18n="Input groups">Query Summary</div>
-                    </a>
-                  </li>
-                  <li class="menu-item">
-                    <a href="agent_invoice.php" class="menu-link">
-                      <div data-i18n="Input groups">Invoice</div>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </aside>
+          
