@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data_to_store = array_filter($_POST);
 
   $save_data = [];
+  $save_data["name"] = $data_to_store['name'];
   $save_data["duration"] = $data_to_store['duration'];
   $save_data["tour_start_date"] = $data_to_store['tour_start_date'];
   $save_data["package_id"] = $data_to_store['package_id'];
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <div class="row mb-3">
                 <div class="col-md">
                   <label class="form-label">Guest Name</label>
-                  <input type="text" class="form-control" placeholder="">
+                  <input type="text" class="form-control" name="name" placeholder="">
                 </div>
               </div>
 
