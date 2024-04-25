@@ -37,6 +37,7 @@ if (!empty($id)) {
   $data = $db->getOne("vehicles");
 }
 
+$transportation = setTransportation();
 
 require_once 'includes/header.php';
 ?>
@@ -64,19 +65,15 @@ require_once 'includes/header.php';
                 </div>
                 
                   <div class="col-md">
-                  <label class="form-label" for="basic-default-phone">Passenger Limit</label>
-                    <select class="form-select" id="inputGroupSelect01" required>
+                  <label class="form-label" for="basic-default-phone">Vehicle Type</label>
+                    <select name="vehicle_type" class="form-select" id="inputGroupSelect01" required>
                       <option value="">Select Vehicle</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="3">4</option>
-                      <option value="3">5</option>
-                      <option value="3">6</option>
-                      <option value="3">7</option>
-                      <option value="3">8</option>
-                      <option value="3">9</option>
-                      <option value="3">10</option>
+                      <?php
+                      foreach($transportation as $key=>$transport){
+                       $selected = ($key == $data['vehicle_type'])?'selected':"";
+                        echo "<option value=\"$key\" $selected>$key</option>";
+                      }
+                      ?> 
                     </select>
                   </div>
                 </div>

@@ -3,7 +3,7 @@ session_start();
 require_once './config/config.php';
 require_once 'includes/agent_header.php';
 $edit = false;
-$id = 2;
+$id = isset($_GET['ID']) && !empty($_GET['ID']) ? decryptId($_GET['ID']) : "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data_to_store = array_filter($_POST);

@@ -26,6 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 }
 
+$db = getDbInstance(); 
+$vehicles = $db->get("vehicles",null,'driver_name, vehicle_number, mobile, vehicle_type');
+$vehicleData=[];
+foreach($vehicles as $vehicle){
+  $vehicleData[$vehicle['vehicle_type']] =$vehicle;
+}
+$json_vehicle = json_encode($vehicleData);
 ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <div class="layout-page">
@@ -103,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <thead class="table-dark">
                       <tr>
                         <th class="text-white">Select Transport</th>
-                        <th class="text-white">Number of Pax</th>
+                        <th class="text-white">Number </th>
                         <th class="text-white">Remarks</th>
                       </tr>
                     </thead>
@@ -298,31 +305,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <h3 class="mt-3 mb-3">Transport</h3>
               <div class="row mb-3">
                 <div class="table-responsive">
-                  <table class="table table-bordered">
+                  <table class="table table-bordered" id="driver_list" >
                     <thead class="table-dark">
                       <tr>
                         <th class="text-white">Category</th>
                         <th class="text-white">No. of Vehicle</th>
                         <th class="text-white">Driver Name</th>
-                        <th class="text-white">Mobile No.</th>
-                        <th class="text-white">Region</th>
+                        <th class="text-white">Mobile No.</th> 
                       </tr>
                     </thead>
-                    <tbody class="table-border-bottom-0">
-                      <tr>
-                        <td style="min-width: 82px">Innova</td>
-                        <td style="min-width: 130px">2</td>
-                        <td>Kumer</td>
-                        <td>9999999999</td>
-                        <td>Leh</td>
-                      </tr>
-                      <tr>
-                        <td style="min-width: 82px">Innova</td>
-                        <td style="min-width: 130px">2</td>
-                        <td>Kumer</td>
-                        <td>9999999999</td>
-                        <td>Leh</td>
-                      </tr>
+                    <tbody class=" table-border-bottom-0">
+                        
                     </tbody>
                   </table>
                 </div>
@@ -433,8 +426,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
       });
     });
+     
   });
 
+  
   function setPackageId(package_id) {
     $('input[name="package_id"]').val(package_id)
     setTimeout(function() {
@@ -726,6 +721,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     //Transportation 
+    const driverTableBody = document.querySelector('#driver_list tbody');
+    const driverDetails = <?=$json_vehicle?>;
+    const existingDriver = driverTableBody.querySelectorAll('tr');
+    existingDriver.forEach(row => row.remove());
     const transportationSelects = document.querySelectorAll('.transportation-select');
     transportationSelects.forEach(select => {
       const detailId = 'detail_' + select.value.replace(' / ', '_');
@@ -738,7 +737,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const total = amount * quantity;
         totalAmount = totalAmount + total;
         // Append to the table
-
+       
         const newRow = document.createElement('tr');
         newRow.innerHTML = `
             <td>${label}</td>
@@ -747,6 +746,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td>${total}</td>
         `;
         targetTableBody.appendChild(newRow);
+
+        let driver_name = driverDetails[label].driver_name;
+        let mobile = driverDetails[label].mobile;
+        const driverRow = document.createElement('tr');
+        driverRow.innerHTML = `
+            <td>${label}</td>
+            <td>${quantity}</td>
+            <td>${driver_name}</td>
+            <td>${mobile}</td>
+        `;
+        driverTableBody.appendChild(driverRow);
+
       }
     });
 

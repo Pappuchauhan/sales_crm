@@ -27,7 +27,7 @@ if (!$order_by) {
 
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
-$select = array('id', 'driver_name', 'vehicle_number', 'mobile', 'created_at', 'updated_at');
+$select = array('id', 'driver_name', 'vehicle_number', 'mobile', 'created_at', 'updated_at', 'vehicle_type');
 
 //Start building query according to input parameters.
 // If search string
@@ -104,11 +104,11 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                  <th class="text-white border-right-white">#</th>
-                    <th class="text-white border-right-white">Driver ID</th>
+                  <th class="text-white border-right-white">#</th> 
                     <th class="text-white border-right-white">Driver Name</th>
                     <th class="text-white border-right-white">Vehicle Number</th>
                     <th class="text-white border-right-white">Mobile Number</th>
+                    <th class="text-white border-right-white">Vehicle Type</th>
                     <th class="text-white border-right-white">Edit Details</th>
                   </tr>
                 </thead>
@@ -117,11 +117,11 @@ include BASE_PATH . '/includes/header.php';
                   $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
                   foreach ($rows as $row) : ?>
                     <tr>
-                      <td class="border-right-dark"><?=$k?></td>
-                      <td class="border-right-dark">#<?php echo $row['id']; ?></td>
+                      <td class="border-right-dark"><?=$k?></td> 
                       <td class="border-right-dark"><?php echo xss_clean($row['driver_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['vehicle_number']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
+                      <td class="border-right-dark"><?php echo xss_clean($row['vehicle_type']); ?></td>
                       <td class="border-right-dark"><a href="add_vehicle.php?crm=<?php echo encryptId($row['id']); ?>" >Edit Details</a></td>
                     </tr>
                   <?php 
