@@ -6,6 +6,7 @@ require_once BASE_PATH . '/includes/auth_validate.php';
 $default_categories = getCategories();
 $db = getDbInstance();
 $db->where('duration', $_POST['duration']);
+$db->where('status', 'Active');
 $results = $db->get("packages");
 foreach($results as $result):
 ?>

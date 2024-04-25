@@ -51,6 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pkg_detail_id = $db->insert('package_details', $quadSharingSave);
   } else {
     $msg = "added";
+    $db->orderBy('id', 'desc');
+    $package_last = $db->getOne("packages");
+    if($package_last){
+      $data_to_store['package_code'] = sprintf("TA%04d", $package_last['id'] + 1);
+    }else{
+      $data_to_store['package_code'] = sprintf("TA%04d",  1);
+    }
+    $db = getDbInstance();
     $package_id = $db->insert('packages', $data_to_store);
     $db = getDbInstance();
     foreach ($details as $detail) {

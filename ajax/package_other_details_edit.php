@@ -1,13 +1,12 @@
-<?php
-session_start();
-require_once '../config/config.php';
-require_once BASE_PATH . '/includes/auth_validate.php';
+<?php 
 
 $db = getDbInstance();
-$db->where('package_id', $_POST['package_id']);
+$db->where('package_id', $queries['package_id']);
 $db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "IN");
 $results = $db->get("package_details");
-$category = $_POST['category'];
+$category = $queries['category'];
+$s_person = json_decode($queries['person'],true);
+ 
 foreach ($results as $key => $result) :
 
     switch (strtolower($category)) {
@@ -50,7 +49,7 @@ foreach ($results as $key => $result) :
             <input 
             data-amount="<?=$amount?>"
             name="person[<?=str_replace("Fixed", "", $result['itineary']) ?>]"
-            type="text" class="form-control text-center quantity" value="0">
+            type="text" class="form-control text-center quantity" value="<?=$s_person[str_replace("Fixed", "", $result['itineary'])]?>">
             <button class="btn btn-outline-primary border-lighter add-custom-padding increment"  type="button">+</button>
         </div>
     </div>
@@ -58,7 +57,7 @@ foreach ($results as $key => $result) :
 endforeach; 
 
 $db = getDbInstance();
-$db->where('package_id', $_POST['package_id']);
+$db->where('package_id', $queries['package_id']);
 $db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "NOT IN");
 $db->orderBy('id','ASC');
 $results = $db->getOne("package_details");

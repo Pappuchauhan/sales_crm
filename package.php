@@ -16,10 +16,9 @@ $page = filter_input(INPUT_GET, 'page');
 if (!$page) {
   $page = 1;
 }
-
-// If filter types are not selected we show latest added data first
+ 
 if (!$filter_col) {
-  $filter_col = 'id';
+  $filter_col = 'package_code';
 }
 if (!$order_by) {
   $order_by = 'asc';
@@ -27,9 +26,8 @@ if (!$order_by) {
 
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
-$select = array('id', 'package_name', 'permit', 'guide', 'duration',  'created_at', 'updated_at');
-
-//Start building query according to input parameters.
+$select = array('id', 'package_code', 'package_name', 'permit', 'guide', 'duration',  'status', 'created_at', 'updated_at');
+ 
 // If search string
 if ($search_string) {
   $db->where("$filter_col", '%' . $search_string . '%', 'like');
@@ -42,6 +40,8 @@ if ($order_by) {
 
 // Set pagination limit
 $db->pageLimit = $pagelimit;
+$db->where('status', 'Active');
+
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('packages', $page, $select);
@@ -66,9 +66,9 @@ include BASE_PATH . '/includes/header.php';
                   <label class="input-group-text">Options</label>
                   <select class="form-select" name="filter_col">
                     <option selected="">Choose...</option>
-                    <option value="id" selected>Package Code</option>
-                    <option value="id">Package Name</option>
-                    <option value="id">Duration</option>
+                    <option value="package_code" selected>Package Code</option>
+                    <option value="package_name">Package Name</option>
+                    <option value="duration">Duration</option>
                   </select>
                 </div>
               </div>
@@ -112,18 +112,22 @@ include BASE_PATH . '/includes/header.php';
                 </thead>
                 <tbody class="table-border-bottom-0">
                   <?php 
-                  $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
-                  foreach ($rows as $row) : ?>
+                 $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
+                  foreach ($rows as $row) :
+                   
+                    ?>
                     <tr>
                     <td class="border-right-dark"><?=$k?></td>
-                      <td class="border-right-dark">#<?php echo xss_clean($row['id']); ?></td>
+                      <td class="border-right-dark">TA0<?php echo xss_clean($row['package_code']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['package_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
-                      <td class="border-right-dark"><a href="add_package.php?crm=<?php echo encryptId($row['id']); ?>">Edit</a></td>
+                      <td class="border-right-dark"><a href="add_package.php?crm=<?php echo encryptId($row['id']); ?>">Edit</a>
+                     <a href="delete_package.php?crm=<?php echo encryptId($row['id']); ?>" onClick="return confirm('Are you sure you want to delete this record?')">Delete</a></td>
                     </tr>
                   <?php
                 $k++;
-                endforeach; ?>
+                endforeach; 
+              ?>
 
                 </tbody>
               </table>

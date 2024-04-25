@@ -3,7 +3,7 @@ session_start();
 require_once './config/config.php';
 require_once 'includes/agent_header.php';
 $edit = false;
-$id = 1;
+$id = 2;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data_to_store = array_filter($_POST);
@@ -24,8 +24,16 @@ if (!empty($id)) {
     $db = getDbInstance();
     $db->where('id', $id);
     $queries = $db->getOne("agent_queries");
+
+    $db = getDbInstance();
+    $db->where('id',  $queries['package_id']);
+    $package = $db->getOne("packages");
 }
 
+$save_transport = json_decode($queries['transport'],true);
+ 
+//echo "<pre>";
+//print_r($save_transport);
 ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <div class="layout-page">
@@ -64,7 +72,7 @@ if (!empty($id)) {
                                     </div>
                                     <div class="col-md">
                                         <label class="form-label">Select Date</label>
-                                        <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?=$queries['tour_start_date']?>">
+                                        <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?= $queries['tour_start_date'] ?>">
                                     </div>
                                 </div>
 
@@ -89,14 +97,14 @@ if (!empty($id)) {
                                                 $db->where('duration', $queries['duration']);
                                                 $results = $db->get("packages");
                                                 foreach ($results as $result) :
-                                                   $selected =  ($result['id']==$queries['package_id'])?'checked':"" ;
-                                                    
+                                                    $selected =  ($result['id'] == $queries['package_id']) ? 'checked' : "";
+
                                                 ?>
 
                                                     <tr>
                                                         <td>
                                                             <div class="form-check">
-                                                                <input name="package_name" onClick="return setPackageId(<?= $result['id'] ?>)" class="form-check-input" type="radio" <?=$selected?> value="<?= $result['id'] ?>" id="defaultRadio1">
+                                                                <input name="package_name" onClick="return setPackageId(<?= $result['id'] ?>)" class="form-check-input" type="radio" <?= $selected ?> value="<?= $result['id'] ?>" id="defaultRadio1">
                                                             </div>
                                                         </td>
                                                         <td>
@@ -110,8 +118,8 @@ if (!empty($id)) {
                                                                 <?php
                                                                 foreach ($default_categories as $category) {
                                                                     $cat_selected = "";
-                                                                    if(!empty($selected)){
-                                                                        $cat_selected = ($category == $queries['category'])?"selected":"";
+                                                                    if (!empty($selected)) {
+                                                                        $cat_selected = ($category == $queries['category']) ? "selected" : "";
                                                                     }
 
                                                                     echo " <option value=\"$category\" $cat_selected>$category</option>";
@@ -130,7 +138,7 @@ if (!empty($id)) {
                                 <input type="hidden" name="category" value="<?php echo $save_data['category'] ?? ''; ?>">
 
                                 <div class="row mb-3" id="package-other-details">
-
+                                    <?php include("./ajax/package_other_details_edit.php") ?>
                                 </div>
 
                                 <?php $transportations = setTransportation(); ?>
@@ -146,6 +154,7 @@ if (!empty($id)) {
                                                 </tr>
                                             </thead>
                                             <tbody class="table-border-bottom-0">
+                                                <?php if($save_transport["'name'"]<1){ ?>
                                                 <tr class="transport-row">
                                                     <td>
                                                         <select class="form-select transportation-select" onChange="return calculateTotal();">
@@ -162,27 +171,165 @@ if (!empty($id)) {
                                                     </td>
                                                     <td>Maximum <span class="max-persons"></span> Persons</td>
                                                 </tr>
+
+                                                <?php
+                                                }
+                                                foreach($save_transport["'name'"] as $key=>$sname):
+                                                ?>
+                                                <tr class="transport-row">
+                                                    <td>
+                                                        <select class="form-select transportation-select" onChange="return calculateTotal();">
+                                                            <option>Select Transport</option>
+                                                            <?php foreach ($transportations as $name => $val) : 
+                                                                $selected = $name ==$sname?"selected":""
+                                                                ?>
+                                                                <option <?=$selected?> value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-select num-persons-select">
+                                                            <option><?=$save_transport["'no_of_transport'"][$key]?></option>
+                                                        </select>
+                                                    </td>
+                                                    <td>Maximum <span class="max-persons"></span> Persons</td>
+                                                </tr> 
+                                            <?php endforeach;?>
                                                 <tr>
                                                     <td colspan="3" style="text-align:right;"><a href="#" id="addMoreTransport">Add More</a></td>
                                                 </tr>
+
+                                                
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                                 <div class="row mb-3" id="fixed-service">
-
+                                <h3 class="mt-3 mb-3">Extra Services</h3>
+                                <div class="col-md-3">
+                                    <div class="form-check mt-b">
+                                    <input class="form-check-input" <?php if($queries['permit'] =='on'){ echo "checked";}?> type="checkbox" onClick="return calculateTotal();" data-permit="<?=$package['permit']?>" name="permit" id="permit">
+                                    <label class="form-check-label" for="permit">Permit </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check mt-b">
+                                    <input class="form-check-input" <?php if($queries['guide'] =='on'){ echo "checked";}?> type="checkbox" onClick="return calculateTotal();" data-guide="<?=$package['guide']?>" name="guide" id="guide">
+                                    <label class="form-check-label" for="guide">Guide </label>
+                                    </div>
+                                </div>
                                 </div>
 
 
                                 <div class="row mb-3">
                                     <div class="table-responsive" id="service-list">
 
+                                        <?php
+                                        $tour_date = $queries['tour_start_date'];
+                                        preg_match('/\d+/', $queries['duration'], $matches);
+                                        $days = $matches[0];
+                                        $date_data = [];
+                                        for ($i = 0; $i < $days; $i++) {
+                                            $date_data[] = date('d-m-Y', strtotime($tour_date));
+                                            $tour_date = addOneDay($tour_date);
+                                        }
+                                        $save_cumulative  =    json_decode($queries['cumulative'], true);
+                                        $save_per_person  =    json_decode($queries['per_person'], true);
+                                        $save_per_service  =    json_decode($queries['per_service'], true);
+                                        /*
+        echo "<pre>";
+        print_r($save_cumulative);
+        die;
+        */
+                                        $db = getDbInstance();
+                                        $db->where('type', 'Cumulative');
+                                        $cumulative_service = $db->get("services");
+
+                                        $db = getDbInstance();
+                                        $db->where('type', 'Per Person');
+                                        $per_person_service = $db->get("services");
+
+                                        $db = getDbInstance();
+                                        $db->where('type', 'Per Service');
+                                        $per_services = $db->get("services");
+                                        ?>
+                                        <table class="table table-bordered">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th class="text-white">Service</th>
+                                                    <?php foreach ($date_data as $d) { ?>
+                                                        <th class="text-white"><?= $d ?></th>
+                                                    <?php } ?>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-border-bottom-0">
+                                                <?php foreach ($cumulative_service as $cumulative) : ?>
+                                                    <tr>
+                                                        <td>
+                                                            <label class="form-check-label" for="><?= $cumulative['name'] ?>"><?= $cumulative['name'] ?> </label>
+                                                        </td>
+                                                        <?php foreach ($date_data as $d) {
+                                                            $checked = "";
+
+                                                            if (isset($save_cumulative[$cumulative['id']]['dates']) && in_array($d, $save_cumulative[$cumulative['id']]['dates'])) {
+                                                                $checked = "checked";
+                                                            }
+
+
+                                                        ?>
+                                                            <td>
+                                                                <input <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="cumulative[<?= $cumulative['id'] ?>][dates][]" amount-cumulative="<?= $cumulative['amount'] ?>" value="<?= $d ?>" id="cumulative<?= $cumulative['id'] ?>_<?= $d ?>">
+                                                            </td>
+                                                        <?php } ?>
+                                                    </tr>
+                                                <?php endforeach ?>
+
+                                                <?php foreach ($per_person_service as $per_person) : ?>
+                                                    <tr>
+                                                        <td>
+                                                            <label class="form-check-label" for="<?= $per_person['name'] ?>"><?= $per_person['name'] ?> </label>
+                                                        </td>
+                                                        <?php foreach ($date_data as $d) {
+                                                            $checked = "";
+
+                                                            if (isset($save_per_person[$per_person['id']]['dates']) && in_array($d, $save_per_person[$per_person['id']]['dates'])) {
+                                                                $checked = "checked";
+                                                            }
+                                                        ?>
+                                                            <td>
+                                                                <input <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_person[<?= $per_person['id'] ?>][dates][]" amount-per-person="<?= $per_person['amount'] ?>" value="<?= $d ?>" id="per_person<?= $per_person['id'] ?>_<?= $d ?>">
+                                                            </td>
+                                                        <?php } ?>
+                                                    </tr>
+                                                <?php endforeach ?>
+
+                                                <?php foreach ($per_services as $per_service) : ?>
+                                                    <tr>
+                                                        <td>
+                                                            <label class="form-check-label" for="<?= $per_service['name'] ?>"><?= $per_service['name'] ?> </label>
+                                                        </td>
+                                                        <?php foreach ($date_data as $d) {
+                                                            $checked = "";
+
+                                                            if (isset($save_per_service[$per_service['id']]['dates']) && in_array($d, $save_per_service[$per_service['id']]['dates'])) {
+                                                                $checked = "checked";
+                                                            }
+                                                        ?>
+                                                            <td>
+                                                                <input <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_service[<?= $per_service['id'] ?>][dates][]" amount-per-service="<?= $per_service['amount'] ?>" value="<?= $d ?>" id="per_service<?= $per_service['id'] ?>_<?= $d ?>">
+                                                            </td>
+                                                        <?php } ?>
+                                                    </tr>
+                                                <?php endforeach ?>
+
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
 
 
 
-                                <div class="row mb-3 align-items-top">
+                                <div class="row mb-3 align-items-top d-none">
                                     <div class="col-md-3">
                                         <div class="form-check mt-b">
                                             <input class="form-check-input" type="checkbox" value="" id="bike">
@@ -199,8 +346,8 @@ if (!empty($id)) {
                                         </div>
                                     </div>
                                 </div>
-                                <h3 class="mt-3 mb-3">Enter Bike Details</h3>
-                                <div class="row mb-3">
+                                <h3 class="mt-3 mb-3 d-none">Enter Bike Details</h3>
+                                <div class="row mb-3 d-none">
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <tbody class="table-border-bottom-0">
@@ -277,6 +424,47 @@ if (!empty($id)) {
                                                 </tr>
                                             </thead>
                                             <tbody class="table-border-bottom-0" id="itinerary-list">
+                                                <?php
+
+                                                $db = getDbInstance();
+                                                $db->where('package_id', $queries['package_id']);
+                                                $db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "NOT IN");
+                                                $results = $db->get("package_details");
+                                                $tour_date =  date('d-m-Y', strtotime($queries['tour_start_date']));
+
+                                                foreach ($results as $key => $result) :
+
+                                                ?>
+
+                                                    <tr>
+                                                        <td style="min-width: 82px">Day <?= $key + 1 ?></td>
+                                                        <td style="min-width: 130px"><?= $tour_date ?></td>
+                                                        <td><?= date('l', strtotime($tour_date)) ?></td>
+                                                        <td><?= $result['itineary'] ?></td>
+                                                    </tr>
+                                                <?php
+                                                    $tour_date = addOneDay($tour_date);
+                                                endforeach;
+                                                /*
+                                                $db = getDbInstance();
+                                                $db->where('id', $queries['package_id']);
+                                                $result = $db->getOne("packages", 'permit, guide');
+                                                */
+                                                ?>
+                                                <!-- break
+                                                <h3 class="mt-3 mb-3">Extra Services</h3>
+                                                <div class="col-md-3">
+                                                    <div class="form-check mt-b">
+                                                     <input class="form-check-input" checked type="checkbox" onClick="return calculateTotal(<?= $result['id'] ?>);" data-permit="<?= $result['permit'] ?>" id="permit">
+                                                    <label class="form-check-label" for="permit">Permit </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check mt-b">
+                                                    <input class="form-check-input" checked type="checkbox" onClick="return calculateTotal(<?= $result['id'] ?>);" `data-guide="<?= $result['guide'] ?>" id="guide"`>
+                                                    <label class="form-check-label" for="guide">Guide </label>
+                                                    </div>
+                                                </div> -->
 
                                             </tbody>
                                         </table>
@@ -299,7 +487,87 @@ if (!empty($id)) {
                                                 </tr>
                                             </thead>
                                             <tbody class="table-border-bottom-0" id="hotel-list">
+                                                <?php
+                                                $db = getDbInstance();
+                                                $db->where('package_id', $queries['package_id']);
+                                                $db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "NOT IN");
+                                                $results = $db->get("package_details");
+                                                $tour_date = date('d-m-Y', strtotime($queries['tour_start_date']));
+                                                $location = "";
+                                                $checkIn = $tour_date;
+                                                $day = 0;
 
+                                                foreach ($results as $key => $result) :
+                                                    $night = 0;
+
+                                                    switch (strtolower($queries['category'])) {
+                                                        case 'budget':
+                                                            $amount = $result['budget'];
+                                                            break;
+                                                        case 'standard':
+                                                            $amount = $result['standard'];
+                                                            break;
+                                                        case 'deluxe':
+                                                            $amount = $result['deluxe'];
+                                                            break;
+                                                        case 'super_deluxe':
+                                                            $amount = $result['super_deluxe'];
+                                                            break;
+                                                        case 'premium':
+                                                            $amount = $result['premium'];
+                                                            break;
+                                                        case 'premium_plus':
+                                                            $amount = $result['premium_plus'];
+                                                            break;
+                                                        case 'luxury':
+                                                            $amount = $result['luxury'];
+                                                            break;
+                                                        case 'luxury_plus':
+                                                            $amount = $result['luxury_plus'];
+                                                            break;
+                                                        default:
+                                                            $amount = 0;
+                                                            break;
+                                                    }
+
+                                                    if ($result['location'] != $location) {
+
+                                                        $location = $result['location'];
+                                                        $checkOut = addOneDay($checkIn);
+                                                        $i = $key + 1;
+                                                        $night++;
+                                                        while (isset($results[$i]['location']) && $result['location'] == $results[$i]['location']) {
+                                                            $checkOut =  addOneDay($checkOut);
+                                                            $i++;
+                                                            $night++;
+                                                        }
+
+
+                                                        $db = getDbInstance();
+                                                        $db->where('location', $result['location']);
+                                                        $db->where('category', $queries['category']);
+                                                        $hotel = $db->getOne("hotels");
+                                                        if ($hotel) :
+                                                ?>
+
+                                                            <tr>
+                                                                <td><?= $day = $day + $night ?>
+                                                                    <input type="hidden" name="hotel_night[]" value="<?= $night ?>" />
+                                                                    <input type="hidden" name="hotel_amount[]" value="<?= $amount ?>" />
+                                                                    <input type="hidden" name="hotel_name[]" value="<?= $hotel['hotel_name'] ?>" />
+                                                                </td>
+                                                                <td><?= $hotel['hotel_name'] ?></td>
+                                                                <td><?= $checkIn ?></td>
+                                                                <td><?= $checkOut ?></td>
+                                                                <td><?= $night ?></td>
+                                                                <td><?= $hotel['location'] ?></td>
+                                                                <td><?= $hotel['mobile'] ?></td>
+                                                            </tr>
+                                                <?php
+                                                        endif;
+                                                        $checkIn = $checkOut;
+                                                    }
+                                                endforeach; ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -625,7 +893,7 @@ if (!empty($id)) {
         }
 
         // Initial setup for first row
-        $('.transportation-select').each(updateMaxPersons);
+      //  $('.transportation-select').each(updateMaxPersons);
 
         // Add more transportation option
         $('#addMoreTransport').click(function(e) {
@@ -635,7 +903,7 @@ if (!empty($id)) {
             newRow.find('.num-persons-select').val('Select Person');
             newRow.find('.max-persons').empty();
             newRow.insertAfter('.transport-row:last');
-            newRow.find('.transportation-select').each(updateMaxPersons);
+           // newRow.find('.transportation-select').each(updateMaxPersons);
         });
 
         // Event delegation for dynamically added elements

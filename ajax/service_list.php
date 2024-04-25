@@ -37,7 +37,7 @@ for ($i = 0; $i < $days; $i++) {
     </thead>
     <tbody class="table-border-bottom-0">
         <?php foreach ($cumulative_service as $cumulative) : ?>
-            <tr class="transport-row">
+            <tr>
                 <td>
                     <label class="form-check-label" for="><?= $cumulative['name'] ?>"><?= $cumulative['name'] ?> </label>
                 </td>
@@ -50,7 +50,7 @@ for ($i = 0; $i < $days; $i++) {
         <?php endforeach ?>
 
         <?php foreach ($per_person_service as $per_person) : ?>
-            <tr class="transport-row">
+            <tr>
                 <td>
                     <label class="form-check-label" for="<?= $per_person['name'] ?>"><?= $per_person['name'] ?> </label>
                 </td>
@@ -63,7 +63,7 @@ for ($i = 0; $i < $days; $i++) {
         <?php endforeach ?>
 
         <?php foreach ($per_services as $per_service) : ?>
-            <tr class="transport-row">
+            <tr>
                 <td>
                     <label class="form-check-label" for="<?= $per_service['name'] ?>"><?= $per_service['name'] ?> </label>
                 </td>

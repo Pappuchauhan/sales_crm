@@ -5,7 +5,7 @@ require_once 'includes/agent_header.php';
 $edit = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data_to_store = array_filter($_POST);
-
+ 
   $save_data = [];
   $save_data["name"] = $data_to_store['name'];
   $save_data["duration"] = $data_to_store['duration'];
@@ -15,6 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $save_data["cumulative"] = json_encode($data_to_store['cumulative']??[]);
   $save_data["per_person"] = json_encode($data_to_store['per_person']??[]);
   $save_data["per_service"] = json_encode($data_to_store['per_service']??[]); 
+
+  $save_data["person"] = json_encode($data_to_store['person']??[]); 
+  $save_data["transport"] = json_encode($data_to_store['transport']??[]); 
+  $save_data["permit"] = $data_to_store['permit']?? "off";
+  $save_data["guide"] = $data_to_store['guide']?? "off";
   $db = getDbInstance();
   $inserted_id = $db->insert('agent_queries', $save_data);
  
@@ -105,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <tbody class="table-border-bottom-0">
                       <tr class="transport-row">
                         <td>
-                          <select class="form-select transportation-select" onChange="return calculateTotal();">
+                          <select name="transport['name'][]" class="form-select transportation-select" onChange="return calculateTotal();">
                             <option>Select Transport</option>
                             <?php foreach ($transportations as $name => $val) : ?>
                               <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
@@ -113,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                           </select>
                         </td>
                         <td>
-                          <select class="form-select num-persons-select">
+                          <select name="transport['no_of_transport'][]" class="form-select num-persons-select">
                             <option>Select Person</option>
                           </select>
                         </td>
@@ -139,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-              <div class="row mb-3 align-items-top">
+              <div class="row mb-3 align-items-top d-none">
                 <div class="col-md-3">
                   <div class="form-check mt-b">
                     <input class="form-check-input" type="checkbox" value="" id="bike">
@@ -156,8 +161,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   </div>
                 </div>
               </div>
-              <h3 class="mt-3 mb-3">Enter Bike Details</h3>
-              <div class="row mb-3">
+              <h3 class="mt-3 mb-3 d-none">Enter Bike Details</h3>
+              <div class="row mb-3 d-none">
                 <div class="table-responsive">
                   <table class="table table-bordered">
                     <tbody class="table-border-bottom-0">
