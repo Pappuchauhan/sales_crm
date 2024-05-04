@@ -46,40 +46,40 @@ require_once 'includes/agent_header.php';
               <form  action="" method="post" id="hotel_form" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Full Name</label>
-                  <input type="text" disabled class="form-control"   value="<?php echo htmlspecialchars($edit ? $data['full_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="Full name" />
+                  <input type="text" disabled class="form-control"   value="<?php echo xss_clean($edit ? $data['full_name'] : ''); ?>" placeholder="Full name" />
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Email ID</label>
-                    <input type="text" disabled id="basic-default-phone"   value="<?php echo htmlspecialchars($edit ? $data['email_id'] : '', ENT_QUOTES, 'UTF-8'); ?>" class="form-control phone-mask" value="emailid@gmail.com" />
+                    <input type="text" disabled id="basic-default-phone"   value="<?php echo xss_clean($edit ? $data['email_id'] : ''); ?>" class="form-control phone-mask" value="emailid@gmail.com" />
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Mobile No.</label>
-                    <input type="text" id="basic-default-phone" name="mobile" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" class="form-control phone-mask" value="9999995555" />
+                    <input type="text" id="basic-default-phone" name="mobile" value="<?php echo xss_clean($edit ? $data['mobile'] : ''); ?>" class="form-control phone-mask" value="9999995555" />
                   </div>
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Company Name</label>
-                    <input type="text" name="company_name" value="<?php echo htmlspecialchars($edit ? $data['company_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" class="form-control phone-mask" />
+                    <input type="text" name="company_name" value="<?php echo xss_clean($edit ? $data['company_name'] : ''); ?>" class="form-control phone-mask" />
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">GST No.</label>
-                    <input type="text" class="form-control phone-mask" name="gst_no" value="<?php echo htmlspecialchars($edit ? $data['gst_no'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="text" class="form-control phone-mask" name="gst_no" value="<?php echo xss_clean($edit ? $data['gst_no'] : ''); ?>" />
                   </div>
                 </div>
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-email">Complete Address</label>
-                  <input type="text" class="form-control phone-mask" name="complete_address" value="<?php echo htmlspecialchars($edit ? $data['complete_address'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  <input type="text" class="form-control phone-mask" name="complete_address" value="<?php echo xss_clean($edit ? $data['complete_address'] : ''); ?>" />
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Country</label>
-                    <input type="text" class="form-control phone-mask" name="country" value="<?php echo htmlspecialchars($edit ? $data['country'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="text" class="form-control phone-mask" name="country" value="<?php echo xss_clean($edit ? $data['country'] : ''); ?>" />
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">State</label>
-                    <input type="text" class="form-control phone-mask" name="state" value="<?php echo htmlspecialchars($edit ? $data['state'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="text" class="form-control phone-mask" name="state" value="<?php echo xss_clean($edit ? $data['state'] : ''); ?>" />
                   </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Send</button>

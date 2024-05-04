@@ -166,16 +166,16 @@ include BASE_PATH . '/includes/header.php';
 
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Package Name</label>
-                  <input type="text" class="form-control" name="package_name" value="<?php echo htmlspecialchars($edit ? $data['package_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
+                  <input type="text" class="form-control" name="package_name" value="<?php echo xss_clean($edit ? $data['package_name'] : ''); ?>" required/>
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Permit</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="permit" value="<?php echo htmlspecialchars($edit ? $data['permit'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="permit" value="<?php echo xss_clean($edit ? $data['permit'] : ''); ?>" required/>
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Guide</label>
-                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="guide" value="<?php echo htmlspecialchars($edit ? $data['guide'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
+                    <input type="number" id="basic-default-phone" class="form-control phone-mask" name="guide" value="<?php echo xss_clean($edit ? $data['guide'] : ''); ?>" required/>
                   </div>                  
                 </div> 
                 <div class="mb-3">

@@ -61,7 +61,7 @@ include BASE_PATH . '/includes/header.php';
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Service Name</label>
-                    <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($edit ? $data['name'] : '', ENT_QUOTES, 'UTF-8'); ?>" required />
+                    <input type="text" class="form-control" name="name" value="<?php echo xss_clean($edit ? $data['name'] : ''); ?>" required />
                   </div>
 
 
@@ -84,7 +84,7 @@ include BASE_PATH . '/includes/header.php';
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Amount</label>
-                    <input type="text" class="form-control phone-mask" name="amount" value="<?php echo htmlspecialchars($edit ? $data['amount'] : '', ENT_QUOTES, 'UTF-8'); ?>" required/>
+                    <input type="text" class="form-control phone-mask" name="amount" value="<?php echo xss_clean($edit ? $data['amount'] : ''); ?>" required/>
                   </div>
                  
                   <input type="hidden" name="id" value="<?php echo $id ?>" />

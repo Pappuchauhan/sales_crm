@@ -61,7 +61,7 @@ require_once 'includes/header.php';
                 <div class="row mb-3">
                 <div class="col-md">
                   <label class="form-label" for="basic-default-company">Driver Name</label>
-                  <input type="text" class="form-control" name="driver_name" value="<?php echo htmlspecialchars($edit ? $data['driver_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" required />
+                  <input type="text" class="form-control" name="driver_name" value="<?php echo xss_clean($edit ? $data['driver_name'] : ''); ?>" required />
                 </div>
                 
                   <div class="col-md">
@@ -80,11 +80,11 @@ require_once 'includes/header.php';
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Vehicle Number</label>
-                    <input type="text" class="form-control phone-mask" name="vehicle_number" value="<?php echo htmlspecialchars($edit ? $data['vehicle_number'] : '', ENT_QUOTES, 'UTF-8'); ?>" required />
+                    <input type="text" class="form-control phone-mask" name="vehicle_number" value="<?php echo xss_clean($edit ? $data['vehicle_number'] : ''); ?>" required />
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Mobile No.</label>
-                    <input type="number" class="form-control phone-mask" name="mobile" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" required />
+                    <input type="number" class="form-control phone-mask" name="mobile" value="<?php echo xss_clean($edit ? $data['mobile'] : ''); ?>" required />
                   </div>
                   <input type="hidden" name="id" value="<?php echo $id ?>" />
                 </div>

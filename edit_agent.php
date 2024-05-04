@@ -59,23 +59,23 @@ include BASE_PATH . '/includes/header.php';
               <form action="" method="post" id="guide_form" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Agent Email</label>
-                  <input type="text" name="email_id" class="form-control" value="<?php echo htmlspecialchars($edit ? $data['email_id'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  <input type="text" name="email_id" class="form-control" value="<?php echo xss_clean($edit ? $data['email_id'] : ''); ?>" />
                 </div>
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Agent Name</label>
-                  <input type="text" name="full_name" class="form-control" value="<?php echo htmlspecialchars($edit ? $data['full_name'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                  <input type="text" name="full_name" class="form-control" value="<?php echo xss_clean($edit ? $data['full_name'] : ''); ?>" />
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Agent Mobile No.</label>
-                    <input type="number" name="mobile" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['mobile'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" name="mobile" class="form-control phone-mask" value="<?php echo xss_clean($edit ? $data['mobile'] : ''); ?>" />
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Agent Code</label>
-                    <input type="number" name="agent_code" class="form-control phone-mask" value="<?php echo htmlspecialchars($edit ? $data['agent_code'] : '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    <input type="number" name="agent_code" class="form-control phone-mask" value="<?php echo xss_clean($edit ? $data['agent_code'] : ''); ?>" />
                   </div>
                 </div>
 
