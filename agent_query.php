@@ -27,7 +27,7 @@ if (!$order_by) {
 
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
-$select = array('id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'created_at', 'updated_at');
+$select = array('id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'created_at', 'updated_at');
 
 // If search string
 if ($search_string) {
@@ -53,7 +53,7 @@ $total_pages = $db->totalPages;
           <!-- Layout container -->
           <div class="layout-page">
             <!-- Navbar -->
-            <nav
+            <!-- <nav
               class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
               id="layout-navbar">
               <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
@@ -74,12 +74,46 @@ $total_pages = $db->totalPages;
                   </div>
                 </div>
               </div>
-            </nav>
+            </nav> -->
   
             <!-- / Navbar -->
   
             <!-- Content wrapper -->
             <div class="content-wrapper">
+
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+      <form>
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-5">
+                <label class="form-label">Search by</label>
+                <div class="input-group">
+                  <label class="input-group-text">Options</label>
+                  <select class="form-select" name="filter_col">
+                    <option selected="">Choose...</option>
+                    <option value="name" selected>Name</option>
+                    <option value="tour_start_date">Tour start date</option>
+                    <option value="category">category</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <label class="form-label">Enter Text</label>
+                <input class="form-control" name="search_string" type="text" placeholder="Search...">
+              </div>
+              <div class="col-md">
+                <label class="form-label" style="display: block;">&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </div>
+          </div>
+      </form>
+    </div>
+
+
+
               <!-- Content -->
   
               <div class="container-xxl flex-grow-1 container-p-y">
@@ -119,7 +153,7 @@ $total_pages = $db->totalPages;
                             <tr>
                             <td class="border-right-dark"><?=$k?></td>
                                 <td class="border-right-dark"><?php echo xss_clean($row['id']); ?></td>
-                                <td class="border-right-dark">GL2034</td>
+                                <td class="border-right-dark"><?php echo xss_clean($row['booking_code']); ?></td>
                                 <td class="border-right-dark">Group Booking</td>
                                 <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
                                 <td class="border-right-dark">12</td>

@@ -5,32 +5,43 @@ require_once 'includes/agent_header.php';
 $edit = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data_to_store = array_filter($_POST);
- 
+
   $save_data = [];
   $save_data["name"] = $data_to_store['name'];
   $save_data["duration"] = $data_to_store['duration'];
   $save_data["tour_start_date"] = $data_to_store['tour_start_date'];
   $save_data["package_id"] = $data_to_store['package_id'];
   $save_data["category"] = $data_to_store['category'];
-  $save_data["cumulative"] = json_encode($data_to_store['cumulative']??[]);
-  $save_data["per_person"] = json_encode($data_to_store['per_person']??[]);
-  $save_data["per_service"] = json_encode($data_to_store['per_service']??[]); 
+  $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
+  $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
+  $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []);
 
-  $save_data["person"] = json_encode($data_to_store['person']??[]); 
-  $save_data["transport"] = json_encode($data_to_store['transport']??[]); 
-  $save_data["permit"] = $data_to_store['permit']?? "off";
-  $save_data["guide"] = $data_to_store['guide']?? "off";
+  $save_data["person"] = json_encode($data_to_store['person'] ?? []);
+  $save_data["transport"] = json_encode($data_to_store['transport'] ?? []);
+  $save_data["permit"] = $data_to_store['permit'] ?? "off";
+  $save_data["guide"] = $data_to_store['guide'] ?? "off";
   $db = getDbInstance();
-  $inserted_id = $db->insert('agent_queries', $save_data);
- 
+  //$inserted_id = $db->insert('agent_queries', $save_data);
+
 
 }
+$db = getDbInstance();
+$db->orderBy('id', 'desc');
+$booking_last = $db->getOne("agent_queries");
+//print_r($booking_last);
+if ($booking_last) {
+  $save_data['booking_code'] = sprintf("TA%04d", $booking_last['id'] + 1);
+} else {
+  $save_data['booking_code'] = sprintf("TA%04d",  1);
+}
+$inserted_id = $db->insert('agent_queries', $save_data);
 
-$db = getDbInstance(); 
-$vehicles = $db->get("vehicles",null,'driver_name, vehicle_number, mobile, vehicle_type');
-$vehicleData=[];
-foreach($vehicles as $vehicle){
-  $vehicleData[$vehicle['vehicle_type']] =$vehicle;
+
+$db = getDbInstance();
+$vehicles = $db->get("vehicles", null, 'driver_name, vehicle_number, mobile, vehicle_type');
+$vehicleData = [];
+foreach ($vehicles as $vehicle) {
+  $vehicleData[$vehicle['vehicle_type']] = $vehicle;
 }
 $json_vehicle = json_encode($vehicleData);
 ?>
@@ -40,365 +51,322 @@ $json_vehicle = json_encode($vehicleData);
     <div class="container-xxl flex-grow-1 container-p-y">
       <div class="front-body-content">
         <form method="post">
-        <div class="block">
-          <div class="left-part">
-            <div class="card">
-              <h1>Quick Booking</h1>
-
-              <div class="row mb-3">
-                <div class="col-md">
-                  <label class="form-label">Guest Name</label>
-                  <input type="text" class="form-control" name="name" placeholder="">
-                </div>
-              </div>
-
-              <div class="row mb-3">
-                <div class="col-md">
-                  <label class="form-label">Select Duration</label>
-                  <div class="input-group">
-                    <label class="input-group-text">Options</label>
-                    <select class="form-select" name="duration" id="duration">
-                      <option>Choose...</option>
-                      <option value="2 Days 1 Nights" <?php echo ($edit &&  $data['duration'] == "2 Days 1 Nights") ? 'selected' : '' ?>>2 Days 1 Nights</option>
-                      <option value="3 Days 2 Nights" <?php echo ($edit &&  $data['duration'] == "3 Days 2 Nights") ? 'selected' : '' ?>>3 Days 2 Nights</option>
-                      <option value="4 Days 3 Nights" <?php echo ($edit &&  $data['duration'] == "4 Days 3 Nights") ? 'selected' : '' ?>>4 Days 3 Nights</option>
-                      <option value="5 Days 4 Nights" <?php echo ($edit &&  $data['duration'] == "5 Days 4 Nights") ? 'selected' : '' ?>>5 Days 4 Nights</option>
-                      <option value="6 Days 5 Nights" <?php echo ($edit &&  $data['duration'] == "6 Days 5 Nights") ? 'selected' : '' ?>>6 Days 5 Nights</option>
-                      <option value="7 Days 6 Nights" <?php echo ($edit &&  $data['duration'] == "7 Days 6 Nights") ? 'selected' : '' ?>>7 Days 6 Nights</option>
-                      <option value="8 Days 7 Nights" <?php echo ($edit &&  $data['duration'] == "8 Days 7 Nights") ? 'selected' : '' ?>>8 Days 7 Nights</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md">
-                  <label class="form-label">Select Date</label>
-                  <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="2024-04-18">
-                </div>
-              </div>
-
-
-              <h3 class="mt-3 mb-3">Select Package</h3>
-              <div class="row mb-3">
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="table-dark">
-                      <tr>
-                        <th class="text-white px-2" style="max-width: 84px">Select Package</th>
-                        <th class="text-white px-2" style="max-width: 84px">Package Code</th>
-                        <th class="text-white px-2">Package Name</th>
-                        <th class="text-white px-2">Duration</th>
-                        <th class="text-white px-2">Hotel Category</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0" id="package_list">
-
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <input type="hidden" name="package_id">
-              <input type="hidden" name="category">
-
-              <div class="row mb-3" id="package-other-details">
-
-              </div>
-
-              <?php $transportations = setTransportation(); ?>
-              <h3 class="mt-3 mb-3">Select Transportation</h3>
-              <div class="row mb-3">
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="table-dark">
-                      <tr>
-                        <th class="text-white">Select Transport</th>
-                        <th class="text-white">Number </th>
-                        <th class="text-white">Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                      <tr class="transport-row">
-                        <td>
-                          <select name="transport['name'][]" class="form-select transportation-select" onChange="return calculateTotal();">
-                            <option>Select Transport</option>
-                            <?php foreach ($transportations as $name => $val) : ?>
-                              <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
-                            <?php endforeach; ?>
-                          </select>
-                        </td>
-                        <td>
-                          <select name="transport['no_of_transport'][]" class="form-select num-persons-select">
-                            <option>Select Person</option>
-                          </select>
-                        </td>
-                        <td>Maximum <span class="max-persons"></span> Persons</td>
-                      </tr>
-                      <tr>
-                        <td colspan="3" style="text-align:right;"><a href="#" id="addMoreTransport">Add More</a></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="row mb-3" id="fixed-service">
-
-              </div>
-
-
-              <div class="row mb-3">
-                <div class="table-responsive" id="service-list">
-
-                </div>
-              </div>
-
-
-
-              <div class="row mb-3 align-items-top d-none">
-                <div class="col-md-3">
-                  <div class="form-check mt-b">
-                    <input class="form-check-input" type="checkbox" value="" id="bike">
-                    <label class="form-check-label" for="bike">Bike </label>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="row">
-
-                    <div class="col-md">
-                      <input type="text" class="form-control phone-mask" placeholder="No. of Day">
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-              <h3 class="mt-3 mb-3 d-none">Enter Bike Details</h3>
-              <div class="row mb-3 d-none">
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <tbody class="table-border-bottom-0">
-                      <tr>
-                        <td>Twin Bike</td>
-                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
-                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
-
-                      </tr>
-                      <tr>
-                        <td>Twin Bike</td>
-                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
-                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
-
-                      </tr>
-                      <tr>
-                        <td>Twin Bike</td>
-                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Single rider bike"></td>
-                        <td><input type="text" class="form-control phone-mask" placeholder="No. of Double rider bike"></td>
-
-                      </tr>
-                      <tr>
-                        <td>Mechanic</td>
-                        <td colspan="2">
-                          <select class="form-select">
-                            <option>No</option>
-                            <option>Yes</option>
-                          </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Marshal with Bike</td>
-                        <td colspan="2">
-                          <select class="form-select">
-                            <option>No</option>
-                            <option>Yes</option>
-                          </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Fuel</td>
-                        <td colspan="2">
-                          <select class="form-select">
-                            <option>No</option>
-                            <option>Yes</option>
-                          </select>
-                        </td>
-
-                      </tr>
-                      <tr>
-                        <td>Backup</td>
-                        <td colspan="2">
-                          <select class="form-select">
-                            <option>No</option>
-                            <option>Yes</option>
-                          </select>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <h3 class="mt-3 mb-3">Itinerary</h3>
-              <div class="row mb-3">
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="table-dark">
-                      <tr>
-                        <th class="text-white">Day</th>
-                        <th class="text-white">Date</th>
-                        <th class="text-white">Day</th>
-                        <th class="text-white">Plan #001</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0" id="itinerary-list">
-
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <h3 class="mt-3 mb-3">Hotel Details</h3>
-              <div class="row mb-3">
-                <div class="table-responsive text-nowrap">
-                  <table class="table table-bordered">
-                    <thead class="table-dark">
-                      <tr>
-                        <th class="text-white px-2" style="max-width: 84px">Day</th>
-                        <th class="text-white px-2" style="max-width: 84px">Hotel Name</th>
-                        <th class="text-white px-2">Check in Date</th>
-                        <th class="text-white px-2">Check out Date</th>
-                        <th class="text-white px-2">Night</th>
-                        <th class="text-white px-2">Location</th>
-                        <th class="text-white px-2">Manager Cont.</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0" id="hotel-list">
-
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <h3 class="mt-3 mb-3">Inclusions and Exclusions</h3>
-              <div class="row mb-3">
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="table-dark">
-                      <tr>
-                        <th class="text-white">Inclusions</th>
-                        <th class="text-white">Exclusions</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                      <tr>
-                        <td>Permit</td>
-                        <td>Bike</td>
-                      </tr>
-                      <tr>
-                        <td>Guide</td>
-                        <td>Lunch</td>
-                      </tr>
-                      <tr>
-                        <td>Bonfire</td>
-                        <td>Water Bottles</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <h3 class="mt-3 mb-3">Transport</h3>
-              <div class="row mb-3">
-                <div class="table-responsive">
-                  <table class="table table-bordered" id="driver_list" >
-                    <thead class="table-dark">
-                      <tr>
-                        <th class="text-white">Category</th>
-                        <th class="text-white">No. of Vehicle</th>
-                        <th class="text-white">Driver Name</th>
-                        <th class="text-white">Mobile No.</th> 
-                      </tr>
-                    </thead>
-                    <tbody class=" table-border-bottom-0">
-                        
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <h3 class="mt-3 mb-3">Emergency Contact Details</h3>
-              <div class="row mb-3">
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead class="table-dark">
-                      <tr>
-                        <th class="text-white">Hotel Operation</th>
-                        <th class="text-white">Transport</th>
-                        <th class="text-white">Airport Manager</th>
-                        <th class="text-white">Support Team</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                      <tr>
-                        <td>9999999999</td>
-                        <td>9999999999</td>
-                        <td>9999999999</td>
-                        <td>9999999999</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <h3 class="mt-3 mb-3">Final Quotation</h3>
-              <div class="row mb-3">
-                <div class="table-responsive">
-                  <table class="table table-bordered" id="final_quotation">
-                    <thead class="table-dark">
-                      <tr>
-                        <th colspan="4" class="text-white">Your query 01133 Details Quotation in INR</th>
-                      </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                      <tr>
-                        <td class="dark-col"><strong>Plan</strong></td>
-                        <td class="dark-col"><strong>Amount</strong></td>
-                        <td class="dark-col"><strong>Pax</strong></td>
-                        <td class="dark-col"><strong>Total amount</strong></td>
-                      </tr>
-
-
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="right-part">
-            <div class="booking-summary">
+          <div class="block">
+            <div class="left-part">
               <div class="card">
-                <div class="head">
-                  <h3>Booking Summary</h3>
+                <h1>Quick Booking</h1>
+
+                <div class="row mb-3">
+                  <div class="col-md">
+                    <label class="form-label">Guest Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="">
+                  </div>
                 </div>
-                <div class="summary-detail">
-                  <div class="row mb-3">
-                    <div class="col-md text-bold"><strong>Duration:</strong></div>
-                    <div class="col-md">6 Days 5 Nights</div>
+
+                <div class="row mb-3">
+                  <div class="col-md">
+                    <label class="form-label">Select Duration</label>
+                    <div class="input-group">
+                      <label class="input-group-text">Options</label>
+                      <select class="form-select" name="duration" id="duration">
+                        <option>Choose...</option>
+                        <option value="2 Days 1 Nights" <?php echo ($edit &&  $data['duration'] == "2 Days 1 Nights") ? 'selected' : '' ?>>2 Days 1 Nights</option>
+                        <option value="3 Days 2 Nights" <?php echo ($edit &&  $data['duration'] == "3 Days 2 Nights") ? 'selected' : '' ?>>3 Days 2 Nights</option>
+                        <option value="4 Days 3 Nights" <?php echo ($edit &&  $data['duration'] == "4 Days 3 Nights") ? 'selected' : '' ?>>4 Days 3 Nights</option>
+                        <option value="5 Days 4 Nights" <?php echo ($edit &&  $data['duration'] == "5 Days 4 Nights") ? 'selected' : '' ?>>5 Days 4 Nights</option>
+                        <option value="6 Days 5 Nights" <?php echo ($edit &&  $data['duration'] == "6 Days 5 Nights") ? 'selected' : '' ?>>6 Days 5 Nights</option>
+                        <option value="7 Days 6 Nights" <?php echo ($edit &&  $data['duration'] == "7 Days 6 Nights") ? 'selected' : '' ?>>7 Days 6 Nights</option>
+                        <option value="8 Days 7 Nights" <?php echo ($edit &&  $data['duration'] == "8 Days 7 Nights") ? 'selected' : '' ?>>8 Days 7 Nights</option>
+                      </select>
+                    </div>
                   </div>
-                  <div class="row mb-3">
-                    <div class="col-md"><strong>Travel Date:</strong></div>
-                    <div class="col-md">6 October 2024</div>
+                  <div class="col-md">
+                    <label class="form-label">Select Date</label>
+                    <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="2024-04-18">
                   </div>
-                  <div class="row mb-3">
-                    <div class="col-md"><strong>Total No. of Pax:</strong></div>
-                    <div class="col-md">15</div>
+                </div>
+
+
+                <h3 class="mt-3 mb-3">Select Package</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-dark">
+                        <tr>
+                          <th class="text-white px-2" style="max-width: 84px">Select Package</th>
+                          <th class="text-white px-2" style="max-width: 84px">Package Code</th>
+                          <th class="text-white px-2">Package Name</th>
+                          <th class="text-white px-2">Duration</th>
+                          <th class="text-white px-2">Hotel Category</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-border-bottom-0" id="package_list">
+
+                      </tbody>
+                    </table>
                   </div>
-                  <div class="row">
-                    <div class="col-md"><strong>Calculated Price:</strong></div>
-                    <div class="col-md"><strong>₹23500</strong></div>
+                </div>
+                <input type="hidden" name="package_id">
+                <input type="hidden" name="category">
+
+                <div class="row mb-3" id="package-other-details">
+
+                </div>
+
+                <?php $transportations = setTransportation(); ?>
+                <h3 class="mt-3 mb-3">Select Transportation</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-dark">
+                        <tr>
+                          <th class="text-white">Select Transport</th>
+                          <th class="text-white">Number </th>
+                          <th class="text-white">Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-border-bottom-0">
+                        <tr class="transport-row">
+                          <td>
+                            <select name="transport['name'][]" class="form-select transportation-select" onChange="return calculateTotal();">
+                              <option>Select Transport</option>
+                              <?php foreach ($transportations as $name => $val) : ?>
+                                <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
+                              <?php endforeach; ?>
+                            </select>
+                          </td>
+                          <td>
+                            <select name="transport['no_of_transport'][]"  onChange="return calculateTotal();" class="form-select num-persons-select">
+                              <option>Select Person</option>
+                            </select>
+                          </td>
+                          <td>Maximum <span class="max-persons"></span> Persons</td>
+                        </tr>
+                        <tr>
+                          <td colspan="3" style="text-align:right;"><a href="#" id="addMoreTransport">Add More</a></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="row mb-3" id="fixed-service">
+
+                </div>
+
+
+                <div class="row mb-3">
+                  <div class="table-responsive" id="service-list">
+
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                   <div class="table-responsive" id="service-per-service">
+
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-top">
+                  <div class="col-md-3">
+                    <div class="form-check mt-b"> 
+                      <label class="form-check-label" for="bike">Bike </label>
+                    </div>
+                  </div>
+                  <div class="col-md-9">
+                    <div class="row">
+
+                      <div class="col-md">
+                        <input type="text" class="form-control phone-mask" placeholder="No. of Day">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <h3 class="mt-3 mb-3">Enter Bike Details</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <tbody class="table-border-bottom-0">                          
+                        <tr>
+                          <td>Mechanic</td>
+                          <td colspan="2">
+                            <select class="form-select">
+                              <option>No</option>
+                              <option>Yes</option>
+                            </select>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Marshal with Bike</td>
+                          <td colspan="2">
+                            <select class="form-select">
+                              <option>No</option>
+                              <option>Yes</option>
+                            </select>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Fuel</td>
+                          <td colspan="2">
+                            <select class="form-select">
+                              <option>No</option>
+                              <option>Yes</option>
+                            </select>
+                          </td>
+
+                        </tr>
+                        <tr>
+                          <td>Backup</td>
+                          <td colspan="2">
+                            <select class="form-select">
+                              <option>No</option>
+                              <option>Yes</option>
+                            </select>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <h3 class="mt-3 mb-3">Itinerary</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-dark">
+                        <tr>
+                          <th class="text-white">Day</th>
+                          <th class="text-white">Date</th>
+                          <th class="text-white">Day</th>
+                          <th class="text-white">Plan #001</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-border-bottom-0" id="itinerary-list">
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <h3 class="mt-3 mb-3">Hotel Details</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table table-bordered">
+                      <thead class="table-dark">
+                        <tr>
+                          <th class="text-white px-2" style="max-width: 84px">Day</th>
+                          <th class="text-white px-2" style="max-width: 84px">Hotel Name</th>
+                          <th class="text-white px-2">Check in Date</th>
+                          <th class="text-white px-2">Check out Date</th>
+                          <th class="text-white px-2">Night</th>
+                          <th class="text-white px-2">Location</th>
+                          <th class="text-white px-2">Manager Cont.</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-border-bottom-0" id="hotel-list">
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <h3 class="mt-3 mb-3">Transport</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="driver_list">
+                      <thead class="table-dark">
+                        <tr>
+                          <th class="text-white">Vehicle Type</th>
+                          <th class="text-white">No. of Vehicle</th>
+                          <th class="text-white">Driver Name</th>
+                          <th class="text-white">Mobile No.</th>
+                        </tr>
+                      </thead>
+                      <tbody class=" table-border-bottom-0">
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <h3 class="mt-3 mb-3">Emergency Contact Details</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-dark">
+                        <tr>
+                          <th class="text-white">Hotel Operation</th>
+                          <th class="text-white">Transport</th>
+                          <th class="text-white">Airport Manager</th>
+                          <th class="text-white">Support Team</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-border-bottom-0">
+                        <tr>
+                          <td>9999999999</td>
+                          <td>9999999999</td>
+                          <td>9999999999</td>
+                          <td>9999999999</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <h3 class="mt-3 mb-3">Final Quotation</h3>
+                <div class="row mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="final_quotation">
+                      <thead class="table-dark">
+                        <tr>
+                          <th colspan="4" class="text-white">Your query 01133 Details Quotation in INR</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-border-bottom-0">
+                        <tr>
+                          <td class="dark-col"><strong>Plan</strong></td>
+                          <td class="dark-col"><strong>Amount</strong></td>
+                          <td class="dark-col"><strong>Pax</strong></td>
+                          <td class="dark-col"><strong>Total amount</strong></td>
+                        </tr>
+
+
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row get-quote-btn">
-              <button type="submit" class="btn btn-primary">Generate Quote</button>
+            <div class="right-part" style="position:fixed;right:0px">
+              <div class="booking-summary" >
+                <div class="card">
+                  <div class="head">
+                    <h3>Booking Summary</h3>
+                  </div>
+                  <div class="summary-detail">
+                    <div class="row mb-3">
+                      <div class="col-md text-bold"><strong>Duration:</strong></div>
+                      <div class="col-md" id="summary-duration">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-md"><strong>Travel Date:</strong></div>
+                      <div class="col-md" id="summary-travel-date">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-md"><strong>Total No. of Pax:</strong></div>
+                      <div class="col-md" id="summary-no-of-pax">-</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md"><strong>Calculated Price:</strong></div>
+                      <div class="col-md"><strong id="summary-calculated-price"></strong></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row get-quote-btn">
+                <button type="submit" class="btn btn-primary">Generate Quote</button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
       </div>
     </div>
   </div>
@@ -426,10 +394,10 @@ $json_vehicle = json_encode($vehicleData);
         }
       });
     });
-     
+
   });
 
-  
+
   function setPackageId(package_id) {
     $('input[name="package_id"]').val(package_id)
     setTimeout(function() {
@@ -489,8 +457,10 @@ $json_vehicle = json_encode($vehicleData);
           days: days,
           tour_date: tour_date
         },
-        success: function(data) {
-          $('#service-list').html(data);
+        success: function(data) { 
+        let dataArr = data.split("break")
+        $('#service-list').html(dataArr[0]);
+        $('#service-per-service').html(dataArr[1]);
         },
         error: function(xhr, status, error) {
           console.error('Error:', error);
@@ -573,16 +543,21 @@ $json_vehicle = json_encode($vehicleData);
   document.addEventListener('DOMContentLoaded', function() {
     // Function to update maximum number of persons
     function updateMaxPersons() {
+     // console.log( $(this))
       const selectedTransport = $(this).find('option:selected').data('trans');
       $(this).closest('.transport-row').find('.max-persons').text(selectedTransport);
       $(this).closest('.transport-row').find('.num-persons-select').empty();
-      for (let i = 1; i <= selectedTransport; i++) {
+      for (let i = 0; i <= 5; i++) {
         $(this).closest('.transport-row').find('.num-persons-select').append(`<option value="${i}">${i}</option>`);
       }
     }
 
+    function removeAllBelowElement(){
+      $('.transport-row:not(:first)').remove();
+    }
+
     // Initial setup for first row
-    $('.transportation-select').each(updateMaxPersons);
+   // $('.transportation-select').each(updateMaxPersons);
 
     // Add more transportation option
     $('#addMoreTransport').click(function(e) {
@@ -597,85 +572,73 @@ $json_vehicle = json_encode($vehicleData);
 
     // Event delegation for dynamically added elements
     $('.table').on('change', '.transportation-select', updateMaxPersons);
+    $('.table').on('change', '.transportation-select:first', removeAllBelowElement);
   });
 
   function calculateTotal() {
     const packageDetails = document.querySelectorAll('#package-other-details .col-md');
     const targetTableBody = document.querySelector('#final_quotation tbody');
 
-    let totalAmount = 0;
-    let totalPax = 0;
-
+    let totalAmount = 0; 
+    let total_per_person = 0;
     const existingRows = targetTableBody.querySelectorAll('tr:not(:first-child)');
     existingRows.forEach(row => row.remove());
+    const rowData = {
+      items: [],
+      totalMember: 0
+    };
+
     packageDetails.forEach(detail => {
       const label = detail.querySelector('.form-label').textContent;
       const price = parseFloat(detail.querySelector('input').dataset.amount);
       const quantity = parseInt(detail.querySelector('input').value);
       const total = price * quantity;
-      totalPax = totalPax + quantity;
+      //totalPax = totalPax + quantity;
       let h_pax = quantity;
-      //console.log(label)?
-      
-      switch(label.trim()){
-       
+
+      switch (label.trim()) {
+
         case 'TWIN':
-          console.log(label)
           h_pax = (quantity * 2);
           break;
         case 'TRIPLE':
-          h_pax = (quantity *3);
+          h_pax = (quantity * 3);
           break;
         case 'QUAD SHARING':
-          h_pax = (quantity *4);
+          h_pax = (quantity * 4);
           break;
         default:
-        h_pax = quantity;
+          h_pax = quantity;
           break;
 
       }
-      
       if (quantity > 0) {
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-                <td>${label}</td>
-                <td>${price}</td>
-                <td>${h_pax}</td>
-                <td>${total}</td>
-            `;
-        targetTableBody.appendChild(newRow);
-        totalAmount += total; // Accumulate total amount
+        const newRowData = {
+          label: label,
+          price: price,
+          h_pax: h_pax,
+          total: total,
+          quantity: quantity
+        };
+        rowData.items.push(newRowData);
+        rowData.totalMember += h_pax;
+
       }
     });
     //Extra Services 
     //permit
+    console.log(rowData)
+    let totalPax = rowData.totalMember;
     let permitElement = document.getElementById("permit");
     if (permitElement.checked) {
-      let amount = permitElement.getAttribute("data-permit");
-      totalAmount += parseInt(amount);
-      const newRow = document.createElement('tr');
-      newRow.innerHTML = `
-            <td>Permit</td>
-            <td>${amount}</td>
-            <td>-</td>
-            <td>${amount}</td>
-        `;
-      targetTableBody.appendChild(newRow);
+      permit_amount = permitElement.getAttribute("data-permit");
+      total_per_person = total_per_person + parseInt((permit_amount / totalPax));
     }
-    //guide
+    //guide 
     let guideElement = document.getElementById("guide");
     if (guideElement.checked) {
-      let amount = guideElement.getAttribute("data-guide");
-      totalAmount += parseInt(amount);
-
-      const newRow = document.createElement('tr');
-      newRow.innerHTML = `
-            <td>Guide</td>
-            <td>${amount}</td>
-            <td>-</td>
-            <td>${amount}</td>
-        `;
-      targetTableBody.appendChild(newRow);
+      guide_amount = guideElement.getAttribute("data-guide");
+      total_per_person = total_per_person + parseInt((guide_amount / totalPax));
     }
 
     //services
@@ -683,19 +646,25 @@ $json_vehicle = json_encode($vehicleData);
     document.querySelectorAll('#service-list input[type="checkbox"]').forEach(function(checkbox) {
       if (checkbox.checked) {
         const serviceName = checkbox.closest('tr').querySelector('label').textContent.trim();
-        const amount = parseFloat(checkbox.getAttribute('amount-cumulative') || checkbox.getAttribute('amount-per-person') || checkbox.getAttribute('amount-per-service'));
+        const amount = parseFloat(checkbox.getAttribute('amount-cumulative') || checkbox.getAttribute('amount-per-person'));
         const date = checkbox.value;
+        let service_type = ""
+        if (checkbox.getAttribute('amount-cumulative')) {
+          service_type = "Cumulative"
+        } else if (checkbox.getAttribute('amount-per-person')) {
+          service_type = "Per Person"
+        } else if (checkbox.getAttribute('amount-per-service')) {
+          service_type = "Per Service"
+        }
 
-        // Check if the service is already in the serviceDetails object
         if (serviceDetails.hasOwnProperty(serviceName)) {
-          // If yes, increase the quantity for this service
           serviceDetails[serviceName].quantity += 1;
         } else {
-          // If no, initialize the service details with quantity 1
           serviceDetails[serviceName] = {
             amount: amount,
             quantity: 1,
-            total: amount // Initialize total with the amount for the first date
+            total: amount,
+            type: service_type
           };
         }
       }
@@ -705,24 +674,36 @@ $json_vehicle = json_encode($vehicleData);
       if (serviceDetails.hasOwnProperty(serviceName)) {
         const {
           amount,
-          quantity
+          quantity,
+          type
         } = serviceDetails[serviceName];
-        const newRow = document.createElement('tr');
-        let total = ((amount * totalPax) * quantity)
-        totalAmount = totalAmount + total; 
-        newRow.innerHTML = `
-            <td>${serviceName}</td>
-            <td>${amount}</td>
-            <td>${quantity}</td>
-            <td>${total}</td>
-        `;
-        targetTableBody.appendChild(newRow);
+
+        if (type == "Cumulative") {
+          total_per_person = total_per_person + ((amount * quantity) / totalPax);
+        } else if (type == "Per Person") {
+          total_per_person = total_per_person + (amount * quantity);
+        } 
+
       }
     }
 
+
+ // Service Per Service
+const perService = document.getElementById('service-per-service');  
+perService.querySelectorAll('.row.mb-3.align-items-top').forEach(row => { 
+    const input = row.querySelector('input[type="number"]'); 
+    const label = row.querySelector('.form-check-label').textContent.trim();
+    const amount = input.getAttribute('amount-per-service')
+    const quantity = parseInt(input.value) || 0; 
+    if(quantity>0){
+      total_per_person = total_per_person + ((amount * quantity)/totalPax);
+    }  
+});
+ 
+
     //Transportation 
     const driverTableBody = document.querySelector('#driver_list tbody');
-    const driverDetails = <?=$json_vehicle?>;
+    const driverDetails = <?= $json_vehicle ?>;
     const existingDriver = driverTableBody.querySelectorAll('tr');
     existingDriver.forEach(row => row.remove());
     const transportationSelects = document.querySelectorAll('.transportation-select');
@@ -735,17 +716,9 @@ $json_vehicle = json_encode($vehicleData);
         const amount = parseFloat(document.getElementById(detailId).value);
         const quantity = 1; // Quantity is always 1
         const total = amount * quantity;
-        totalAmount = totalAmount + total;
         // Append to the table
-       
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td>${label}</td>
-            <td>${amount}</td>
-            <td>${quantity}</td>
-            <td>${total}</td>
-        `;
-        targetTableBody.appendChild(newRow);
+        total_per_person = total_per_person + ((amount * quantity) / totalPax)
+
 
         let driver_name = driverDetails[label].driver_name;
         let mobile = driverDetails[label].mobile;
@@ -761,7 +734,37 @@ $json_vehicle = json_encode($vehicleData);
       }
     });
 
+    rowData.items.forEach(function(item) {
+      let price = item.price + total_per_person;
+      let h_pax = item.quantity;
+      let total = price * item.quantity;
+
+      if ("TWIN" == item.label.trim()) {
+        price = item.price + (total_per_person * 2)
+        h_pax = item.quantity * 2;
+        total = price * item.quantity;
+      } else if ("TRIPLE" == item.label.trim()) {
+        price = item.price + (total_per_person * 3)
+        h_pax = item.quantity * 3;
+        total = price * item.quantity;
+      } else if ("QUAD SHARING" == item.label.trim()) {
+        price = item.price + (total_per_person * 4)
+        h_pax = item.quantity * 4;
+        total = price * item.quantity;
+      }
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+                <td>${item.label}</td>
+                <td>${price}</td>
+                <td>${h_pax}</td>
+                <td>${total}</td>
+            `;
+      targetTableBody.appendChild(newRow);
+      totalAmount += total;
+    });
+
     // Hotel List
+    /*
     const hotelList = document.getElementById('hotel-list');
     hotelList.querySelectorAll('tr').forEach(row => {
 
@@ -783,12 +786,12 @@ $json_vehicle = json_encode($vehicleData);
         `;
       targetTableBody.appendChild(newRow);
     });
-
+*/
     // Add total rows
     const totalRows = `
         <tr>
             <td></td>
-            <td colspan="2">Total amount</td>
+            <td colspan="2">Total Amount Excluding GST</td>
             <td>${totalAmount}</td>
         </tr>
         <tr>
@@ -800,20 +803,20 @@ $json_vehicle = json_encode($vehicleData);
             <td></td>
             <td colspan="2">SGST 2.5%</td>
             <td>${totalAmount * 0.025}</td>
-        </tr>
+        </tr> 
         <tr>
             <td></td>
-            <td colspan="2">Saleable Price</td>
+            <td colspan="2" class="dark-col"><strong>Total Amount Including GST</strong></td>
             <td>${totalAmount}</td>
-        </tr>
-        <tr>
-            <td></td>
-            <td colspan="2" class="dark-col"><strong>Saleable Price</strong></td>
-            <td>${totalAmount * 1.05}</td>
         </tr>
     `;
 
     targetTableBody.insertAdjacentHTML('beforeend', totalRows);
+
+    document.getElementById('summary-duration').innerHTML = document.getElementById('duration').value ;
+    document.getElementById('summary-travel-date').innerHTML = $('input[name="tour_start_date"]').val();
+    document.getElementById('summary-no-of-pax').innerHTML = totalPax;
+    document.getElementById('summary-calculated-price').innerHTML = '₹'+totalAmount;
   }
 
 

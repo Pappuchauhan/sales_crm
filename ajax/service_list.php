@@ -19,7 +19,7 @@ $tour_date = $_POST['tour_date'];
 $days = $_POST['days'];
 $date_data = [];
 for ($i = 0; $i < $days; $i++) {
-    $date_data[] = date('d-m-Y',strtotime($tour_date));
+    $date_data[] = date('d-m-Y', strtotime($tour_date));
     $tour_date = addOneDay($tour_date);
 }
 
@@ -43,7 +43,7 @@ for ($i = 0; $i < $days; $i++) {
                 </td>
                 <?php foreach ($date_data as $d) { ?>
                     <td>
-                     <input onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="cumulative[<?= $cumulative['id'] ?>][dates][]" amount-cumulative="<?= $cumulative['amount'] ?>" value="<?= $d ?>" id="cumulative<?= $cumulative['id'] ?>_<?= $d ?>">                     
+                        <input onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="cumulative[<?= $cumulative['id'] ?>][dates][]" amount-cumulative="<?= $cumulative['amount'] ?>" value="<?= $d ?>" id="cumulative<?= $cumulative['id'] ?>_<?= $d ?>">
                     </td>
                 <?php } ?>
             </tr>
@@ -56,24 +56,29 @@ for ($i = 0; $i < $days; $i++) {
                 </td>
                 <?php foreach ($date_data as $d) { ?>
                     <td>
-                     <input onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_person[<?= $per_person['id'] ?>][dates][]" amount-per-person="<?= $per_person['amount'] ?>" value="<?= $d ?>" id="per_person<?= $per_person['id'] ?>_<?= $d ?>">                     
+                        <input onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_person[<?= $per_person['id'] ?>][dates][]" amount-per-person="<?= $per_person['amount'] ?>" value="<?= $d ?>" id="per_person<?= $per_person['id'] ?>_<?= $d ?>">
                     </td>
                 <?php } ?>
             </tr>
-        <?php endforeach ?>
-
-        <?php foreach ($per_services as $per_service) : ?>
-            <tr>
-                <td>
-                    <label class="form-check-label" for="<?= $per_service['name'] ?>"><?= $per_service['name'] ?> </label>
-                </td>
-                <?php foreach ($date_data as $d) { ?>
-                    <td>
-                     <input onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_service[<?= $per_service['id'] ?>][dates][]" amount-per-service="<?= $per_service['amount'] ?>" value="<?= $d ?>" id="per_service<?= $per_service['id'] ?>_<?= $d ?>">                     
-                    </td>
-                <?php } ?>
-            </tr>
-        <?php endforeach ?>
+        <?php endforeach ?>        
 
     </tbody>
 </table>
+break
+<h3 class="mt-3 mb-3">Per Service</h3>
+<?php foreach ($per_services as $per_service) : ?>
+<div class="row mb-3 align-items-top">
+    <div class="col-md-3">
+        <div class="form-check mt-b"> 
+            <label class="form-check-label" for="<?= $per_service['name'] ?>"><?= $per_service['name'] ?> </label>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md">
+                <input onChange="return calculateTotal();" placeholder="Enter no. of quantity" type="number" min="0" class="form-control phone-mask" name="per_service[<?= $per_service['id'] ?>][]" amount-per-service="<?= $per_service['amount'] ?>"  id="per_service<?= $per_service['id'] ?>">
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach ?>

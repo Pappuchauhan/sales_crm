@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $package_id = $db->insert('packages', $data_to_store);
     $db = getDbInstance();
     foreach ($details as $detail) {
-      $detail['package_id'] = $package_id;
+     $detail['package_id'] = $package_id;
       $pkg_detail_id = $db->insert('package_details', $detail);
     }
 

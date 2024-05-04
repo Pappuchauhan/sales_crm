@@ -218,3 +218,9 @@ function setTransportation(){
     return ["COACH"=>"4","TEMPO"=>"5","CRYISTA"=>"6","INNOVA"=>"7","ZYALO / ERTIGA"=>"8","ECO"=>"9"];
 }
 
+
+define("Bike",2000);
+define("Mechanic",500);
+define("Marshal_with_bike",500);
+define("Fuel",500);
+define("Backup",500);
