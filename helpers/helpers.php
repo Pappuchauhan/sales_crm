@@ -221,6 +221,6 @@ function setTransportation(){
 
 define("Bike",2000);
 define("Mechanic",500);
-define("Marshal_with_bike",500);
+define("Marshal",500);
 define("Fuel",500);
 define("Backup",500);

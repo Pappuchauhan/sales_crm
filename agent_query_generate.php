@@ -168,29 +168,33 @@ $json_vehicle = json_encode($vehicleData);
 
                 <div class="row mb-3 align-items-top">
                   <div class="col-md-3">
-                    <div class="form-check mt-b"> 
+                    <div class="form-check mt-b">
+                      <input class="form-check-input" type="checkbox"  id="bike">
                       <label class="form-check-label" for="bike">Bike </label>
                     </div>
                   </div>
                   <div class="col-md-9">
                     <div class="row">
-
-                      <div class="col-md">
-                        <input type="text" class="form-control phone-mask" placeholder="No. of Day">
-                      </div>
+ 
 
                     </div>
                   </div>
                 </div>
-                <h3 class="mt-3 mb-3">Enter Bike Details</h3>
-                <div class="row mb-3">
+                <h3 class="mt-3 mb-3"  id="enter-bike-details">Enter Bike Details</h3>
+                <div class="row mb-3" id="enter-bike-details-section">
                   <div class="table-responsive">
                     <table class="table table-bordered">
-                      <tbody class="table-border-bottom-0">                          
+                      <tbody class="table-border-bottom-0">   
+                      <tr>
+                          <td>No. of Bike</td>
+                          <td colspan="2">
+                             <input type="number" name="number_of_bike" onChange="return calculateTotal();" class="form-control phone-mask">
+                          </td>
+                        </tr>                       
                         <tr>
                           <td>Mechanic</td>
                           <td colspan="2">
-                            <select class="form-select">
+                            <select class="form-select" name="mechanic" onChange="return calculateTotal();">
                               <option>No</option>
                               <option>Yes</option>
                             </select>
@@ -199,7 +203,7 @@ $json_vehicle = json_encode($vehicleData);
                         <tr>
                           <td>Marshal with Bike</td>
                           <td colspan="2">
-                            <select class="form-select">
+                            <select class="form-select" name="marshal" onChange="return calculateTotal();">
                               <option>No</option>
                               <option>Yes</option>
                             </select>
@@ -208,17 +212,16 @@ $json_vehicle = json_encode($vehicleData);
                         <tr>
                           <td>Fuel</td>
                           <td colspan="2">
-                            <select class="form-select">
+                            <select class="form-select" name="fuel" onChange="return calculateTotal();">
                               <option>No</option>
                               <option>Yes</option>
                             </select>
                           </td>
-
                         </tr>
                         <tr>
                           <td>Backup</td>
                           <td colspan="2">
-                            <select class="form-select">
+                            <select class="form-select" name="backup" onChange="return calculateTotal();">
                               <option>No</option>
                               <option>Yes</option>
                             </select>
@@ -573,6 +576,23 @@ $json_vehicle = json_encode($vehicleData);
     // Event delegation for dynamically added elements
     $('.table').on('change', '.transportation-select', updateMaxPersons);
     $('.table').on('change', '.transportation-select:first', removeAllBelowElement);
+
+  //bike section hide and show
+  const bikeCheckbox = document.getElementById('bike'); 
+  const bikeDetailsSection = document.getElementById('enter-bike-details-section'); 
+  const bikeDetails = document.getElementById('enter-bike-details'); 
+  bikeDetailsSection.style.display = 'none'; 
+  bikeDetails.style.display = 'none';
+  bikeCheckbox.addEventListener('change', function() { 
+    if (this.checked) { 
+        bikeDetailsSection.style.display = 'block';
+        bikeDetails.style.display = 'block';
+    } else { 
+        bikeDetailsSection.style.display = 'none';
+        bikeDetails.style.display = 'none';
+    }
+  });
+
   });
 
   function calculateTotal() {
@@ -630,16 +650,20 @@ $json_vehicle = json_encode($vehicleData);
     console.log(rowData)
     let totalPax = rowData.totalMember;
     let permitElement = document.getElementById("permit");
+    if (permitElement) {
     if (permitElement.checked) {
       permit_amount = permitElement.getAttribute("data-permit");
       total_per_person = total_per_person + parseInt((permit_amount / totalPax));
     }
+  }
     //guide 
     let guideElement = document.getElementById("guide");
+    if (guideElement) {
     if (guideElement.checked) {
       guide_amount = guideElement.getAttribute("data-guide");
       total_per_person = total_per_person + parseInt((guide_amount / totalPax));
     }
+  }
 
     //services
     const serviceDetails = {};
@@ -734,6 +758,23 @@ perService.querySelectorAll('.row.mb-3.align-items-top').forEach(row => {
       }
     });
 
+
+// Get Bike Details
+const numberOfBike = document.querySelector('input[name="number_of_bike"]').value;
+const mechanic = document.querySelector('select[name="mechanic"]').value;
+const marshal = document.querySelector('select[name="marshal"]').value;
+const fuel = document.querySelector('select[name="fuel"]').value;
+const backup = document.querySelector('select[name="backup"]').value;
+
+// Retrieve the values of the inputs
+const numberOfBikePrice = parseInt(numberOfBike) * parseInt(<?php echo Bike ?>);
+const mechanicPrice = mechanic == 'Yes'? parseInt(<?php echo Mechanic ?>) : 0;
+const marshalPrice = marshal == 'Yes'? parseInt(<?php echo Marshal ?>) : 0;
+const fuelPrice = fuel == 'Yes'? parseInt(<?php echo Fuel ?>) : 0;
+const backupPrice = backup == 'Yes'? parseInt(<?php echo Backup ?>) : 0;
+//document.getElementById('bike').checked 
+const total_bike_price =  (numberOfBikePrice +  mechanicPrice + marshalPrice + fuelPrice + backupPrice)
+
     rowData.items.forEach(function(item) {
       let price = item.price + total_per_person;
       let h_pax = item.quantity;
@@ -762,7 +803,19 @@ perService.querySelectorAll('.row.mb-3.align-items-top').forEach(row => {
       targetTableBody.appendChild(newRow);
       totalAmount += total;
     });
-
+//totalMember
+    if(document.getElementById('bike').checked ){
+    const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+                <td>Bike</td>
+                <td>${(total_bike_price/ numberOfBike).toFixed(2)}</td>
+                <td>${ numberOfBike}</td>
+                <td>${total_bike_price.toFixed(2)}</td>
+            `;
+      targetTableBody.appendChild(newRow);
+      totalAmount += total_bike_price;
+    }
+   
     // Hotel List
     /*
     const hotelList = document.getElementById('hotel-list');
