@@ -20,12 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $save_data["transport"] = json_encode($data_to_store['transport'] ?? []);
   $save_data["permit"] = $data_to_store['permit'] ?? "off";
   $save_data["guide"] = $data_to_store['guide'] ?? "off";
-  $db = getDbInstance();
-  //$inserted_id = $db->insert('agent_queries', $save_data);
-
-
-}
-$db = getDbInstance();
+  $db = getDbInstance(); 
 $db->orderBy('id', 'desc');
 $booking_last = $db->getOne("agent_queries");
 //print_r($booking_last);
@@ -35,6 +30,9 @@ if ($booking_last) {
   $save_data['booking_code'] = sprintf("TA%04d",  1);
 }
 $inserted_id = $db->insert('agent_queries', $save_data);
+
+}
+
 
 
 $db = getDbInstance();
