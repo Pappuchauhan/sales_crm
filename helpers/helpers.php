@@ -215,7 +215,8 @@ function addOneDay($date){
 }
 
 function setTransportation(){
-    return ["COACH"=>"4","TEMPO"=>"5","CRYISTA"=>"6","INNOVA"=>"7","ZYALO / ERTIGA"=>"8","ECO"=>"9"];
+    return ["COACH"=>"25","TEMPO"=>"12","CRYISTA"=>"5","INNOVA"=>"5","ZYALO / ERTIGA"=>"5","ECO"=>"5", "LARGE COACH"=>"30"];
+   //return ["Tempo"=>"12","Cryista"=>"5","Innova"=>"5","Zylo"=>"5","Scorpeior"=>"5","Coach"=>"25","Large Coach"=>"30"];
 }
 
 

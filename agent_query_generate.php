@@ -59,9 +59,9 @@ $json_vehicle = json_encode($vehicleData);
                     <label class="form-label">Guest Name</label>
                     <input type="text" class="form-control" name="name" placeholder="">
                   </div>
-                </div>
+                
 
-                <div class="row mb-3">
+               
                   <div class="col-md">
                     <label class="form-label">Select Duration</label>
                     <div class="input-group">
@@ -119,7 +119,7 @@ $json_vehicle = json_encode($vehicleData);
                       <thead class="table-dark">
                         <tr>
                           <th class="text-white">Select Transport</th>
-                          <th class="text-white">Number </th>
+                          
                           <th class="text-white">Remarks</th>
                         </tr>
                       </thead>
@@ -133,11 +133,7 @@ $json_vehicle = json_encode($vehicleData);
                               <?php endforeach; ?>
                             </select>
                           </td>
-                          <td>
-                            <select name="transport['no_of_transport'][]"  onChange="return calculateTotal();" class="form-select num-persons-select">
-                              <option>Select Person</option>
-                            </select>
-                          </td>
+                       
                           <td>Maximum <span class="max-persons"></span> Persons</td>
                         </tr>
                         <tr>
@@ -164,7 +160,7 @@ $json_vehicle = json_encode($vehicleData);
                   </div>
                 </div>
 
-                <div class="row mb-3 align-items-top">
+                <div class="row mb-3 align-items-top" style="display:none">
                   <div class="col-md-3">
                     <div class="form-check mt-b">
                       <input class="form-check-input" type="checkbox"  id="bike">
@@ -261,7 +257,7 @@ $json_vehicle = json_encode($vehicleData);
                           <th class="text-white px-2">Check out Date</th>
                           <th class="text-white px-2">Night</th>
                           <th class="text-white px-2">Location</th>
-                          <th class="text-white px-2">Manager Cont.</th>
+                          <th class="text-white px-2">Hotel status</th>
                         </tr>
                       </thead>
                       <tbody class="table-border-bottom-0" id="hotel-list">
@@ -289,7 +285,7 @@ $json_vehicle = json_encode($vehicleData);
                     </table>
                   </div>
                 </div>
-                <h3 class="mt-3 mb-3">Emergency Contact Details</h3>
+                <!--<h3 class="mt-3 mb-3">Emergency Contact Details</h3>
                 <div class="row mb-3">
                   <div class="table-responsive">
                     <table class="table table-bordered">
@@ -311,7 +307,7 @@ $json_vehicle = json_encode($vehicleData);
                       </tbody>
                     </table>
                   </div>
-                </div>
+                </div>-->
                 <h3 class="mt-3 mb-3">Final Quotation</h3>
                 <div class="row mb-3">
                   <div class="table-responsive">
@@ -355,9 +351,13 @@ $json_vehicle = json_encode($vehicleData);
                       <div class="col-md"><strong>Total No. of Pax:</strong></div>
                       <div class="col-md" id="summary-no-of-pax">-</div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3">
                       <div class="col-md"><strong>Calculated Price:</strong></div>
                       <div class="col-md"><strong id="summary-calculated-price"></strong></div>
+		    </div>
+		    <div class="row">
+                      <div class="col-md"><strong>Per Person Price:</strong></div>
+                      <div class="col-md"><strong id="per-person-calculated-price"></strong></div>
                     </div>
                   </div>
                 </div>
@@ -650,7 +650,8 @@ $json_vehicle = json_encode($vehicleData);
     let permitElement = document.getElementById("permit");
     if (permitElement) {
     if (permitElement.checked) {
-      permit_amount = permitElement.getAttribute("data-permit");
+	    permit_amount = permitElement.getAttribute("data-permit");
+	    permit_amount = parseInt(permit_amount*totalPax);
       total_per_person = total_per_person + parseInt((permit_amount / totalPax));
     }
   }
@@ -726,6 +727,7 @@ perService.querySelectorAll('.row.mb-3.align-items-top').forEach(row => {
     //Transportation 
     const driverTableBody = document.querySelector('#driver_list tbody');
     const driverDetails = <?= $json_vehicle ?>;
+    console.log(driverDetails);
     const existingDriver = driverTableBody.querySelectorAll('tr');
     existingDriver.forEach(row => row.remove());
     const transportationSelects = document.querySelectorAll('.transportation-select');
@@ -748,8 +750,10 @@ perService.querySelectorAll('.row.mb-3.align-items-top').forEach(row => {
         driverRow.innerHTML = `
             <td>${label}</td>
             <td>${quantity}</td>
-            <td>${driver_name}</td>
-            <td>${mobile}</td>
+           <!-- <td>${driver_name}</td>
+            <td>${mobile}</td>-->
+            <td>Pending</td>
+            <td>Pending</td>
         `;
         driverTableBody.appendChild(driverRow);
 
@@ -777,26 +781,29 @@ const total_bike_price =  (numberOfBikePrice +  mechanicPrice + marshalPrice + f
       let price = item.price + total_per_person;
       let h_pax = item.quantity;
       let total = price * item.quantity;
-
+      let per_person_pr = item.price;
       if ("TWIN" == item.label.trim()) {
         price = item.price + (total_per_person * 2)
         h_pax = item.quantity * 2;
         total = price * item.quantity;
+        per_person_pr = (total/ h_pax);
       } else if ("TRIPLE" == item.label.trim()) {
         price = item.price + (total_per_person * 3)
         h_pax = item.quantity * 3;
         total = price * item.quantity;
+        per_person_pr = (total/ h_pax);
       } else if ("QUAD SHARING" == item.label.trim()) {
         price = item.price + (total_per_person * 4)
         h_pax = item.quantity * 4;
         total = price * item.quantity;
+        per_person_pr = (total/ h_pax);
       }
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
                 <td>${item.label}</td>
-                <td>${price}</td>
+                <td>${round(per_person_pr)}</td>
                 <td>${h_pax}</td>
-                <td>${total}</td>
+                <td>${round(total)}</td>
             `;
       targetTableBody.appendChild(newRow);
       totalAmount += total;
@@ -839,6 +846,10 @@ const total_bike_price =  (numberOfBikePrice +  mechanicPrice + marshalPrice + f
     });
 */
     // Add total rows
+    var finalPrice = totalAmount;
+    var igstPrice = round((totalAmount * 0.025));
+    var sgstPrice = round((totalAmount * 0.025));
+       finalPrice = round((finalPrice + igstPrice + sgstPrice));
     const totalRows = `
         <tr>
             <td></td>
@@ -848,17 +859,17 @@ const total_bike_price =  (numberOfBikePrice +  mechanicPrice + marshalPrice + f
         <tr>
             <td></td>
             <td colspan="2">IGST 2.5%</td>
-            <td>${totalAmount * 0.025}</td>
+            <td>${igstPrice}</td>
         </tr>
         <tr>
             <td></td>
             <td colspan="2">SGST 2.5%</td>
-            <td>${totalAmount * 0.025}</td>
+            <td>${sgstPrice}</td>
         </tr> 
         <tr>
             <td></td>
             <td colspan="2" class="dark-col"><strong>Total Amount Including GST</strong></td>
-            <td>${totalAmount}</td>
+            <td>${finalPrice}</td>
         </tr>
     `;
 
@@ -867,9 +878,13 @@ const total_bike_price =  (numberOfBikePrice +  mechanicPrice + marshalPrice + f
     document.getElementById('summary-duration').innerHTML = document.getElementById('duration').value ;
     document.getElementById('summary-travel-date').innerHTML = $('input[name="tour_start_date"]').val();
     document.getElementById('summary-no-of-pax').innerHTML = totalPax;
-    document.getElementById('summary-calculated-price').innerHTML = '₹'+totalAmount;
+    document.getElementById('summary-calculated-price').innerHTML = '₹'+finalPrice;
+    document.getElementById('per-person-calculated-price').innerHTML = '₹'+round(parseInt(finalPrice/totalPax));
   }
 
+  function round(number) {
+    return Math.round(number * 100) / 100; 
+  }
 
 
   //calculateTotal();

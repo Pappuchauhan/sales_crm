@@ -20,19 +20,19 @@ foreach ($results as $key => $result) :
         case 'deluxe':
             $amount = $result['deluxe'];
             break;
-        case 'super_deluxe':
+        case 'super deluxe':
             $amount = $result['super_deluxe'];
             break;
         case 'premium':
             $amount = $result['premium'];
             break;
-        case 'premium_plus':
+        case 'premium plus':
             $amount = $result['premium_plus'];
             break;
         case 'luxury':
             $amount = $result['luxury'];
             break;
-        case 'luxury_plus':
+        case 'luxury plus':
             $amount = $result['luxury_plus'];
             break;
         default:
