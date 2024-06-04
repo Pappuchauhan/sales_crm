@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
     $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
     $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []);
+
     $db = getDbInstance();
     $db->where('id', $id);
     $last_id = $db->update('agent_queries', $save_data);
@@ -30,17 +31,23 @@ if (!empty($id)) {
     $package = $db->getOne("packages");
 }
 
-$save_transport = json_decode($queries['transport'],true);
- 
-//echo "<pre>";
-//print_r($save_transport);
+$save_transport = json_decode($queries['transport'], true);
+
+$db = getDbInstance();
+$vehicles = $db->get("vehicles", null, 'driver_name, vehicle_number, mobile, vehicle_type');
+$vehicleData = [];
+foreach ($vehicles as $vehicle) {
+    $vehicleData[$vehicle['vehicle_type']] = $vehicle;
+}
+$json_vehicle = json_encode($vehicleData);
 ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <div class="layout-page">
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="front-body-content">
-                <form method="post">
+                <form method="post" data-disable-inputs="true">
                     <div class="block">
                         <div class="left-part">
                             <div class="card">
@@ -49,16 +56,13 @@ $save_transport = json_decode($queries['transport'],true);
                                 <div class="row mb-3">
                                     <div class="col-md">
                                         <label class="form-label">Guest Name</label>
-                                        <input type="text" name="name" class="form-control" placeholder="" value="<?php echo $queries['name'] ?? ''; ?>">
+                                        <input type="text" disabled name="name" class="form-control" placeholder="" value="<?php echo $queries['name'] ?? ''; ?>">
                                     </div>
-                                </div>
-
-                                <div class="row mb-3">
                                     <div class="col-md">
                                         <label class="form-label">Select Duration</label>
                                         <div class="input-group">
                                             <label class="input-group-text">Options</label>
-                                            <select class="form-select" name="duration" id="duration">
+                                            <select class="form-select" disabled name="duration" id="duration">
                                                 <option>Choose...</option>
                                                 <option value="2 Days 1 Nights" <?php echo ($queries['duration'] ?? '') === "2 Days 1 Nights" ? 'selected' : ''; ?>>2 Days 1 Nights</option>
                                                 <option value="3 Days 2 Nights" <?php echo ($queries['duration'] ?? '') === "3 Days 2 Nights" ? 'selected' : ''; ?>>3 Days 2 Nights</option>
@@ -72,7 +76,7 @@ $save_transport = json_decode($queries['transport'],true);
                                     </div>
                                     <div class="col-md">
                                         <label class="form-label">Select Date</label>
-                                        <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?= $queries['tour_start_date'] ?>">
+                                        <input class="form-control" disabled type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?= $queries['tour_start_date'] ?>">
                                     </div>
                                 </div>
 
@@ -104,7 +108,7 @@ $save_transport = json_decode($queries['transport'],true);
                                                     <tr>
                                                         <td>
                                                             <div class="form-check">
-                                                                <input name="package_name" onClick="return setPackageId(<?= $result['id'] ?>)" class="form-check-input" type="radio" <?= $selected ?> value="<?= $result['id'] ?>" id="defaultRadio1">
+                                                                <input name="package_name" disabled onClick="return setPackageId(<?= $result['id'] ?>)" class="form-check-input" type="radio" <?= $selected ?> value="<?= $result['id'] ?>" id="defaultRadio1">
                                                             </div>
                                                         </td>
                                                         <td>
@@ -113,7 +117,7 @@ $save_transport = json_decode($queries['transport'],true);
                                                         <td><?= $result['package_name'] ?></td>
                                                         <td><?= $result['duration'] ?></td>
                                                         <td>
-                                                            <select class="form-select" onchange="return setCategory(this.value, <?= $result['id'] ?>);">
+                                                            <select disabled class="form-select" onchange="return setCategory(this.value, <?= $result['id'] ?>);">
                                                                 <option>Choose Hotel Category</option>
                                                                 <?php
                                                                 foreach ($default_categories as $category) {
@@ -149,75 +153,70 @@ $save_transport = json_decode($queries['transport'],true);
                                             <thead class="table-dark">
                                                 <tr>
                                                     <th class="text-white">Select Transport</th>
-                                                    <th class="text-white">Number of Pax</th>
+
                                                     <th class="text-white">Remarks</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="table-border-bottom-0">
-                                                <?php if($save_transport["'name'"]<1){ ?>
-                                                <tr class="transport-row">
-                                                    <td>
-                                                        <select class="form-select transportation-select" onChange="return calculateTotal();">
-                                                            <option>Select Transport</option>
-                                                            <?php foreach ($transportations as $name => $val) : ?>
-                                                                <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-select num-persons-select">
-                                                            <option>Select Person</option>
-                                                        </select>
-                                                    </td>
-                                                    <td>Maximum <span class="max-persons"></span> Persons</td>
-                                                </tr>
+                                                <?php if ($save_transport["'name'"] < 1) { ?>
+                                                    <tr class="transport-row">
+                                                        <td>
+                                                            <select disabled class="form-select transportation-select" onChange="return calculateTotal();">
+                                                                <option>Select Transport</option>
+                                                                <?php foreach ($transportations as $name => $val) : ?>
+                                                                    <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </td>
+                                                        <td>Maximum <span class="max-persons"></span> Persons</td>
+                                                    </tr>
 
                                                 <?php
                                                 }
-                                                foreach($save_transport["'name'"] as $key=>$sname):
+                                                foreach ($save_transport["'name'"] as $key => $sname) :
                                                 ?>
-                                                <tr class="transport-row">
-                                                    <td>
-                                                        <select class="form-select transportation-select" onChange="return calculateTotal();">
-                                                            <option>Select Transport</option>
-                                                            <?php foreach ($transportations as $name => $val) : 
-                                                                $selected = $name ==$sname?"selected":""
+                                                    <tr class="transport-row">
+                                                        <td>
+                                                            <select disabled class="form-select transportation-select" onChange="return calculateTotal();">
+                                                                <option>Select Transport</option>
+                                                                <?php foreach ($transportations as $name => $val) :
+                                                                    $selected = $name == $sname ? "selected" : ""
                                                                 ?>
-                                                                <option <?=$selected?> value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-select num-persons-select">
-                                                            <option><?=$save_transport["'no_of_transport'"][$key]?></option>
-                                                        </select>
-                                                    </td>
-                                                    <td>Maximum <span class="max-persons"></span> Persons</td>
-                                                </tr> 
-                                            <?php endforeach;?>
+                                                                    <option <?= $selected ?> value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </td>
+
+                                                        <td>Maximum <span class="max-persons"></span> Persons</td>
+                                                    </tr>
+                                                <?php endforeach; ?>
                                                 <tr>
                                                     <td colspan="3" style="text-align:right;"><a href="#" id="addMoreTransport">Add More</a></td>
                                                 </tr>
 
-                                                
+
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                                 <div class="row mb-3" id="fixed-service">
-                                <h3 class="mt-3 mb-3">Extra Services</h3>
-                                <div class="col-md-3">
-                                    <div class="form-check mt-b">
-                                    <input class="form-check-input" <?php if($queries['permit'] =='on'){ echo "checked";}?> type="checkbox" onClick="return calculateTotal();" data-permit="<?=$package['permit']?>" name="permit" id="permit">
-                                    <label class="form-check-label" for="permit">Permit </label>
+                                    <h3 class="mt-3 mb-3">Extra Services</h3>
+                                    <div class="col-md-3">
+                                        <div class="form-check mt-b">
+                                            <input disabled class="form-check-input" <?php if ($queries['permit'] == 'on') {
+                                                                                            echo "checked";
+                                                                                        } ?> type="checkbox" onClick="return calculateTotal();" data-permit="<?= $package['permit'] ?>" name="permit" id="permit">
+                                            <label class="form-check-label" for="permit">Permit </label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-check mt-b">
-                                    <input class="form-check-input" <?php if($queries['guide'] =='on'){ echo "checked";}?> type="checkbox" onClick="return calculateTotal();" data-guide="<?=$package['guide']?>" name="guide" id="guide">
-                                    <label class="form-check-label" for="guide">Guide </label>
+                                    <div class="col-md-3">
+                                        <div class="form-check mt-b">
+                                            <input disabled class="form-check-input" <?php if ($queries['guide'] == 'on') {
+                                                                                            echo "checked";
+                                                                                        } ?> type="checkbox" onClick="return calculateTotal();" data-guide="<?= $package['guide'] ?>" name="guide" id="guide">
+                                            <label disabled class="form-check-label" for="guide">Guide </label>
+                                        </div>
                                     </div>
-                                </div>
                                 </div>
 
 
@@ -236,11 +235,7 @@ $save_transport = json_decode($queries['transport'],true);
                                         $save_cumulative  =    json_decode($queries['cumulative'], true);
                                         $save_per_person  =    json_decode($queries['per_person'], true);
                                         $save_per_service  =    json_decode($queries['per_service'], true);
-                                        /*
-        echo "<pre>";
-        print_r($save_cumulative);
-        die;
-        */
+
                                         $db = getDbInstance();
                                         $db->where('type', 'Cumulative');
                                         $cumulative_service = $db->get("services");
@@ -278,7 +273,7 @@ $save_transport = json_decode($queries['transport'],true);
 
                                                         ?>
                                                             <td>
-                                                                <input <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="cumulative[<?= $cumulative['id'] ?>][dates][]" amount-cumulative="<?= $cumulative['amount'] ?>" value="<?= $d ?>" id="cumulative<?= $cumulative['id'] ?>_<?= $d ?>">
+                                                                <input disabled <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="cumulative[<?= $cumulative['id'] ?>][dates][]" amount-cumulative="<?= $cumulative['amount'] ?>" value="<?= $d ?>" id="cumulative<?= $cumulative['id'] ?>_<?= $d ?>">
                                                             </td>
                                                         <?php } ?>
                                                     </tr>
@@ -297,35 +292,33 @@ $save_transport = json_decode($queries['transport'],true);
                                                             }
                                                         ?>
                                                             <td>
-                                                                <input <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_person[<?= $per_person['id'] ?>][dates][]" amount-per-person="<?= $per_person['amount'] ?>" value="<?= $d ?>" id="per_person<?= $per_person['id'] ?>_<?= $d ?>">
+                                                                <input disabled <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_person[<?= $per_person['id'] ?>][dates][]" amount-per-person="<?= $per_person['amount'] ?>" value="<?= $d ?>" id="per_person<?= $per_person['id'] ?>_<?= $d ?>">
                                                             </td>
                                                         <?php } ?>
                                                     </tr>
                                                 <?php endforeach ?>
-
-                                                <?php foreach ($per_services as $per_service) : ?>
-                                                    <tr>
-                                                        <td>
-                                                            <label class="form-check-label" for="<?= $per_service['name'] ?>"><?= $per_service['name'] ?> </label>
-                                                        </td>
-                                                        <?php foreach ($date_data as $d) {
-                                                            $checked = "";
-
-                                                            if (isset($save_per_service[$per_service['id']]['dates']) && in_array($d, $save_per_service[$per_service['id']]['dates'])) {
-                                                                $checked = "checked";
-                                                            }
-                                                        ?>
-                                                            <td>
-                                                                <input <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_service[<?= $per_service['id'] ?>][dates][]" amount-per-service="<?= $per_service['amount'] ?>" value="<?= $d ?>" id="per_service<?= $per_service['id'] ?>_<?= $d ?>">
-                                                            </td>
-                                                        <?php } ?>
-                                                    </tr>
-                                                <?php endforeach ?>
-
-                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
+
+                                <h3 class="mt-3 mb-3">Per Service</h3>
+                                <?php foreach ($per_services as $per_service) : ?>
+                                    <div class="row mb-3 align-items-top" id="service-per-service">
+                                        <div class="col-md-3">
+                                            <div class="form-check mt-b">
+                                                <label class="form-check-label" for="<?= $per_service['name'] ?>"><?= $per_service['name'] ?> </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <input disabled value="<?= $save_per_service[$per_service['id']][0] ?>" onChange="return calculateTotal();" placeholder="Enter no. of quantity" type="number" min="0" class="form-control phone-mask" name="per_service[<?= $per_service['id'] ?>][]" amount-per-service="<?= $per_service['amount'] ?>" id="per_service<?= $per_service['id'] ?>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach ?>
+
 
 
 
@@ -340,7 +333,7 @@ $save_transport = json_decode($queries['transport'],true);
                                         <div class="row">
 
                                             <div class="col-md">
-                                                <input type="text" class="form-control phone-mask" placeholder="No. of Day">
+                                                <input disabled type="text" class="form-control phone-mask" placeholder="No. of Day">
                                             </div>
 
                                         </div>
@@ -411,6 +404,58 @@ $save_transport = json_decode($queries['transport'],true);
                                     </div>
                                 </div>
 
+                                <h3 class="mt-3 mb-3" id="enter-bike-details">Enter Bike Details</h3>
+                                <div class="row mb-3" id="enter-bike-details-section">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <tbody class="table-border-bottom-0">
+                                                <tr>
+                                                    <td>No. of Bike</td>
+                                                    <td colspan="2">
+                                                        <input type="number" name="number_of_bike" onChange="return calculateTotal();" class="form-control phone-mask">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mechanic</td>
+                                                    <td colspan="2">
+                                                        <select class="form-select" name="mechanic" onChange="return calculateTotal();">
+                                                            <option>No</option>
+                                                            <option>Yes</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Marshal with Bike</td>
+                                                    <td colspan="2">
+                                                        <select class="form-select" name="marshal" onChange="return calculateTotal();">
+                                                            <option>No</option>
+                                                            <option>Yes</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Fuel</td>
+                                                    <td colspan="2">
+                                                        <select class="form-select" name="fuel" onChange="return calculateTotal();">
+                                                            <option>No</option>
+                                                            <option>Yes</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Backup</td>
+                                                    <td colspan="2">
+                                                        <select class="form-select" name="backup" onChange="return calculateTotal();">
+                                                            <option>No</option>
+                                                            <option>Yes</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                                 <h3 class="mt-3 mb-3">Itinerary</h3>
                                 <div class="row mb-3">
                                     <div class="table-responsive">
@@ -470,8 +515,11 @@ $save_transport = json_decode($queries['transport'],true);
                                         </table>
                                     </div>
                                 </div>
-
+                                <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                 <h3 class="mt-3 mb-3">Hotel Details</h3>
+                                
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Choose Hotel</button>
+                                            </div>
                                 <div class="row mb-3">
                                     <div class="table-responsive text-nowrap">
                                         <table class="table table-bordered">
@@ -572,90 +620,38 @@ $save_transport = json_decode($queries['transport'],true);
                                         </table>
                                     </div>
                                 </div>
-
-                                <h3 class="mt-3 mb-3">Inclusions and Exclusions</h3>
-                                <div class="row mb-3">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th class="text-white">Inclusions</th>
-                                                    <th class="text-white">Exclusions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="table-border-bottom-0">
-                                                <tr>
-                                                    <td>Permit</td>
-                                                    <td>Bike</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Guide</td>
-                                                    <td>Lunch</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Bonfire</td>
-                                                    <td>Water Bottles</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
+                                <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                 <h3 class="mt-3 mb-3">Transport</h3>
+                                
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Choose Driver</button>
+                                            </div>
+
                                 <div class="row mb-3">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered">
+                                        <table class="table table-bordered" id="driver_list">
                                             <thead class="table-dark">
                                                 <tr>
-                                                    <th class="text-white">Category</th>
+                                                    <th class="text-white">Vehicle Type</th>
                                                     <th class="text-white">No. of Vehicle</th>
                                                     <th class="text-white">Driver Name</th>
                                                     <th class="text-white">Mobile No.</th>
-                                                    <th class="text-white">Region</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="table-border-bottom-0">
-                                                <tr>
-                                                    <td style="min-width: 82px">Innova</td>
-                                                    <td style="min-width: 130px">2</td>
-                                                    <td>Kumer</td>
-                                                    <td>9999999999</td>
-                                                    <td>Leh</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="min-width: 82px">Innova</td>
-                                                    <td style="min-width: 130px">2</td>
-                                                    <td>Kumer</td>
-                                                    <td>9999999999</td>
-                                                    <td>Leh</td>
-                                                </tr>
+                                            <tbody class=" table-border-bottom-0">
+                                                <?php foreach ($save_transport["'name'"] as $trans) : ?>
+                                                    <tr>
+                                                        <td><?= $trans ?></td>
+                                                        <td>1</td>
+                                                        <td><?= $vehicleData["$trans"]['driver_name'] ?></td>
+                                                        <td><?= $vehicleData["$trans"]['mobile'] ?></td>
+                                                    </tr>
+                                                <?php endforeach; ?>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                <h3 class="mt-3 mb-3">Emergency Contact Details</h3>
-                                <div class="row mb-3">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th class="text-white">Hotel Operation</th>
-                                                    <th class="text-white">Transport</th>
-                                                    <th class="text-white">Airport Manager</th>
-                                                    <th class="text-white">Support Team</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="table-border-bottom-0">
-                                                <tr>
-                                                    <td>9999999999</td>
-                                                    <td>9999999999</td>
-                                                    <td>9999999999</td>
-                                                    <td>9999999999</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+
+
                                 <h3 class="mt-3 mb-3">Final Quotation</h3>
                                 <div class="row mb-3">
                                     <div class="table-responsive">
@@ -680,7 +676,7 @@ $save_transport = json_decode($queries['transport'],true);
                                 </div>
                             </div>
                         </div>
-                        <div class="right-part">
+                        <div class="right-part" style="position:fixed;right:0px">
                             <div class="booking-summary">
                                 <div class="card">
                                     <div class="head">
@@ -689,19 +685,23 @@ $save_transport = json_decode($queries['transport'],true);
                                     <div class="summary-detail">
                                         <div class="row mb-3">
                                             <div class="col-md text-bold"><strong>Duration:</strong></div>
-                                            <div class="col-md">6 Days 5 Nights</div>
+                                            <div class="col-md" id="summary-duration">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md"><strong>Travel Date:</strong></div>
-                                            <div class="col-md">6 October 2024</div>
+                                            <div class="col-md" id="summary-travel-date">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md"><strong>Total No. of Pax:</strong></div>
-                                            <div class="col-md">15</div>
+                                            <div class="col-md" id="summary-no-of-pax">-</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md"><strong>Calculated Price:</strong></div>
+                                            <div class="col-md"><strong id="summary-calculated-price"></strong></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md"><strong>Calculated Price:</strong></div>
-                                            <div class="col-md"><strong>₹23500</strong></div>
+                                            <div class="col-md"><strong>Per Person Price:</strong></div>
+                                            <div class="col-md"><strong id="per-person-calculated-price"></strong></div>
                                         </div>
                                     </div>
                                 </div>
@@ -717,6 +717,42 @@ $save_transport = json_decode($queries['transport'],true);
     </div>
 </div>
 </div>
+</div>
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="driver_list">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="text-white">Vehicle Type</th>
+                                    <th class="text-white">No. of Vehicle</th>
+                                    <th class="text-white">Driver Name</th>
+                                    <th class="text-white">Mobile No.</th>
+                                </tr>
+                            </thead>
+                            <tbody class=" table-border-bottom-0">
+                                <tr>
+                                    <td>CRYISTA</td>
+                                    <td>1</td>
+                                    <td>CRYISTA DRIVER</td>
+                                    <td>8743094432</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -739,7 +775,9 @@ $save_transport = json_decode($queries['transport'],true);
                 }
             });
         });
+
     });
+
 
     function setPackageId(package_id) {
         $('input[name="package_id"]').val(package_id)
@@ -801,7 +839,9 @@ $save_transport = json_decode($queries['transport'],true);
                     tour_date: tour_date
                 },
                 success: function(data) {
-                    $('#service-list').html(data);
+                    let dataArr = data.split("break")
+                    $('#service-list').html(dataArr[0]);
+                    $('#service-per-service').html(dataArr[1]);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
@@ -884,16 +924,21 @@ $save_transport = json_decode($queries['transport'],true);
     document.addEventListener('DOMContentLoaded', function() {
         // Function to update maximum number of persons
         function updateMaxPersons() {
+            // console.log( $(this))
             const selectedTransport = $(this).find('option:selected').data('trans');
             $(this).closest('.transport-row').find('.max-persons').text(selectedTransport);
             $(this).closest('.transport-row').find('.num-persons-select').empty();
-            for (let i = 1; i <= selectedTransport; i++) {
+            for (let i = 0; i <= 5; i++) {
                 $(this).closest('.transport-row').find('.num-persons-select').append(`<option value="${i}">${i}</option>`);
             }
         }
 
+        function removeAllBelowElement() {
+            $('.transport-row:not(:first)').remove();
+        }
+
         // Initial setup for first row
-      //  $('.transportation-select').each(updateMaxPersons);
+        // $('.transportation-select').each(updateMaxPersons);
 
         // Add more transportation option
         $('#addMoreTransport').click(function(e) {
@@ -903,11 +948,29 @@ $save_transport = json_decode($queries['transport'],true);
             newRow.find('.num-persons-select').val('Select Person');
             newRow.find('.max-persons').empty();
             newRow.insertAfter('.transport-row:last');
-           // newRow.find('.transportation-select').each(updateMaxPersons);
+            newRow.find('.transportation-select').each(updateMaxPersons);
         });
 
         // Event delegation for dynamically added elements
         $('.table').on('change', '.transportation-select', updateMaxPersons);
+        $('.table').on('change', '.transportation-select:first', removeAllBelowElement);
+
+        //bike section hide and show
+        const bikeCheckbox = document.getElementById('bike');
+        const bikeDetailsSection = document.getElementById('enter-bike-details-section');
+        const bikeDetails = document.getElementById('enter-bike-details');
+        bikeDetailsSection.style.display = 'none';
+        bikeDetails.style.display = 'none';
+        bikeCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                bikeDetailsSection.style.display = 'block';
+                bikeDetails.style.display = 'block';
+            } else {
+                bikeDetailsSection.style.display = 'none';
+                bikeDetails.style.display = 'none';
+            }
+        });
+        calculateTotal();
     });
 
     function calculateTotal() {
@@ -915,23 +978,25 @@ $save_transport = json_decode($queries['transport'],true);
         const targetTableBody = document.querySelector('#final_quotation tbody');
 
         let totalAmount = 0;
-        let totalPax = 0;
-
+        let total_per_person = 0;
         const existingRows = targetTableBody.querySelectorAll('tr:not(:first-child)');
         existingRows.forEach(row => row.remove());
+        const rowData = {
+            items: [],
+            totalMember: 0
+        };
+
         packageDetails.forEach(detail => {
             const label = detail.querySelector('.form-label').textContent;
             const price = parseFloat(detail.querySelector('input').dataset.amount);
             const quantity = parseInt(detail.querySelector('input').value);
             const total = price * quantity;
-            totalPax = totalPax + quantity;
+            //totalPax = totalPax + quantity;
             let h_pax = quantity;
-            //console.log(label)?
 
             switch (label.trim()) {
 
                 case 'TWIN':
-                    console.log(label)
                     h_pax = (quantity * 2);
                     break;
                 case 'TRIPLE':
@@ -945,48 +1010,38 @@ $save_transport = json_decode($queries['transport'],true);
                     break;
 
             }
-
             if (quantity > 0) {
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                <td>${label}</td>
-                <td>${price}</td>
-                <td>${h_pax}</td>
-                <td>${total}</td>
-            `;
-                targetTableBody.appendChild(newRow);
-                totalAmount += total; // Accumulate total amount
+                const newRowData = {
+                    label: label,
+                    price: price,
+                    h_pax: h_pax,
+                    total: total,
+                    quantity: quantity
+                };
+                rowData.items.push(newRowData);
+                rowData.totalMember += h_pax;
+
             }
         });
         //Extra Services 
         //permit
+        console.log(rowData)
+        let totalPax = rowData.totalMember;
         let permitElement = document.getElementById("permit");
-        if (permitElement.checked) {
-            let amount = permitElement.getAttribute("data-permit");
-            totalAmount += parseInt(amount);
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-            <td>Permit</td>
-            <td>${amount}</td>
-            <td>-</td>
-            <td>${amount}</td>
-        `;
-            targetTableBody.appendChild(newRow);
+        if (permitElement) {
+            if (permitElement.checked) {
+                permit_amount = permitElement.getAttribute("data-permit");
+                permit_amount = parseInt(permit_amount * totalPax);
+                total_per_person = total_per_person + parseInt((permit_amount / totalPax));
+            }
         }
-        //guide
+        //guide 
         let guideElement = document.getElementById("guide");
-        if (guideElement.checked) {
-            let amount = guideElement.getAttribute("data-guide");
-            totalAmount += parseInt(amount);
-
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-            <td>Guide</td>
-            <td>${amount}</td>
-            <td>-</td>
-            <td>${amount}</td>
-        `;
-            targetTableBody.appendChild(newRow);
+        if (guideElement) {
+            if (guideElement.checked) {
+                guide_amount = guideElement.getAttribute("data-guide");
+                total_per_person = total_per_person + parseInt((guide_amount / totalPax));
+            }
         }
 
         //services
@@ -994,18 +1049,25 @@ $save_transport = json_decode($queries['transport'],true);
         document.querySelectorAll('#service-list input[type="checkbox"]').forEach(function(checkbox) {
             if (checkbox.checked) {
                 const serviceName = checkbox.closest('tr').querySelector('label').textContent.trim();
-                const amount = parseFloat(checkbox.getAttribute('amount-cumulative') || checkbox.getAttribute('amount-per-person') || checkbox.getAttribute('amount-per-service'));
+                const amount = parseFloat(checkbox.getAttribute('amount-cumulative') || checkbox.getAttribute('amount-per-person'));
                 const date = checkbox.value;
+                let service_type = ""
+                if (checkbox.getAttribute('amount-cumulative')) {
+                    service_type = "Cumulative"
+                } else if (checkbox.getAttribute('amount-per-person')) {
+                    service_type = "Per Person"
+                } else if (checkbox.getAttribute('amount-per-service')) {
+                    service_type = "Per Service"
+                }
 
                 if (serviceDetails.hasOwnProperty(serviceName)) {
-                    // If yes, increase the quantity for this service
                     serviceDetails[serviceName].quantity += 1;
                 } else {
-                    // If no, initialize the service details with quantity 1
                     serviceDetails[serviceName] = {
                         amount: amount,
                         quantity: 1,
-                        total: amount // Initialize total with the amount for the first date
+                        total: amount,
+                        type: service_type
                     };
                 }
             }
@@ -1015,99 +1077,204 @@ $save_transport = json_decode($queries['transport'],true);
             if (serviceDetails.hasOwnProperty(serviceName)) {
                 const {
                     amount,
-                    quantity
+                    quantity,
+                    type
                 } = serviceDetails[serviceName];
-                const newRow = document.createElement('tr');
-                let total = ((amount * totalPax) * quantity)
-                totalAmount = totalAmount + total;
-                newRow.innerHTML = `
-            <td>${serviceName}</td>
-            <td>${amount}</td>
-            <td>${quantity}</td>
-            <td>${total}</td>
-        `;
-                targetTableBody.appendChild(newRow);
+
+                if (type == "Cumulative") {
+                    total_per_person = total_per_person + ((amount * quantity) / totalPax);
+                } else if (type == "Per Person") {
+                    total_per_person = total_per_person + (amount * quantity);
+                }
+
             }
         }
 
-        //Transportation 
-        const transportationSelects = document.querySelectorAll('.transportation-select');
-        transportationSelects.forEach(select => {
-            const detailId = 'detail_' + select.value.replace(' / ', '_');
-            console.log(detailId)
-            if (document.getElementById(detailId)) {
-                const label = select.value;
 
-                const amount = parseFloat(document.getElementById(detailId).value);
-                const quantity = 1; // Quantity is always 1
-                const total = amount * quantity;
-                totalAmount = totalAmount + total;
-                // Append to the table
-
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-            <td>${label}</td>
-            <td>${amount}</td>
-            <td>${quantity}</td>
-            <td>${total}</td>
-        `;
-                targetTableBody.appendChild(newRow);
+        // Service Per Service
+        const perService = document.getElementById('service-per-service');
+        perService.querySelectorAll('.row.mb-3.align-items-top').forEach(row => {
+            const input = row.querySelector('input[type="number"]');
+            const label = row.querySelector('.form-check-label').textContent.trim();
+            const amount = input.getAttribute('amount-per-service')
+            const quantity = parseInt(input.value) || 0;
+            if (quantity > 0) {
+                total_per_person = total_per_person + ((amount * quantity) / totalPax);
             }
         });
 
-        // Hotel List
-        const hotelList = document.getElementById('hotel-list');
-        hotelList.querySelectorAll('tr').forEach(row => {
 
-            const nightInput = row.querySelector('input[name="hotel_night[]"]');
-            const amountInput = row.querySelector('input[name="hotel_amount[]"]');
-            const nameInput = row.querySelector('input[name="hotel_name[]"]');
+        //Transportation 
+        /*
+        const driverTableBody = document.querySelector('#driver_list tbody');
+        const driverDetails = <?= $json_vehicle ?>;
+        console.log(driverDetails);
+        const existingDriver = driverTableBody.querySelectorAll('tr');
+        existingDriver.forEach(row => row.remove());
+        const transportationSelects = document.querySelectorAll('.transportation-select');
+        transportationSelects.forEach(select => {
+          const detailId = 'detail_' + select.value.replace(' / ', '_');
+          console.log(detailId)
+          if (document.getElementById(detailId)) {
+            const label = select.value;
 
-            const night = nightInput.value;
-            const amount = amountInput.value;
-            const name = nameInput.value;
-            const total = amount * night;
-            totalAmount = totalAmount + total;
+            const amount = parseFloat(document.getElementById(detailId).value);
+            const quantity = 1; // Quantity is always 1
+            const total = amount * quantity;
+            // Append to the table
+            total_per_person = total_per_person + ((amount * quantity) / totalPax)
+
+
+            let driver_name = driverDetails[label].driver_name;
+            let mobile = driverDetails[label].mobile;
+            const driverRow = document.createElement('tr');
+            driverRow.innerHTML = `
+                <td>${label}</td>
+                <td>${quantity}</td>
+               <!-- <td>${driver_name}</td>
+                <td>${mobile}</td>-->
+                <td>Pending</td>
+                <td>Pending</td>
+            `;
+            driverTableBody.appendChild(driverRow);
+
+          }
+        });
+        */
+
+        // Get Bike Details
+        const numberOfBike = document.querySelector('input[name="number_of_bike"]').value;
+        const mechanic = document.querySelector('select[name="mechanic"]').value;
+        const marshal = document.querySelector('select[name="marshal"]').value;
+        const fuel = document.querySelector('select[name="fuel"]').value;
+        const backup = document.querySelector('select[name="backup"]').value;
+
+        // Retrieve the values of the inputs
+        const numberOfBikePrice = parseInt(numberOfBike) * parseInt(<?php echo Bike ?>);
+        const mechanicPrice = mechanic == 'Yes' ? parseInt(<?php echo Mechanic ?>) : 0;
+        const marshalPrice = marshal == 'Yes' ? parseInt(<?php echo Marshal ?>) : 0;
+        const fuelPrice = fuel == 'Yes' ? parseInt(<?php echo Fuel ?>) : 0;
+        const backupPrice = backup == 'Yes' ? parseInt(<?php echo Backup ?>) : 0;
+        //document.getElementById('bike').checked 
+        const total_bike_price = (numberOfBikePrice + mechanicPrice + marshalPrice + fuelPrice + backupPrice)
+
+        rowData.items.forEach(function(item) {
+            let price = item.price + total_per_person;
+            let h_pax = item.quantity;
+            let total = price * item.quantity;
+            let per_person_pr = item.price;
+            if ("TWIN" == item.label.trim()) {
+                price = item.price + (total_per_person * 2)
+                h_pax = item.quantity * 2;
+                total = price * item.quantity;
+                per_person_pr = (total / h_pax);
+            } else if ("TRIPLE" == item.label.trim()) {
+                price = item.price + (total_per_person * 3)
+                h_pax = item.quantity * 3;
+                total = price * item.quantity;
+                per_person_pr = (total / h_pax);
+            } else if ("QUAD SHARING" == item.label.trim()) {
+                price = item.price + (total_per_person * 4)
+                h_pax = item.quantity * 4;
+                total = price * item.quantity;
+                per_person_pr = (total / h_pax);
+            }
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
+                <td>${item.label}</td>
+                <td>${round(per_person_pr)}</td>
+                <td>${h_pax}</td>
+                <td>${round(total)}</td>
+            `;
+            targetTableBody.appendChild(newRow);
+            totalAmount += total;
+        });
+        //totalMember
+        if (document.getElementById('bike').checked) {
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>Bike</td>
+                <td>${(total_bike_price/ numberOfBike).toFixed(2)}</td>
+                <td>${ numberOfBike}</td>
+                <td>${total_bike_price.toFixed(2)}</td>
+            `;
+            targetTableBody.appendChild(newRow);
+            totalAmount += total_bike_price;
+        }
+
+        // Hotel List
+        /*
+    const hotelList = document.getElementById('hotel-list');
+    hotelList.querySelectorAll('tr').forEach(row => {
+
+      const nightInput = row.querySelector('input[name="hotel_night[]"]');
+      const amountInput = row.querySelector('input[name="hotel_amount[]"]');
+      const nameInput = row.querySelector('input[name="hotel_name[]"]');
+
+      const night = nightInput.value;
+      const amount = amountInput.value;
+      const name = nameInput.value;
+      const total = amount * night;
+      totalAmount = totalAmount + total;
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
             <td>${name}</td>
             <td>${amount}</td>
             <td>${night}</td>
             <td>${total}</td>
         `;
-            targetTableBody.appendChild(newRow);
-        });
-
+      targetTableBody.appendChild(newRow);
+    });
+*/
         // Add total rows
+        var finalPrice = totalAmount;
+        var igstPrice = round((totalAmount * 0.025));
+        var sgstPrice = round((totalAmount * 0.025));
+        finalPrice = round((finalPrice + igstPrice + sgstPrice));
         const totalRows = `
         <tr>
             <td></td>
-            <td colspan="2">Total amount</td>
+            <td colspan="2">Total Amount Excluding GST</td>
             <td>${totalAmount}</td>
         </tr>
         <tr>
             <td></td>
             <td colspan="2">IGST 2.5%</td>
-            <td>${totalAmount * 0.025}</td>
+            <td>${igstPrice}</td>
         </tr>
         <tr>
             <td></td>
             <td colspan="2">SGST 2.5%</td>
-            <td>${totalAmount * 0.025}</td>
-        </tr>
+            <td>${sgstPrice}</td>
+        </tr> 
         <tr>
             <td></td>
-            <td colspan="2">Saleable Price</td>
-            <td>${totalAmount}</td>
-        </tr>
-        <tr>
-            <td></td>
-            <td colspan="2" class="dark-col"><strong>Saleable Price</strong></td>
-            <td>${totalAmount * 1.05}</td>
+            <td colspan="2" class="dark-col"><strong>Total Amount Including GST</strong></td>
+            <td>${finalPrice}</td>
         </tr>
     `;
 
         targetTableBody.insertAdjacentHTML('beforeend', totalRows);
+
+        document.getElementById('summary-duration').innerHTML = document.getElementById('duration').value;
+        document.getElementById('summary-travel-date').innerHTML = $('input[name="tour_start_date"]').val();
+        document.getElementById('summary-no-of-pax').innerHTML = totalPax;
+        document.getElementById('summary-calculated-price').innerHTML = '₹' + finalPrice;
+        document.getElementById('per-person-calculated-price').innerHTML = '₹' + round(parseInt(finalPrice / totalPax));
     }
+
+    function round(number) {
+        return Math.round(number * 100) / 100;
+    }
+
+
+    //calculateTotal();
+    /*
+document.addEventListener('input', function(event) { 
+    if (event.target.classList.contains('quantity')) {
+        calculateTotal(); 
+    }
+});
+*/
 </script>
 <?php include  'includes/agent_footer.php'; ?>

@@ -585,19 +585,19 @@ include BASE_PATH . '/includes/header.php';
         standardSum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-standard').innerHTML = `₹${standardSum}`;
-    document.getElementById('cwb-standard').innerHTML = `₹${standardSum * 0.4}`;
-    document.getElementById('cnb-standard').innerHTML = `₹${standardSum * 0.25}`;
-    document.getElementById('triple-standard').innerHTML = `₹${(standardSum * 0.4) + standardSum}`;
-    document.getElementById('single-standard').innerHTML = `₹${standardSum * 0.75}`;
-    document.getElementById('quad_sharing-standard').innerHTML = `₹${(standardSum * 0.75)  + standardSum}`;
+    document.getElementById('twin-standard').innerHTML = `₹${Math.round(standardSum)}`;
+    document.getElementById('cwb-standard').innerHTML = `₹${Math.round(standardSum * 0.4)}`;
+    document.getElementById('cnb-standard').innerHTML = `₹${Math.round(standardSum * 0.25)}`;
+    document.getElementById('triple-standard').innerHTML = `₹${Math.round((standardSum * 0.4) + standardSum)}`;
+    document.getElementById('single-standard').innerHTML = `₹${Math.round(standardSum * 0.75)}`;
+    document.getElementById('quad_sharing-standard').innerHTML = `₹${Math.round((standardSum * 0.75)  + standardSum)}`;
 
-    document.querySelector('input[name="twin[standard]"]').value = standardSum;
-    document.querySelector('input[name="cwb[standard]"]').value = standardSum * 0.4;
-    document.querySelector('input[name="cnb[standard]"]').value = standardSum * 0.25;
-    document.querySelector('input[name="triple[standard]"]').value = (standardSum * 0.4) + standardSum;
-    document.querySelector('input[name="single[standard]"]').value = standardSum * 0.75;
-    document.querySelector('input[name="quad_sharing[standard]"]').value = (standardSum * 0.75) + standardSum;
+    document.querySelector('input[name="twin[standard]"]').value = Math.round(standardSum);
+    document.querySelector('input[name="cwb[standard]"]').value = Math.round(standardSum * 0.4);
+    document.querySelector('input[name="cnb[standard]"]').value = Math.round(standardSum * 0.25);
+    document.querySelector('input[name="triple[standard]"]').value = Math.round((standardSum * 0.4) + standardSum);
+    document.querySelector('input[name="single[standard]"]').value = Math.round(standardSum * 0.75);
+    document.querySelector('input[name="quad_sharing[standard]"]').value = Math.round((standardSum * 0.75) + standardSum);
     return standardSum;
   }
 
@@ -609,19 +609,19 @@ include BASE_PATH . '/includes/header.php';
         deluxeSum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-deluxe').innerHTML = `₹${deluxeSum}`;
-    document.getElementById('cwb-deluxe').innerHTML = `₹${deluxeSum * 0.4}`;
-    document.getElementById('cnb-deluxe').innerHTML = `₹${deluxeSum * 0.25}`;
-    document.getElementById('triple-deluxe').innerHTML = `₹${(deluxeSum * 0.4) + deluxeSum}`;
-    document.getElementById('single-deluxe').innerHTML = `₹${deluxeSum * 0.75}`;
-    document.getElementById('quad_sharing-deluxe').innerHTML = `₹${(deluxeSum * 0.75)  + deluxeSum}`;
+    document.getElementById('twin-deluxe').innerHTML = `₹${Math.round(deluxeSum)}`;
+    document.getElementById('cwb-deluxe').innerHTML = `₹${Math.round(deluxeSum * 0.4)}`;
+    document.getElementById('cnb-deluxe').innerHTML = `₹${Math.round(deluxeSum * 0.25)}`;
+    document.getElementById('triple-deluxe').innerHTML = `₹${Math.round((deluxeSum * 0.4) + deluxeSum)}`;
+    document.getElementById('single-deluxe').innerHTML = `₹${Math.round(deluxeSum * 0.75)}`;
+    document.getElementById('quad_sharing-deluxe').innerHTML = `₹${Math.round((deluxeSum * 0.75)  + deluxeSum)}`;
 
-    document.querySelector('input[name="twin[deluxe]"]').value = deluxeSum;
-    document.querySelector('input[name="cwb[deluxe]"]').value = deluxeSum * 0.4;
-    document.querySelector('input[name="cnb[deluxe]"]').value = deluxeSum * 0.25;
-    document.querySelector('input[name="triple[deluxe]"]').value = (deluxeSum * 0.4) + deluxeSum;
-    document.querySelector('input[name="single[deluxe]"]').value = deluxeSum * 0.75;
-    document.querySelector('input[name="quad_sharing[deluxe]"]').value = (deluxeSum * 0.75) + deluxeSum;
+    document.querySelector('input[name="twin[deluxe]"]').value = Math.round(deluxeSum);
+    document.querySelector('input[name="cwb[deluxe]"]').value = Math.round(deluxeSum * 0.4);
+    document.querySelector('input[name="cnb[deluxe]"]').value = Math.round(deluxeSum * 0.25);
+    document.querySelector('input[name="triple[deluxe]"]').value = Math.round((deluxeSum * 0.4) + deluxeSum);
+    document.querySelector('input[name="single[deluxe]"]').value = Math.round(deluxeSum * 0.75);
+    document.querySelector('input[name="quad_sharing[deluxe]"]').value = Math.round((deluxeSum * 0.75) + deluxeSum);
     return deluxeSum;
   }
 
@@ -633,19 +633,19 @@ include BASE_PATH . '/includes/header.php';
         super_deluxeSum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-super-deluxe').innerHTML = `₹${super_deluxeSum}`;
-    document.getElementById('cwb-super-deluxe').innerHTML = `₹${super_deluxeSum * 0.4}`;
-    document.getElementById('cnb-super-deluxe').innerHTML = `₹${super_deluxeSum * 0.25}`;
-    document.getElementById('triple-super-deluxe').innerHTML = `₹${(super_deluxeSum * 0.4) + super_deluxeSum}`;
-    document.getElementById('single-super-deluxe').innerHTML = `₹${super_deluxeSum * 0.75}`;
-    document.getElementById('quad_sharing-super-deluxe').innerHTML = `₹${(super_deluxeSum * 0.75)  + super_deluxeSum}`;
+    document.getElementById('twin-super-deluxe').innerHTML = `₹${Math.round(super_deluxeSum)}`;
+    document.getElementById('cwb-super-deluxe').innerHTML = `₹${Math.round(super_deluxeSum * 0.4)}`;
+    document.getElementById('cnb-super-deluxe').innerHTML = `₹${Math.round(super_deluxeSum * 0.25)}`;
+    document.getElementById('triple-super-deluxe').innerHTML = `₹${Math.round((super_deluxeSum * 0.4) + super_deluxeSum)}`;
+    document.getElementById('single-super-deluxe').innerHTML = `₹${Math.round(super_deluxeSum * 0.75)}`;
+    document.getElementById('quad_sharing-super-deluxe').innerHTML = `₹${Math.round((super_deluxeSum * 0.75)  + super_deluxeSum)}`;
 
-    document.querySelector('input[name="twin[super_deluxe]"]').value = super_deluxeSum;
-    document.querySelector('input[name="cwb[super_deluxe]"]').value = super_deluxeSum * 0.4;
-    document.querySelector('input[name="cnb[super_deluxe]"]').value = super_deluxeSum * 0.25;
-    document.querySelector('input[name="triple[super_deluxe]"]').value = (super_deluxeSum * 0.4) + super_deluxeSum;
-    document.querySelector('input[name="single[super_deluxe]"]').value = super_deluxeSum * 0.75;
-    document.querySelector('input[name="quad_sharing[super_deluxe]"]').value = (super_deluxeSum * 0.75) + super_deluxeSum;
+    document.querySelector('input[name="twin[super_deluxe]"]').value = Math.round(super_deluxeSum);
+    document.querySelector('input[name="cwb[super_deluxe]"]').value = Math.round(super_deluxeSum * 0.4);
+    document.querySelector('input[name="cnb[super_deluxe]"]').value = Math.round(super_deluxeSum * 0.25);
+    document.querySelector('input[name="triple[super_deluxe]"]').value = Math.round((super_deluxeSum * 0.4) + super_deluxeSum);
+    document.querySelector('input[name="single[super_deluxe]"]').value = Math.round(super_deluxeSum * 0.75);
+    document.querySelector('input[name="quad_sharing[super_deluxe]"]').value = Math.round((super_deluxeSum * 0.75) + super_deluxeSum);
     return super_deluxeSum;
   }
 
@@ -658,19 +658,19 @@ include BASE_PATH . '/includes/header.php';
         sum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-luxury').innerHTML = `₹${sum}`;
-    document.getElementById('cwb-luxury').innerHTML = `₹${sum * 0.4}`;
-    document.getElementById('cnb-luxury').innerHTML = `₹${sum * 0.25}`;
-    document.getElementById('triple-luxury').innerHTML = `₹${(sum * 0.4) + sum}`;
-    document.getElementById('single-luxury').innerHTML = `₹${sum * 0.75}`;
-    document.getElementById('quad_sharing-luxury').innerHTML = `₹${(sum * 0.75)  + sum}`;
+    document.getElementById('twin-luxury').innerHTML = `₹${Math.round(sum)}`;
+    document.getElementById('cwb-luxury').innerHTML = `₹${Math.round(sum * 0.4)}`;
+    document.getElementById('cnb-luxury').innerHTML = `₹${Math.round(sum * 0.25)}`;
+    document.getElementById('triple-luxury').innerHTML = `₹${Math.round((sum * 0.4) + sum)}`;
+    document.getElementById('single-luxury').innerHTML = `₹${Math.round(sum * 0.75)}`;
+    document.getElementById('quad_sharing-luxury').innerHTML = `₹${Math.round((sum * 0.75)  + sum)}`;
 
-    document.querySelector('input[name="twin[luxury]"]').value = sum;
-    document.querySelector('input[name="cwb[luxury]"]').value = sum * 0.4;
-    document.querySelector('input[name="cnb[luxury]"]').value = sum * 0.25;
-    document.querySelector('input[name="triple[luxury]"]').value = (sum * 0.4) + sum;
-    document.querySelector('input[name="single[luxury]"]').value = sum * 0.75;
-    document.querySelector('input[name="quad_sharing[luxury]"]').value = (sum * 0.75) + sum;
+    document.querySelector('input[name="twin[luxury]"]').value = Math.round(sum);
+    document.querySelector('input[name="cwb[luxury]"]').value = Math.round(sum * 0.4);
+    document.querySelector('input[name="cnb[luxury]"]').value = Math.round(sum * 0.25);
+    document.querySelector('input[name="triple[luxury]"]').value = Math.round((sum * 0.4) + sum);
+    document.querySelector('input[name="single[luxury]"]').value = Math.round(sum * 0.75);
+    document.querySelector('input[name="quad_sharing[luxury]"]').value = Math.round((sum * 0.75) + sum);
     return sum;
   }
 
@@ -682,19 +682,19 @@ include BASE_PATH . '/includes/header.php';
         sum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-luxury_plus').innerHTML = `₹${sum}`;
-    document.getElementById('cwb-luxury_plus').innerHTML = `₹${sum * 0.4}`;
-    document.getElementById('cnb-luxury_plus').innerHTML = `₹${sum * 0.25}`;
-    document.getElementById('triple-luxury_plus').innerHTML = `₹${(sum * 0.4) + sum}`;
-    document.getElementById('single-luxury_plus').innerHTML = `₹${sum * 0.75}`;
-    document.getElementById('quad_sharing-luxury_plus').innerHTML = `₹${(sum * 0.75)  + sum}`;
+    document.getElementById('twin-luxury_plus').innerHTML = `₹${Math.round(sum)}`;
+    document.getElementById('cwb-luxury_plus').innerHTML = `₹${Math.round(sum * 0.4)}`;
+    document.getElementById('cnb-luxury_plus').innerHTML = `₹${Math.round(sum * 0.25)}`;
+    document.getElementById('triple-luxury_plus').innerHTML = `₹${Math.round((sum * 0.4) + sum)}`;
+    document.getElementById('single-luxury_plus').innerHTML = `₹${Math.round(sum * 0.75)}`;
+    document.getElementById('quad_sharing-luxury_plus').innerHTML = `₹${Math.round((sum * 0.75)  + sum)}`;
 
-    document.querySelector('input[name="twin[luxury_plus]"]').value = sum;
-    document.querySelector('input[name="cwb[luxury_plus]"]').value = sum * 0.4;
-    document.querySelector('input[name="cnb[luxury_plus]"]').value = sum * 0.25;
-    document.querySelector('input[name="triple[luxury_plus]"]').value = (sum * 0.4) + sum;
-    document.querySelector('input[name="single[luxury_plus]"]').value = sum * 0.75;
-    document.querySelector('input[name="quad_sharing[luxury_plus]"]').value = (sum * 0.75) + sum;
+    document.querySelector('input[name="twin[luxury_plus]"]').value = Math.round(sum);
+    document.querySelector('input[name="cwb[luxury_plus]"]').value = Math.round(sum * 0.4);
+    document.querySelector('input[name="cnb[luxury_plus]"]').value = Math.round(sum * 0.25);
+    document.querySelector('input[name="triple[luxury_plus]"]').value = Math.round((sum * 0.4) + sum);
+    document.querySelector('input[name="single[luxury_plus]"]').value = Math.round(sum * 0.75);
+    document.querySelector('input[name="quad_sharing[luxury_plus]"]').value = Math.round((sum * 0.75) + sum);
     return sum;
   }
 
@@ -706,19 +706,19 @@ include BASE_PATH . '/includes/header.php';
         premiumSum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-premium').innerHTML = `₹${premiumSum}`;
-    document.getElementById('cwb-premium').innerHTML = `₹${premiumSum * 0.4}`;
-    document.getElementById('cnb-premium').innerHTML = `₹${premiumSum * 0.25}`;
-    document.getElementById('triple-premium').innerHTML = `₹${(premiumSum * 0.4) + premiumSum}`;
-    document.getElementById('single-premium').innerHTML = `₹${premiumSum * 0.75}`;
-    document.getElementById('quad_sharing-premium').innerHTML = `₹${(premiumSum * 0.75)  + premiumSum}`;
+    document.getElementById('twin-premium').innerHTML = `₹${Math.round(premiumSum)}`;
+    document.getElementById('cwb-premium').innerHTML = `₹${Math.round(premiumSum * 0.4)}`;
+    document.getElementById('cnb-premium').innerHTML = `₹${Math.round(premiumSum * 0.25)}`;
+    document.getElementById('triple-premium').innerHTML = `₹${Math.round((premiumSum * 0.4) + premiumSum)}`;
+    document.getElementById('single-premium').innerHTML = `₹${Math.round(premiumSum * 0.75)}`;
+    document.getElementById('quad_sharing-premium').innerHTML = `₹${Math.round((premiumSum * 0.75)  + premiumSum)}`;
 
-    document.querySelector('input[name="twin[premium]"]').value = premiumSum;
-    document.querySelector('input[name="cwb[premium]"]').value = premiumSum * 0.4;
-    document.querySelector('input[name="cnb[premium]"]').value = premiumSum * 0.25;
-    document.querySelector('input[name="triple[premium]"]').value = (premiumSum * 0.4) + premiumSum;
-    document.querySelector('input[name="single[premium]"]').value = premiumSum * 0.75;
-    document.querySelector('input[name="quad_sharing[premium]"]').value = (premiumSum * 0.75) + premiumSum;
+    document.querySelector('input[name="twin[premium]"]').value = Math.round(premiumSum);
+    document.querySelector('input[name="cwb[premium]"]').value = Math.round(premiumSum * 0.4);
+    document.querySelector('input[name="cnb[premium]"]').value = Math.round(premiumSum * 0.25);
+    document.querySelector('input[name="triple[premium]"]').value = Math.round((premiumSum * 0.4) + premiumSum);
+    document.querySelector('input[name="single[premium]"]').value = Math.round(premiumSum * 0.75);
+    document.querySelector('input[name="quad_sharing[premium]"]').value = Math.round((premiumSum * 0.75) + premiumSum);
     return premiumSum;
   }
 
@@ -730,19 +730,19 @@ include BASE_PATH . '/includes/header.php';
         sum += parseInt(input.value);
       }
     });
-    document.getElementById('twin-premium_plus').innerHTML = `₹${sum}`;
-    document.getElementById('cwb-premium_plus').innerHTML = `₹${sum * 0.4}`;
-    document.getElementById('cnb-premium_plus').innerHTML = `₹${sum * 0.25}`;
-    document.getElementById('triple-premium_plus').innerHTML = `₹${(sum * 0.4) + sum}`;
-    document.getElementById('single-premium_plus').innerHTML = `₹${sum * 0.75}`;
-    document.getElementById('quad_sharing-premium_plus').innerHTML = `₹${(sum * 0.75)  + sum}`;
+    document.getElementById('twin-premium_plus').innerHTML = `₹${Math.round(sum)}`;
+    document.getElementById('cwb-premium_plus').innerHTML = `₹${Math.round(sum * 0.4)}`;
+    document.getElementById('cnb-premium_plus').innerHTML = `₹${Math.round(sum * 0.25)}`;
+    document.getElementById('triple-premium_plus').innerHTML = `₹${Math.round((sum * 0.4) + sum)}`;
+    document.getElementById('single-premium_plus').innerHTML = `₹${Math.round(sum * 0.75)}`;
+    document.getElementById('quad_sharing-premium_plus').innerHTML = `₹${Math.round((sum * 0.75)  + sum)}`;
 
-    document.querySelector('input[name="twin[premium_plus]"]').value = sum;
-    document.querySelector('input[name="cwb[premium_plus]"]').value = sum * 0.4;
-    document.querySelector('input[name="cnb[premium_plus]"]').value = sum * 0.25;
-    document.querySelector('input[name="triple[premium_plus]"]').value = (sum * 0.4) + sum;
-    document.querySelector('input[name="single[premium_plus]"]').value = sum * 0.75;
-    document.querySelector('input[name="quad_sharing[premium_plus]"]').value = (sum * 0.75) + sum;
+    document.querySelector('input[name="twin[premium_plus]"]').value = Math.round(sum);
+    document.querySelector('input[name="cwb[premium_plus]"]').value = Math.round(sum * 0.4);
+    document.querySelector('input[name="cnb[premium_plus]"]').value = Math.round(sum * 0.25);
+    document.querySelector('input[name="triple[premium_plus]"]').value = Math.round((sum * 0.4) + sum);
+    document.querySelector('input[name="single[premium_plus]"]').value = Math.round(sum * 0.75);
+    document.querySelector('input[name="quad_sharing[premium_plus]"]').value = Math.round((sum * 0.75) + sum);
     return sum;
   }
 
