@@ -66,9 +66,11 @@ foreach ($results as $key => $result) :
 
             <tr>
                 <td><?=$day = $day+$night?> 
-                <input type="hidden" name="hotel_night[]" value="<?=$night?>" /> 
-                <input type="hidden" name="hotel_amount[]" value="<?=$amount?>" />
-                <input type="hidden" name="hotel_name[]" value="<?=$hotels[0]['hotel_name']?>" />
+                <input type="hidden" name="hotel['night'][]" value="<?=$night?>" /> 
+                <input type="hidden" name="hotel['amount'][]" value="<?=$amount?>" />
+                <input type="hidden" name="hotel['name'][]" value="<?=$hotels[0]['hotel_name']?>" />
+                <input type="hidden" name="hotel['check_in'][]" value="<?= $checkIn ?>" >
+                <input type="hidden" name="hotel['check_out'][]" value="<?= $checkOut ?>" > 
             </td>
                 <td> 
                     <select  class="form-select transportation-select" > 
@@ -76,7 +78,10 @@ foreach ($results as $key => $result) :
                             <option value="<?php echo $hotel['hotel_name']; ?>"><?php echo  $hotel['hotel_name']; ?></option>
                         <?php endforeach; ?>
                     </select></td>
-                <td><?= $checkIn ?></td>
+                <td>
+                    <?= $checkIn ?>
+                    
+            </td>
                 <td><?= $checkOut ?></td>
                 <td><?= $night?></td>
                 <td><?= $hotels[0]['location'] ?></td>

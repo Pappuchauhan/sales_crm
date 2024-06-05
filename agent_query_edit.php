@@ -622,7 +622,7 @@ $json_vehicle = json_encode($vehicleData);
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                 <h3 class="mt-3 mb-3">Transport</h3>
                                 
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Choose Driver</button>
+                                <button type="button" id="driver-change" class="btn btn-primary" data-toggle="modal" data-target=".bd-transport-modal-xl">Choose Driver</button>
                                             </div>
 
                                 <div class="row mb-3">
@@ -717,6 +717,9 @@ $json_vehicle = json_encode($vehicleData);
 </div>
 </div>
 </div>
+<!-- 
+    this is for hotel modal
+-->
 <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -726,8 +729,10 @@ $json_vehicle = json_encode($vehicleData);
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <form id="save-hotel-details">
             <div class="modal-body">
                 <div class="row mb-3">
+                   
                     <div class="table-responsive">
                         <table class="table table-bordered" id="driver_list">
                             <thead class="table-dark">
@@ -746,8 +751,60 @@ $json_vehicle = json_encode($vehicleData);
                             </tbody>
                         </table>
                     </div>
+                    
                 </div>
             </div>
+            <input type="hidden" value="<?=$id?>" name="agent_query_id"> 
+            <input type="hidden" value="hotel" name="data_save_form"> 
+            <div class="modal-footer">
+            <button type="submit"   class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- 
+    this is for transport modal
+-->
+<div class="modal fade bd-transport-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Choose Driver</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="save-driver-details">
+            <div class="modal-body">
+                <div class="row mb-3">
+                   
+                    <div class="table-responsive">
+                        <table class="table table-bordered" >
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="text-white">VEHICLE TYPE</th>
+                                    <th class="text-white">NO. OF VEHICLE</th>
+                                    <th class="text-white">DRIVER NAME</th>
+                                    <th class="text-white">MOBILE NO.</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody class=" table-border-bottom-0" id="change-driver-list">
+                                <tr>  <td colspan="4">Loading...</td>  </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+            <input type="hidden" value="<?=$id?>" name="agent_query_driver_id"> 
+            <input type="hidden" value="driver" name="data_save_form"> 
+            <div class="modal-footer">
+            <button type="submit"   class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </form>
         </div>
     </div>
 </div>
@@ -794,6 +851,69 @@ $json_vehicle = json_encode($vehicleData);
             }
         });
         });
+
+        $('#save-hotel-details').on('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Serialize form data
+            var formData = $(this).serialize();
+
+            // AJAX request
+            $.ajax({
+                url: 'ajax/save_data.php', // Replace with your server endpoint
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success response
+                    $('#response').html('<div class="alert alert-success">' + response.message + '</div>');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    $('#response').html('<div class="alert alert-danger">An error occurred: ' + error + '</div>');
+                }
+            });
+        });
+/// driver data manupulation 
+        $('#driver-change').click(function() {
+        let agent_query_id = $('input[name="agent_query_driver_id"]').val() 
+        $('#change-driver-list').html('<tr>  <td colspan="7">Loading...</td>  </tr>');
+        $.ajax({
+            url: 'ajax/change_driver_list.php',
+            type: 'POST',
+            data: {
+                agent_query_id: agent_query_id 
+            },
+            success: function(data) {
+                $('#change-driver-list').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+        });
+
+        $('#save-driver-details').on('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Serialize form data
+            var formData = $(this).serialize();
+
+            // AJAX request
+            $.ajax({
+                url: 'ajax/save_data.php', // Replace with your server endpoint
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success response
+                    $('#response').html('<div class="alert alert-success">' + response.message + '</div>');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    $('#response').html('<div class="alert alert-danger">An error occurred: ' + error + '</div>');
+                }
+            });
+        });
+ 
 
     });
 
