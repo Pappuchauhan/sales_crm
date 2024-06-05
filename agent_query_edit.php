@@ -29,8 +29,7 @@ if (!empty($id)) {
     $db = getDbInstance();
     $db->where('id',  $queries['package_id']);
     $package = $db->getOne("packages");
-}
-
+} 
 $save_transport = json_decode($queries['transport'], true);
 
 $db = getDbInstance();
@@ -138,8 +137,8 @@ $json_vehicle = json_encode($vehicleData);
                                         </table>
                                     </div>
                                 </div>
-                                <input type="hidden" name="package_id" value="<?php echo $save_data['package_id'] ?? ''; ?>">
-                                <input type="hidden" name="category" value="<?php echo $save_data['category'] ?? ''; ?>">
+                                <input type="hidden" name="package_id" value="<?php echo $queries['package_id'] ?? ''; ?>">
+                                <input type="hidden" name="category" value="<?php echo $queries['category'] ?? ''; ?>">
 
                                 <div class="row mb-3" id="package-other-details">
                                     <?php include("./ajax/package_other_details_edit.php") ?>
@@ -518,7 +517,7 @@ $json_vehicle = json_encode($vehicleData);
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                 <h3 class="mt-3 mb-3">Hotel Details</h3>
                                 
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Choose Hotel</button>
+                                <button type="button" id="change-hotel" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Choose Hotel</button>
                                             </div>
                                 <div class="row mb-3">
                                     <div class="table-responsive text-nowrap">
@@ -623,7 +622,7 @@ $json_vehicle = json_encode($vehicleData);
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                 <h3 class="mt-3 mb-3">Transport</h3>
                                 
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Choose Driver</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Choose Driver</button>
                                             </div>
 
                                 <div class="row mb-3">
@@ -718,11 +717,11 @@ $json_vehicle = json_encode($vehicleData);
 </div>
 </div>
 </div>
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Choose Hotel</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -733,19 +732,17 @@ $json_vehicle = json_encode($vehicleData);
                         <table class="table table-bordered" id="driver_list">
                             <thead class="table-dark">
                                 <tr>
-                                    <th class="text-white">Vehicle Type</th>
-                                    <th class="text-white">No. of Vehicle</th>
-                                    <th class="text-white">Driver Name</th>
-                                    <th class="text-white">Mobile No.</th>
+                                    <th class="text-white">DAY</th>
+                                    <th class="text-white">HOTEL NAME</th>
+                                    <th class="text-white">CHECK IN DATE</th>
+                                    <th class="text-white">CHECK OUT DATE</th>
+                                    <th class="text-white">NIGHT</th>
+                                    <th class="text-white">LOCATION</th>
+                                    <th class="text-white">MANAGER CONT.</th>
                                 </tr>
                             </thead>
-                            <tbody class=" table-border-bottom-0">
-                                <tr>
-                                    <td>CRYISTA</td>
-                                    <td>1</td>
-                                    <td>CRYISTA DRIVER</td>
-                                    <td>8743094432</td>
-                                </tr>
+                            <tbody class=" table-border-bottom-0" id="change-hotel-list">
+                                <tr>  <td colspan="7">Loading...</td>  </tr>
                             </tbody>
                         </table>
                     </div>
@@ -774,6 +771,28 @@ $json_vehicle = json_encode($vehicleData);
                     console.error('Error:', error);
                 }
             });
+        });
+
+        $('#change-hotel').click(function() {
+        let tour_date = $('input[name="tour_start_date"]').val()
+        let package_id = $('input[name="package_id"]').val()
+        let category = $('input[name="category"]').val() 
+        $('#package_list').html('<tr>  <td colspan="7">Loading...</td>  </tr>');
+        $.ajax({
+            url: 'ajax/change_hotel_list.php',
+            type: 'POST',
+            data: {
+                package_id: package_id,
+                tour_date: tour_date,
+                category: category
+            },
+            success: function(data) {
+                $('#change-hotel-list').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
         });
 
     });
