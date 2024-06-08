@@ -4,7 +4,7 @@ require_once './config/config.php';
 require_once 'includes/agent_header.php';
 $edit = false;
 $id = isset($_GET['ID']) && !empty($_GET['ID']) ? decryptId($_GET['ID']) : "";
-
+$disabled = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data_to_store = array_filter($_POST);
     $save_data = [];
@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $save_data["tour_start_date"] = $data_to_store['tour_start_date'];
     $save_data["package_id"] = $data_to_store['package_id'];
     $save_data["category"] = $data_to_store['category'];
+    $save_data["your_budget"] = $data_to_store['your_budget'];
     $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
     $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
     $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []);
@@ -29,9 +30,10 @@ if (!empty($id)) {
     $db = getDbInstance();
     $db->where('id',  $queries['package_id']);
     $package = $db->getOne("packages");
-} 
+}
 $save_transport = json_decode($queries['transport'], true);
-
+$hotel_details = !empty($queries['hotel_details']) ? json_decode($queries['hotel_details'], true) : [];
+$driver_details = !empty($queries['driver_details']) ? json_decode($queries['driver_details'], true) : [];
 $db = getDbInstance();
 $vehicles = $db->get("vehicles", null, 'driver_name, vehicle_number, mobile, vehicle_type');
 $vehicleData = [];
@@ -55,13 +57,13 @@ $json_vehicle = json_encode($vehicleData);
                                 <div class="row mb-3">
                                     <div class="col-md">
                                         <label class="form-label">Guest Name</label>
-                                        <input type="text" disabled name="name" class="form-control" placeholder="" value="<?php echo $queries['name'] ?? ''; ?>">
+                                        <input type="text" <?= $disabled ?> name="name" class="form-control" placeholder="" value="<?php echo $queries['name'] ?? ''; ?>">
                                     </div>
                                     <div class="col-md">
                                         <label class="form-label">Select Duration</label>
                                         <div class="input-group">
                                             <label class="input-group-text">Options</label>
-                                            <select class="form-select" disabled name="duration" id="duration">
+                                            <select class="form-select" <?= $disabled ?> name="duration" id="duration">
                                                 <option>Choose...</option>
                                                 <option value="2 Days 1 Nights" <?php echo ($queries['duration'] ?? '') === "2 Days 1 Nights" ? 'selected' : ''; ?>>2 Days 1 Nights</option>
                                                 <option value="3 Days 2 Nights" <?php echo ($queries['duration'] ?? '') === "3 Days 2 Nights" ? 'selected' : ''; ?>>3 Days 2 Nights</option>
@@ -75,7 +77,7 @@ $json_vehicle = json_encode($vehicleData);
                                     </div>
                                     <div class="col-md">
                                         <label class="form-label">Select Date</label>
-                                        <input class="form-control" disabled type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?= $queries['tour_start_date'] ?>">
+                                        <input class="form-control" <?= $disabled ?> type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?= $queries['tour_start_date'] ?>">
                                     </div>
                                 </div>
 
@@ -107,7 +109,7 @@ $json_vehicle = json_encode($vehicleData);
                                                     <tr>
                                                         <td>
                                                             <div class="form-check">
-                                                                <input name="package_name" disabled onClick="return setPackageId(<?= $result['id'] ?>)" class="form-check-input" type="radio" <?= $selected ?> value="<?= $result['id'] ?>" id="defaultRadio1">
+                                                                <input name="package_name" <?= $disabled ?> onClick="return setPackageId(<?= $result['id'] ?>)" class="form-check-input" type="radio" <?= $selected ?> value="<?= $result['id'] ?>" id="defaultRadio1">
                                                             </div>
                                                         </td>
                                                         <td>
@@ -116,7 +118,7 @@ $json_vehicle = json_encode($vehicleData);
                                                         <td><?= $result['package_name'] ?></td>
                                                         <td><?= $result['duration'] ?></td>
                                                         <td>
-                                                            <select disabled class="form-select" onchange="return setCategory(this.value, <?= $result['id'] ?>);">
+                                                            <select <?= $disabled ?> class="form-select" onchange="return setCategory(this.value, <?= $result['id'] ?>);">
                                                                 <option>Choose Hotel Category</option>
                                                                 <?php
                                                                 foreach ($default_categories as $category) {
@@ -160,7 +162,7 @@ $json_vehicle = json_encode($vehicleData);
                                                 <?php if ($save_transport["'name'"] < 1) { ?>
                                                     <tr class="transport-row">
                                                         <td>
-                                                            <select disabled class="form-select transportation-select" onChange="return calculateTotal();">
+                                                            <select <?= $disabled ?> class="form-select transportation-select" onChange="return calculateTotal();">
                                                                 <option>Select Transport</option>
                                                                 <?php foreach ($transportations as $name => $val) : ?>
                                                                     <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
@@ -176,7 +178,7 @@ $json_vehicle = json_encode($vehicleData);
                                                 ?>
                                                     <tr class="transport-row">
                                                         <td>
-                                                            <select disabled class="form-select transportation-select" onChange="return calculateTotal();">
+                                                            <select <?= $disabled ?> class="form-select transportation-select" onChange="return calculateTotal();">
                                                                 <option>Select Transport</option>
                                                                 <?php foreach ($transportations as $name => $val) :
                                                                     $selected = $name == $sname ? "selected" : ""
@@ -202,18 +204,18 @@ $json_vehicle = json_encode($vehicleData);
                                     <h3 class="mt-3 mb-3">Extra Services</h3>
                                     <div class="col-md-3">
                                         <div class="form-check mt-b">
-                                            <input disabled class="form-check-input" <?php if ($queries['permit'] == 'on') {
-                                                                                            echo "checked";
-                                                                                        } ?> type="checkbox" onClick="return calculateTotal();" data-permit="<?= $package['permit'] ?>" name="permit" id="permit">
+                                            <input <?= $disabled ?> class="form-check-input" <?php if ($queries['permit'] == 'on') {
+                                                                                                echo "checked";
+                                                                                            } ?> type="checkbox" onClick="return calculateTotal();" data-permit="<?= $package['permit'] ?>" name="permit" id="permit">
                                             <label class="form-check-label" for="permit">Permit </label>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-check mt-b">
-                                            <input disabled class="form-check-input" <?php if ($queries['guide'] == 'on') {
-                                                                                            echo "checked";
-                                                                                        } ?> type="checkbox" onClick="return calculateTotal();" data-guide="<?= $package['guide'] ?>" name="guide" id="guide">
-                                            <label disabled class="form-check-label" for="guide">Guide </label>
+                                            <input <?= $disabled ?> class="form-check-input" <?php if ($queries['guide'] == 'on') {
+                                                                                                echo "checked";
+                                                                                            } ?> type="checkbox" onClick="return calculateTotal();" data-guide="<?= $package['guide'] ?>" name="guide" id="guide">
+                                            <label <?= $disabled ?> class="form-check-label" for="guide">Guide </label>
                                         </div>
                                     </div>
                                 </div>
@@ -272,7 +274,7 @@ $json_vehicle = json_encode($vehicleData);
 
                                                         ?>
                                                             <td>
-                                                                <input disabled <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="cumulative[<?= $cumulative['id'] ?>][dates][]" amount-cumulative="<?= $cumulative['amount'] ?>" value="<?= $d ?>" id="cumulative<?= $cumulative['id'] ?>_<?= $d ?>">
+                                                                <input <?= $disabled ?> <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="cumulative[<?= $cumulative['id'] ?>][dates][]" amount-cumulative="<?= $cumulative['amount'] ?>" value="<?= $d ?>" id="cumulative<?= $cumulative['id'] ?>_<?= $d ?>">
                                                             </td>
                                                         <?php } ?>
                                                     </tr>
@@ -291,7 +293,7 @@ $json_vehicle = json_encode($vehicleData);
                                                             }
                                                         ?>
                                                             <td>
-                                                                <input disabled <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_person[<?= $per_person['id'] ?>][dates][]" amount-per-person="<?= $per_person['amount'] ?>" value="<?= $d ?>" id="per_person<?= $per_person['id'] ?>_<?= $d ?>">
+                                                                <input <?= $disabled ?> <?= $checked ?> onClick="return calculateTotal();" class="form-check-input" type="checkbox" name="per_person[<?= $per_person['id'] ?>][dates][]" amount-per-person="<?= $per_person['amount'] ?>" value="<?= $d ?>" id="per_person<?= $per_person['id'] ?>_<?= $d ?>">
                                                             </td>
                                                         <?php } ?>
                                                     </tr>
@@ -311,7 +313,7 @@ $json_vehicle = json_encode($vehicleData);
                                         <div class="col-md-9">
                                             <div class="row">
                                                 <div class="col-md">
-                                                    <input disabled value="<?= $save_per_service[$per_service['id']][0] ?>" onChange="return calculateTotal();" placeholder="Enter no. of quantity" type="number" min="0" class="form-control phone-mask" name="per_service[<?= $per_service['id'] ?>][]" amount-per-service="<?= $per_service['amount'] ?>" id="per_service<?= $per_service['id'] ?>">
+                                                    <input <?= $disabled ?> value="<?= $save_per_service[$per_service['id']][0] ?>" onChange="return calculateTotal();" placeholder="Enter no. of quantity" type="number" min="0" class="form-control phone-mask" name="per_service[<?= $per_service['id'] ?>][]" amount-per-service="<?= $per_service['amount'] ?>" id="per_service<?= $per_service['id'] ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -332,7 +334,7 @@ $json_vehicle = json_encode($vehicleData);
                                         <div class="row">
 
                                             <div class="col-md">
-                                                <input disabled type="text" class="form-control phone-mask" placeholder="No. of Day">
+                                                <input <?= $disabled ?> type="text" class="form-control phone-mask" placeholder="No. of Day">
                                             </div>
 
                                         </div>
@@ -515,10 +517,9 @@ $json_vehicle = json_encode($vehicleData);
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-                                <h3 class="mt-3 mb-3">Hotel Details</h3>
-                                
-                                <button type="button" id="change-hotel" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Choose Hotel</button>
-                                            </div>
+                                    <h3 class="mt-3 mb-3">Hotel Details</h3>
+                                    <button type="button" id="change-hotel" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Choose Hotel</button>
+                                </div>
                                 <div class="row mb-3">
                                     <div class="table-responsive text-nowrap">
                                         <table class="table table-bordered">
@@ -535,95 +536,117 @@ $json_vehicle = json_encode($vehicleData);
                                             </thead>
                                             <tbody class="table-border-bottom-0" id="hotel-list">
                                                 <?php
-                                                $db = getDbInstance();
-                                                $db->where('package_id', $queries['package_id']);
-                                                $db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "NOT IN");
-                                                $results = $db->get("package_details");
-                                                $tour_date = date('d-m-Y', strtotime($queries['tour_start_date']));
-                                                $location = "";
-                                                $checkIn = $tour_date;
-                                                $day = 0;
+                                                if (count($hotel_details) > 0) {
+                                                    foreach ($hotel_details["'name'"] as $hkey => $hname) :
+                                                ?>
+                                                        <tr>
+                                                            <td><?= ($hkey + 1) ?>
+                                                                <input type="hidden" name="hotel_night[]" value="<?= 1 ?>" />
+                                                                <input type="hidden" name="hotel_amount[]" value="<?= $hotel_details["'amount'"][$hkey] ?>" />
+                                                                <input type="hidden" name="hotel_name[]" value="<?= $hname ?>" />
+                                                            </td>
+                                                            <td><?= $hname ?></td>
+                                                            <td><?= $hotel_details["'check_in'"][$hkey] ?></td>
+                                                            <td><?= $hotel_details["'check_out'"][$hkey] ?></td>
+                                                            <td><?= 1 ?></td>
+                                                            <td><?= $hotel_details["'location'"][$hkey] ?></td>
+                                                            <td><?= $hotel_details["'mobile'"][$hkey] ?></td>
+                                                        </tr>
 
-                                                foreach ($results as $key => $result) :
-                                                    $night = 0;
+                                                        <?php
+                                                    endforeach;
+                                                } else {
+                                                    $db = getDbInstance();
+                                                    $db->where('package_id', $queries['package_id']);
+                                                    $db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "NOT IN");
+                                                    $results = $db->get("package_details");
+                                                    $tour_date = date('d-m-Y', strtotime($queries['tour_start_date']));
+                                                    $location = "";
+                                                    $checkIn = $tour_date;
+                                                    $day = 0;
 
-                                                    switch (strtolower($queries['category'])) {
-                                                        case 'budget':
-                                                            $amount = $result['budget'];
-                                                            break;
-                                                        case 'standard':
-                                                            $amount = $result['standard'];
-                                                            break;
-                                                        case 'deluxe':
-                                                            $amount = $result['deluxe'];
-                                                            break;
-                                                        case 'super_deluxe':
-                                                            $amount = $result['super_deluxe'];
-                                                            break;
-                                                        case 'premium':
-                                                            $amount = $result['premium'];
-                                                            break;
-                                                        case 'premium_plus':
-                                                            $amount = $result['premium_plus'];
-                                                            break;
-                                                        case 'luxury':
-                                                            $amount = $result['luxury'];
-                                                            break;
-                                                        case 'luxury_plus':
-                                                            $amount = $result['luxury_plus'];
-                                                            break;
-                                                        default:
-                                                            $amount = 0;
-                                                            break;
-                                                    }
+                                                    foreach ($results as $key => $result) :
+                                                        $night = 0;
 
-                                                    if ($result['location'] != $location) {
-
-                                                        $location = $result['location'];
-                                                        $checkOut = addOneDay($checkIn);
-                                                        $i = $key + 1;
-                                                        $night++;
-                                                        while (isset($results[$i]['location']) && $result['location'] == $results[$i]['location']) {
-                                                            $checkOut =  addOneDay($checkOut);
-                                                            $i++;
-                                                            $night++;
+                                                        switch (strtolower($queries['category'])) {
+                                                            case 'budget':
+                                                                $amount = $result['budget'];
+                                                                break;
+                                                            case 'standard':
+                                                                $amount = $result['standard'];
+                                                                break;
+                                                            case 'deluxe':
+                                                                $amount = $result['deluxe'];
+                                                                break;
+                                                            case 'super_deluxe':
+                                                                $amount = $result['super_deluxe'];
+                                                                break;
+                                                            case 'premium':
+                                                                $amount = $result['premium'];
+                                                                break;
+                                                            case 'premium_plus':
+                                                                $amount = $result['premium_plus'];
+                                                                break;
+                                                            case 'luxury':
+                                                                $amount = $result['luxury'];
+                                                                break;
+                                                            case 'luxury_plus':
+                                                                $amount = $result['luxury_plus'];
+                                                                break;
+                                                            default:
+                                                                $amount = 0;
+                                                                break;
                                                         }
 
+                                                        if ($result['location'] != $location) {
 
-                                                        $db = getDbInstance();
-                                                        $db->where('location', $result['location']);
-                                                        $db->where('category', $queries['category']);
-                                                        $hotel = $db->getOne("hotels");
-                                                        if ($hotel) :
-                                                ?>
+                                                            $location = $result['location'];
+                                                            $checkOut = addOneDay($checkIn);
+                                                            $i = $key + 1;
+                                                            $night++;
+                                                            while (isset($results[$i]['location']) && $result['location'] == $results[$i]['location']) {
+                                                                $checkOut =  addOneDay($checkOut);
+                                                                $i++;
+                                                                $night++;
+                                                            }
 
-                                                            <tr>
-                                                                <td><?= $day = $day + $night ?>
-                                                                    <input type="hidden" name="hotel_night[]" value="<?= $night ?>" />
-                                                                    <input type="hidden" name="hotel_amount[]" value="<?= $amount ?>" />
-                                                                    <input type="hidden" name="hotel_name[]" value="<?= $hotel['hotel_name'] ?>" />
-                                                                </td>
-                                                                <td><?= $hotel['hotel_name'] ?></td>
-                                                                <td><?= $checkIn ?></td>
-                                                                <td><?= $checkOut ?></td>
-                                                                <td><?= $night ?></td>
-                                                                <td><?= $hotel['location'] ?></td>
-                                                                <td><?= $hotel['mobile'] ?></td>
-                                                            </tr>
+
+                                                            $db = getDbInstance();
+                                                            $db->where('location', $result['location']);
+                                                            $db->where('category', $queries['category']);
+                                                            $hotel = $db->getOne("hotels");
+                                                            if ($hotel) :
+                                                        ?>
+
+                                                                <tr>
+                                                                    <td><?= $day = $day + $night ?>
+                                                                        <input type="hidden" name="hotel_night[]" value="<?= $night ?>" />
+                                                                        <input type="hidden" name="hotel_amount[]" value="<?= $amount ?>" />
+                                                                        <input type="hidden" name="hotel_name[]" value="<?= $hotel['hotel_name'] ?>" />
+                                                                    </td>
+                                                                    <td><?= $hotel['hotel_name'] ?></td>
+                                                                    <td><?= $checkIn ?></td>
+                                                                    <td><?= $checkOut ?></td>
+                                                                    <td><?= $night ?></td>
+                                                                    <td><?= $hotel['location'] ?></td>
+                                                                    <td><?= $hotel['mobile'] ?></td>
+                                                                </tr>
                                                 <?php
-                                                        endif;
-                                                        $checkIn = $checkOut;
-                                                    }
-                                                endforeach; ?>
+                                                            endif;
+                                                            $checkIn = $checkOut;
+                                                        }
+                                                    endforeach;
+                                                }
+                                                ?>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-                                <h3 class="mt-3 mb-3">Transport</h3>
-                                
-                                <button type="button" id="driver-change" class="btn btn-primary" data-toggle="modal" data-target=".bd-transport-modal-xl">Choose Driver</button>
-                                            </div>
+                                    <h3 class="mt-3 mb-3">Transport</h3>
+
+                                    <button type="button" id="driver-change" class="btn btn-primary" data-toggle="modal" data-target=".bd-transport-modal-xl">Choose Driver</button>
+                                </div>
 
                                 <div class="row mb-3">
                                     <div class="table-responsive">
@@ -637,14 +660,31 @@ $json_vehicle = json_encode($vehicleData);
                                                 </tr>
                                             </thead>
                                             <tbody class=" table-border-bottom-0">
-                                                <?php foreach ($save_transport["'name'"] as $trans) : ?>
-                                                    <tr>
-                                                        <td><?= $trans ?></td>
-                                                        <td>1</td>
-                                                        <td><?= $vehicleData["$trans"]['driver_name'] ?></td>
-                                                        <td><?= $vehicleData["$trans"]['mobile'] ?></td>
-                                                    </tr>
-                                                <?php endforeach; ?>
+                                                <?php
+                                                if (count($driver_details) > 0) {
+                                                    foreach ($driver_details["'driver'"] as $dkey => $dname) :
+                                                ?>
+
+                                                        <tr>
+                                                            <td><?= $driver_details["'type'"][$dkey] ?></td>
+                                                            <td>1</td>
+                                                            <td><?= $dname ?></td>
+                                                            <td><?= $driver_details["'mobile'"][$dkey] ?></td>
+                                                        </tr>
+
+                                                    <?php
+                                                    endforeach;
+                                                } else {
+
+                                                    foreach ($save_transport["'name'"] as $trans) : ?>
+                                                        <tr>
+                                                            <td><?= $trans ?></td>
+                                                            <td>1</td>
+                                                            <td><?= $vehicleData["$trans"]['driver_name'] ?></td>
+                                                            <td><?= $vehicleData["$trans"]['mobile'] ?></td>
+                                                        </tr>
+                                                <?php endforeach;
+                                                } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -704,8 +744,20 @@ $json_vehicle = json_encode($vehicleData);
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="card" style="margin-top: 10px;height: 50px ! IMPORTANT;">
+
+                                    <div class="summary-detail">
+                                        <div class="row mb-3">
+                                            <div class="col-md text-bold"><label class="form-label"><strong>Your Budget</strong></label></div>
+                                            <div class="col-md" id="summary-duration"><input type="number" name="your_budget" value="<?= $queries['your_budget'] ?>" class="form-control"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
-                            <div class="row get-quote-btn">
+
+                            <div class="row get-quote-btn" style="margin-top: 10px;">
                                 <button type="submit" class="btn btn-primary">Generate Quote</button>
                             </div>
                         </div>
@@ -730,37 +782,39 @@ $json_vehicle = json_encode($vehicleData);
                 </button>
             </div>
             <form id="save-hotel-details">
-            <div class="modal-body">
-                <div class="row mb-3">
-                   
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="driver_list">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th class="text-white">DAY</th>
-                                    <th class="text-white">HOTEL NAME</th>
-                                    <th class="text-white">CHECK IN DATE</th>
-                                    <th class="text-white">CHECK OUT DATE</th>
-                                    <th class="text-white">NIGHT</th>
-                                    <th class="text-white">LOCATION</th>
-                                    <th class="text-white">MANAGER CONT.</th>
-                                </tr>
-                            </thead>
-                            <tbody class=" table-border-bottom-0" id="change-hotel-list">
-                                <tr>  <td colspan="7">Loading...</td>  </tr>
-                            </tbody>
-                        </table>
+                <div class="modal-body">
+                    <div class="row mb-3">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="driver_list">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-white">DAY</th>
+                                        <th class="text-white">HOTEL NAME</th>
+                                        <th class="text-white">CHECK IN DATE</th>
+                                        <th class="text-white">CHECK OUT DATE</th>
+                                        <th class="text-white">NIGHT</th>
+                                        <th class="text-white">LOCATION</th>
+                                        <th class="text-white">MANAGER CONT.</th>
+                                    </tr>
+                                </thead>
+                                <tbody class=" table-border-bottom-0" id="change-hotel-list">
+                                    <tr>
+                                        <td colspan="7">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
-                    
                 </div>
-            </div>
-            <input type="hidden" value="<?=$id?>" name="agent_query_id"> 
-            <input type="hidden" value="hotel" name="data_save_form"> 
-            <div class="modal-footer">
-            <button type="submit"   class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-        </form>
+                <input type="hidden" value="<?= $id ?>" name="agent_query_id">
+                <input type="hidden" value="hotel" name="data_save_form">
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -777,34 +831,36 @@ $json_vehicle = json_encode($vehicleData);
                 </button>
             </div>
             <form id="save-driver-details">
-            <div class="modal-body">
-                <div class="row mb-3">
-                   
-                    <div class="table-responsive">
-                        <table class="table table-bordered" >
-                            <thead class="table-dark">
-                                <tr>
-                                    <th class="text-white">VEHICLE TYPE</th>
-                                    <th class="text-white">NO. OF VEHICLE</th>
-                                    <th class="text-white">DRIVER NAME</th>
-                                    <th class="text-white">MOBILE NO.</th>                                    
-                                </tr>
-                            </thead>
-                            <tbody class=" table-border-bottom-0" id="change-driver-list">
-                                <tr>  <td colspan="4">Loading...</td>  </tr>
-                            </tbody>
-                        </table>
+                <div class="modal-body">
+                    <div class="row mb-3">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-white">VEHICLE TYPE</th>
+                                        <th class="text-white">NO. OF VEHICLE</th>
+                                        <th class="text-white">DRIVER NAME</th>
+                                        <th class="text-white">MOBILE NO.</th>
+                                    </tr>
+                                </thead>
+                                <tbody class=" table-border-bottom-0" id="change-driver-list">
+                                    <tr>
+                                        <td colspan="4">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
-                    
                 </div>
-            </div>
-            <input type="hidden" value="<?=$id?>" name="agent_query_driver_id"> 
-            <input type="hidden" value="driver" name="data_save_form"> 
-            <div class="modal-footer">
-            <button type="submit"   class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-        </form>
+                <input type="hidden" value="<?= $id ?>" name="agent_query_driver_id">
+                <input type="hidden" value="driver" name="data_save_form">
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -831,25 +887,27 @@ $json_vehicle = json_encode($vehicleData);
         });
 
         $('#change-hotel').click(function() {
-        let tour_date = $('input[name="tour_start_date"]').val()
-        let package_id = $('input[name="package_id"]').val()
-        let category = $('input[name="category"]').val() 
-        $('#package_list').html('<tr>  <td colspan="7">Loading...</td>  </tr>');
-        $.ajax({
-            url: 'ajax/change_hotel_list.php',
-            type: 'POST',
-            data: {
-                package_id: package_id,
-                tour_date: tour_date,
-                category: category
-            },
-            success: function(data) {
-                $('#change-hotel-list').html(data);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
+            let tour_date = $('input[name="tour_start_date"]').val()
+            let package_id = $('input[name="package_id"]').val()
+            let category = $('input[name="category"]').val()
+            let agent_query_id = $('input[name="agent_query_driver_id"]').val()
+            $('#package_list').html('<tr>  <td colspan="7">Loading...</td>  </tr>');
+            $.ajax({
+                url: 'ajax/change_hotel_list.php',
+                type: 'POST',
+                data: {
+                    package_id: package_id,
+                    tour_date: tour_date,
+                    category: category,
+                    agent_query_id: agent_query_id
+                },
+                success: function(data) {
+                    $('#change-hotel-list').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
         });
 
         $('#save-hotel-details').on('submit', function(event) {
@@ -873,23 +931,23 @@ $json_vehicle = json_encode($vehicleData);
                 }
             });
         });
-/// driver data manupulation 
+        /// driver data manupulation 
         $('#driver-change').click(function() {
-        let agent_query_id = $('input[name="agent_query_driver_id"]').val() 
-        $('#change-driver-list').html('<tr>  <td colspan="7">Loading...</td>  </tr>');
-        $.ajax({
-            url: 'ajax/change_driver_list.php',
-            type: 'POST',
-            data: {
-                agent_query_id: agent_query_id 
-            },
-            success: function(data) {
-                $('#change-driver-list').html(data);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
+            let agent_query_id = $('input[name="agent_query_driver_id"]').val()
+            $('#change-driver-list').html('<tr>  <td colspan="7">Loading...</td>  </tr>');
+            $.ajax({
+                url: 'ajax/change_driver_list.php',
+                type: 'POST',
+                data: {
+                    agent_query_id: agent_query_id
+                },
+                success: function(data) {
+                    $('#change-driver-list').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
         });
 
         $('#save-driver-details').on('submit', function(event) {
@@ -913,7 +971,7 @@ $json_vehicle = json_encode($vehicleData);
                 }
             });
         });
- 
+
 
     });
 
@@ -1406,7 +1464,34 @@ $json_vehicle = json_encode($vehicleData);
         return Math.round(number * 100) / 100;
     }
 
+    // for edit 
+    function updateManagerContact(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const managerContact = selectedOption.getAttribute('data-manager-contact');
+        const managerLocation = selectedOption.getAttribute('data-manager-location');
 
+        // Find the manager contact cell in the same row
+        const row = selectElement.closest('tr');
+        const hiddenInput = row.querySelector('input[name="hotel[\'mobile\'][]"]');
+        const phoneSpan = row.querySelector('span');
+
+        hiddenInput.value = managerContact;
+        phoneSpan.textContent = managerContact;
+
+    }
+
+    function updateDriverContact(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const driverPhone = selectedOption.getAttribute('data-driver-phone');
+
+        // Find the row and update the hidden input and span for the driver phone
+        const row = selectElement.closest('tr');
+        const hiddenInput = row.querySelector('input[name="transport[\'mobile\'][]"]');
+        const phoneSpan = row.querySelector('span');
+
+        hiddenInput.value = driverPhone;
+        phoneSpan.textContent = driverPhone;
+    }
     //calculateTotal();
     /*
 document.addEventListener('input', function(event) { 

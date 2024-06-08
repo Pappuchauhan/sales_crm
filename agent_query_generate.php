@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $save_data["tour_start_date"] = $data_to_store['tour_start_date'];
   $save_data["package_id"] = $data_to_store['package_id'];
   $save_data["category"] = $data_to_store['category'];
+  $save_data["your_budget"] = $data_to_store['your_budget'];
   $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
   $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
   $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []);
@@ -360,8 +361,18 @@ $json_vehicle = json_encode($vehicleData);
                     </div>
                   </div>
                 </div>
+                <div class="card" style="margin-top: 10px;height: 50px ! IMPORTANT;">
+
+              <div class="summary-detail">
+                  <div class="row mb-3" >
+                      <div class="col-md text-bold"><label class="form-label"><strong>Your Budget</strong></label></div>
+                      <div class="col-md" id="summary-duration"><input type="number" name="your_budget"  class="form-control"></div>
+                  </div>
+
               </div>
-              <div class="row get-quote-btn">
+              </div>
+              </div>
+              <div class="row get-quote-btn" style="margin-top: 10px;">
                 <button type="submit" class="btn btn-primary">Generate Quote</button>
               </div>
             </div>
