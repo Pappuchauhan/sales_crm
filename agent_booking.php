@@ -2,7 +2,7 @@
 session_start();
 require_once './config/config.php';
 require_once 'includes/agent_header.php';
-
+is_agent_login();
 // Get Input data from query string
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');

@@ -2,6 +2,7 @@
 session_start();
 require_once './config/config.php';
 require_once 'includes/agent_header.php';
+is_agent_login();
 $edit = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data_to_store = array_filter($_POST);
@@ -21,6 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $save_data["transport"] = json_encode($data_to_store['transport'] ?? []);
   $save_data["permit"] = $data_to_store['permit'] ?? "off";
   $save_data["guide"] = $data_to_store['guide'] ?? "off";
+  $save_data["created_by"] = $_SESSION['user_id'];
+  $save_data["updated_by"] = $_SESSION['user_id']; 
   $db = getDbInstance();
   $db->orderBy('id', 'desc');
   $booking_last = $db->getOne("agent_queries");

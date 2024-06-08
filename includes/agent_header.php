@@ -30,8 +30,8 @@
               <li><a href="agent_query_generate.php">Query Generate</a></li>
               <li><a href="agent_booking.php">My Booking</a></li>
               <li><a href="agent_query.php">Queries</a></li>
-              <li><a href="agent_invoice.php">Invoices</a></li>
-              <li><a href="#">Business Analysis</a></li>
+              <li><a href="agent_invoice.php">Invoices</a></li> 
+              <li><a href="logout.php">Logout</a></li> 
               <li><a class="profile-icon" href="profile.php"><img src="assets/img/avatars/1.png" alt="Profile" /></a></li>
             </ul>
           </nav>

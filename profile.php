@@ -2,7 +2,7 @@
 session_start();
 require_once './config/config.php';
 require_once './includes/auth_validate.php';
-
+is_agent_login();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $data_to_store = array_filter($_POST);

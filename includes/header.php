@@ -21,6 +21,7 @@
 <?php
 $current_url =  $_SERVER['REQUEST_URI'];
 $filename = basename($current_url);
+is_admin_login();
 ?>
 
 <body>

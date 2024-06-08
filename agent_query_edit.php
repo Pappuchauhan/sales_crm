@@ -1,14 +1,15 @@
 <?php
 session_start();
 require_once './config/config.php';
-require_once 'includes/agent_header.php';
+require_once 'includes/agent_header.php'; 
 $edit = false;
 $id = isset($_GET['ID']) && !empty($_GET['ID']) ? decryptId($_GET['ID']) : "";
-$disabled = 'disabled';
+$disabled = $_SESSION['admin_type']=='Admin'?'disabled':'';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Generate Booking') {
     $data_to_store = array_filter($_POST);
     $save_data = [];
     $save_data["type"] = "Booking";
+    $save_data["updated_by"] = $_SESSION['user_id']; 
     $db = getDbInstance();
     $db->where('id', $id);
     $last_id = $db->update('agent_queries', $save_data);
@@ -24,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Gene
     $save_data["your_budget"] = $data_to_store['your_budget'];
     $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
     $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
-    $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []);
-
+    $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []); 
+    $save_data["updated_by"] = $_SESSION['user_id']; 
     $db = getDbInstance();
     $db->where('id', $id);
     $last_id = $db->update('agent_queries', $save_data);

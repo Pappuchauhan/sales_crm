@@ -232,6 +232,17 @@ function setTransportation()
     return ["COACH" => "25", "TEMPO" => "12", "CRYISTA" => "5", "INNOVA" => "5", "ZYALO / ERTIGA" => "5", "ECO" => "5", "LARGE COACH" => "30"];
     //return ["Tempo"=>"12","Cryista"=>"5","Innova"=>"5","Zylo"=>"5","Scorpeior"=>"5","Coach"=>"25","Large Coach"=>"30"];
 }
+function is_agent_login(){
+    if($_SESSION['admin_type'] == 'Admin'){
+        header('Location:index.php');
+    } 
+}
+
+function is_admin_login(){
+    if($_SESSION['admin_type']!=='Admin'){
+        header('Location:agent_query_generate.php');
+    } 
+}
 
 
 define("Bike", 2000);

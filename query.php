@@ -2,9 +2,7 @@
 session_start();
 require_once 'config/config.php';
 require_once BASE_PATH . '/includes/auth_validate.php';
-
-require_once 'includes/agent_header.php';
-
+require_once 'includes/header.php'; 
 // Get Input data from query string
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
@@ -46,9 +44,7 @@ $db->pageLimit = PAGE_LIMIT;
 $rows = $db->arraybuilder()->paginate('agent_queries', $page, $select);
 $total_pages = $db->totalPages;
 
-
-
-include BASE_PATH . '/includes/header.php';
+ 
 ?>
 <div class="layout-page">
 
