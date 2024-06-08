@@ -1,58 +1,64 @@
 <?php
+
 /**
  * Function to generate random string.
  */
 require 'vendor/autoload.php';
-function randomString($n) {
+function randomString($n)
+{
 
-	$generated_string = "";
+    $generated_string = "";
 
-	$domain = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    $domain = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
-	$len = strlen($domain);
+    $len = strlen($domain);
 
-	// Loop to create random string
-	for ($i = 0; $i < $n; $i++) {
-		// Generate a random index to pick characters
-		$index = rand(0, $len - 1);
+    // Loop to create random string
+    for ($i = 0; $i < $n; $i++) {
+        // Generate a random index to pick characters
+        $index = rand(0, $len - 1);
 
-		// Concatenating the character
-		// in resultant string
-		$generated_string = $generated_string . $domain[$index];
-	}
+        // Concatenating the character
+        // in resultant string
+        $generated_string = $generated_string . $domain[$index];
+    }
 
-	return $generated_string;
+    return $generated_string;
 }
 
 /**
  *
  */
-function getSecureRandomToken() {
-	$token = bin2hex(openssl_random_pseudo_bytes(16));
-	return $token;
+function getSecureRandomToken()
+{
+    $token = bin2hex(openssl_random_pseudo_bytes(16));
+    return $token;
 }
 
 /**
  * Clear Auth Cookie
  */
-function clearAuthCookie() {
+function clearAuthCookie()
+{
 
-	unset($_COOKIE['series_id']);
-	unset($_COOKIE['remember_token']);
-	setcookie('series_id', null, -1, '/');
-	setcookie('remember_token', null, -1, '/');
+    unset($_COOKIE['series_id']);
+    unset($_COOKIE['remember_token']);
+    setcookie('series_id', null, -1, '/');
+    setcookie('remember_token', null, -1, '/');
 }
 /**
  *
  */
-function clean_input($data) {
-	$data = trim($data);
-	$data = stripslashes($data);
-	$data = htmlspecialchars($data);
-	return $data;
+function clean_input($data)
+{
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
 }
 
-function paginationLinks($current_page, $total_pages, $base_url) {
+function paginationLinks($current_page, $total_pages, $base_url)
+{
 
     if ($total_pages <= 1) {
         return false;
@@ -112,33 +118,38 @@ function paginationLinks($current_page, $total_pages, $base_url) {
 /**
  * to prevent xss
  */
-function xss_clean($string){
-    return !empty($string)? htmlspecialchars($string, ENT_QUOTES, 'UTF-8'):"";
-
+function xss_clean($string)
+{
+    return !empty($string) ? htmlspecialchars($string, ENT_QUOTES, 'UTF-8') : "";
 }
-  
+
 // Function to encrypt data
-function encryptId($id) {
-   return base64_encode($id);
+function encryptId($id)
+{
+    return base64_encode($id);
 }
 
 // Function to decrypt data
-function decryptId($id) {
+function decryptId($id)
+{
     return base64_decode($id);
 }
 
-function getCategories(){
-	return array("Budget", "Standard", "Deluxe", "Super Deluxe", "Luxury", "Luxury Plus", "Premium", "Premium Plus");
+function getCategories()
+{
+    return array("Budget", "Standard", "Deluxe", "Super Deluxe", "Luxury", "Luxury Plus", "Premium", "Premium Plus");
 }
 
-function generateOTP() { 
+function generateOTP()
+{
     $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
     return $otp;
-   //return '123456';
-   
+    //return '123456';
+
 }
 
-function sendOTPMessage($otp,$mobile) {
+function sendOTPMessage($otp, $mobile)
+{
     $url = 'https://api.interakt.ai/v1/public/message/';
     $authorizationHeader = 'Authorization: Basic THY3QlBYcHhFTUg4eS1kc1NWWFoxWksxdlN0ZlhNQm5YTlZoSjdtUk5pWTo=';
     $contentTypeHeader = 'Content-Type: application/json';
@@ -176,15 +187,16 @@ function sendOTPMessage($otp,$mobile) {
     }
 }
 
-function sendEmail($otp, $to) { 
+function sendEmail($otp, $to)
+{
 
-    $mail = new PHPMailer\PHPMailer\PHPMailer(); 
-    $mail->SMTPDebug = 0; 
-    $mail->isSMTP(); 
+    $mail = new PHPMailer\PHPMailer\PHPMailer();
+    $mail->SMTPDebug = 0;
+    $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-    $mail->SMTPSecure = 'tls'; 
-    $mail->Port = 587;  
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 587;
     $mail->isHTML(true);
     $mail->Username = 'agent@go2ladakh.in';
     $mail->Password = 'uyxh thzu huwg sleq';
@@ -205,23 +217,27 @@ function sendEmail($otp, $to) {
     <p>Ladakh DMC</p>";
 
     return $mail->send();
-} 
+}
 
-function addOneDay($date){
+function addOneDay($date)
+{
     //$date = "2021-06-18";
     $timestamp = strtotime($date);
     $timestamp_plus_one_day = strtotime("+1 day", $timestamp);
-   return  date("d-m-Y", $timestamp_plus_one_day); 
+    return  date("d-m-Y", $timestamp_plus_one_day);
 }
 
-function setTransportation(){
-    return ["COACH"=>"25","TEMPO"=>"12","CRYISTA"=>"5","INNOVA"=>"5","ZYALO / ERTIGA"=>"5","ECO"=>"5", "LARGE COACH"=>"30"];
-   //return ["Tempo"=>"12","Cryista"=>"5","Innova"=>"5","Zylo"=>"5","Scorpeior"=>"5","Coach"=>"25","Large Coach"=>"30"];
+function setTransportation()
+{
+    return ["COACH" => "25", "TEMPO" => "12", "CRYISTA" => "5", "INNOVA" => "5", "ZYALO / ERTIGA" => "5", "ECO" => "5", "LARGE COACH" => "30"];
+    //return ["Tempo"=>"12","Cryista"=>"5","Innova"=>"5","Zylo"=>"5","Scorpeior"=>"5","Coach"=>"25","Large Coach"=>"30"];
 }
 
 
-define("Bike",2000);
-define("Mechanic",500);
-define("Marshal",500);
-define("Fuel",500);
-define("Backup",500);
+define("Bike", 2000);
+define("Mechanic", 500);
+define("Marshal", 500);
+define("Fuel", 500);
+define("Backup", 500);
+
+define("PAGE_LIMIT", 15);

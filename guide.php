@@ -11,10 +11,6 @@ $costumers = new Costumers();
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by');
-
-// Per page limit for pagination.
-$pagelimit = 15;
-
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');
 if (!$page) {
@@ -46,7 +42,7 @@ if ($order_by) {
 }
 
 // Set pagination limit
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('guides', $page, $select);
@@ -109,7 +105,7 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                  <th class="text-white border-right-white">#</th>
+                    <th class="text-white border-right-white">#</th>
                     <th class="text-white border-right-white">Guide ID</th>
                     <th class="text-white border-right-white">Guide Name</th>
                     <th class="text-white border-right-white">Mobile Number</th>
@@ -117,19 +113,19 @@ include BASE_PATH . '/includes/header.php';
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                  <?php 
-                  $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
+                  <?php
+                  $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                   foreach ($rows as $row) : ?>
                     <tr>
-                    <td class="border-right-dark"><?=$k?></td>
+                      <td class="border-right-dark"><?= $k ?></td>
                       <td class="border-right-dark">#<?php echo $row['id']; ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['guide_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
                       <td class="border-right-dark"><a href="add_guide.php?crm=<?php echo encryptId($row['id']); ?>">Edit Details</a></td>
                     </tr>
-                  <?php 
-                 $k++;
-                 endforeach; ?>
+                  <?php
+                    $k++;
+                  endforeach; ?>
 
                 </tbody>
               </table>

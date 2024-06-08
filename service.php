@@ -2,29 +2,26 @@
 session_start();
 require_once 'config/config.php';
 require_once BASE_PATH . '/includes/auth_validate.php';
- 
+
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
-$order_by = filter_input(INPUT_GET, 'order_by'); 
- 
-$pagelimit = 15;
+$order_by = filter_input(INPUT_GET, 'order_by');
 
- 
 $page = filter_input(INPUT_GET, 'page');
 if (!$page) {
   $page = 1;
 }
- 
+
 if (!$filter_col) {
   $filter_col = 'id';
 }
 if (!$order_by) {
   $order_by = 'asc';
 }
- 
+
 $db = getDbInstance();
 $select = array('id', 'name', 'type', 'amount',  'created_at', 'updated_at');
- 
+
 // If search string
 if ($search_string) {
   $db->where("$filter_col", '%' . $search_string . '%', 'like');
@@ -36,7 +33,7 @@ if ($order_by) {
 }
 
 // Set pagination limit
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('services', $page, $select);
@@ -89,7 +86,7 @@ include BASE_PATH . '/includes/header.php';
       <div class="col-auto">
         <a href="add_service.php" class="btn btn-primary">Add Service</a>
       </div>
-    </div>  
+    </div>
     <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
     <!-- Basic Layout -->
     <div class="row">
@@ -100,28 +97,28 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                  <th class="text-white border-right-white">#</th>
+                    <th class="text-white border-right-white">#</th>
                     <th class="text-white border-right-white">Service ID</th>
                     <th class="text-white border-right-white">Service Name</th>
                     <th class="text-white border-right-white">Service Type</th>
-                    <th class="text-white border-right-white">Amount</th> 
+                    <th class="text-white border-right-white">Amount</th>
                     <th class="text-white border-right-white">Edit Details</th>
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                  <?php 
-                   $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
-                   foreach ($rows as $row) : ?>
+                  <?php
+                  $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
+                  foreach ($rows as $row) : ?>
                     <tr>
-                    <td class="border-right-dark"><?=$k?></td>
+                      <td class="border-right-dark"><?= $k ?></td>
                       <td class="border-right-dark">#<?php echo $row['id']; ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['type']); ?></td>
-                      <td class="border-right-dark"><?php echo xss_clean($row['amount']); ?></td> 
+                      <td class="border-right-dark"><?php echo xss_clean($row['amount']); ?></td>
                       <td class="border-right-dark"><a href="add_service.php?crm=<?php echo encryptId($row['id']); ?>">Edit Details</a></td>
                     </tr>
-                  <?php 
-                  $k++;
+                  <?php
+                    $k++;
                   endforeach; ?>
 
                 </tbody>

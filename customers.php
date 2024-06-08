@@ -11,10 +11,6 @@ $costumers = new Costumers();
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by');
-
-// Per page limit for pagination.
-$pagelimit = 15;
-
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');
 if (!$page) {
@@ -46,7 +42,7 @@ if ($order_by) {
 }
 
 // Set pagination limit
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('customers', $page, $select);

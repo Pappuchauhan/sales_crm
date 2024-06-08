@@ -7,10 +7,6 @@ require_once BASE_PATH . '/includes/auth_validate.php';
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by');
-
-// Per page limit for pagination.
-$pagelimit = 15;
-
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');
 if (!$page) {
@@ -41,7 +37,7 @@ if ($order_by) {
 }
 
 // Set pagination limit
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('hotels', $page, $select);
@@ -94,7 +90,7 @@ include BASE_PATH . '/includes/header.php';
       <div class="col-auto">
         <a href="add_hotel.php" class="btn btn-primary">Add Hotel</a>
       </div>
-    </div>  
+    </div>
     <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
     <!-- Basic Layout -->
     <div class="row">
@@ -105,7 +101,7 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                  <th class="text-white border-right-white">#</th>
+                    <th class="text-white border-right-white">#</th>
                     <th class="text-white border-right-white">Hotel ID</th>
                     <th class="text-white border-right-white">Hotel Name</th>
                     <th class="text-white border-right-white">Owner Name</th>
@@ -115,11 +111,11 @@ include BASE_PATH . '/includes/header.php';
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                  <?php 
-                   $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
-                   foreach ($rows as $row) : ?>
+                  <?php
+                  $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
+                  foreach ($rows as $row) : ?>
                     <tr>
-                    <td class="border-right-dark"><?=$k?></td>
+                      <td class="border-right-dark"><?= $k ?></td>
                       <td class="border-right-dark">#<?php echo $row['id']; ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['hotel_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['owner_name']); ?></td>
@@ -127,8 +123,8 @@ include BASE_PATH . '/includes/header.php';
                       <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
                       <td class="border-right-dark"><a href="add_hotel.php?crm=<?php echo encryptId($row['id']); ?>">Edit Details</a></td>
                     </tr>
-                  <?php 
-                  $k++;
+                  <?php
+                    $k++;
                   endforeach; ?>
 
                 </tbody>

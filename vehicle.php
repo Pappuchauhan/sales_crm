@@ -1,15 +1,12 @@
 <?php
 session_start();
 require_once 'config/config.php';
-require_once BASE_PATH . '/includes/auth_validate.php'; 
+require_once BASE_PATH . '/includes/auth_validate.php';
 
 // Get Input data from query string
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by');
-
-// Per page limit for pagination.
-$pagelimit = 15;
 
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');
@@ -41,7 +38,7 @@ if ($order_by) {
 }
 
 // Set pagination limit
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('vehicles', $page, $select);
@@ -93,7 +90,7 @@ include BASE_PATH . '/includes/header.php';
       <div class="col-auto">
         <a href="add_vehicle.php" class="btn btn-primary">Add Vehicle</a>
       </div>
-    </div> 
+    </div>
     <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
     <!-- Basic Layout -->
     <div class="row">
@@ -104,7 +101,7 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                  <th class="text-white border-right-white">#</th> 
+                    <th class="text-white border-right-white">#</th>
                     <th class="text-white border-right-white">Driver Name</th>
                     <th class="text-white border-right-white">Vehicle Number</th>
                     <th class="text-white border-right-white">Mobile Number</th>
@@ -113,19 +110,19 @@ include BASE_PATH . '/includes/header.php';
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                  <?php  
-                  $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
+                  <?php
+                  $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                   foreach ($rows as $row) : ?>
                     <tr>
-                      <td class="border-right-dark"><?=$k?></td> 
+                      <td class="border-right-dark"><?= $k ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['driver_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['vehicle_number']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['vehicle_type']); ?></td>
-                      <td class="border-right-dark"><a href="add_vehicle.php?crm=<?php echo encryptId($row['id']); ?>" >Edit Details</a></td>
+                      <td class="border-right-dark"><a href="add_vehicle.php?crm=<?php echo encryptId($row['id']); ?>">Edit Details</a></td>
                     </tr>
-                  <?php 
-                  $k++;
+                  <?php
+                    $k++;
                   endforeach; ?>
 
                 </tbody>

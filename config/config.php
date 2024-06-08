@@ -24,6 +24,7 @@ define('DB_NAME', "sales_crm");
 /**
  * Get instance of DB object
  */
-function getDbInstance() {
+function getDbInstance()
+{
 	return new MysqliDb(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 }

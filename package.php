@@ -1,22 +1,19 @@
 <?php
 session_start();
 require_once 'config/config.php';
-require_once BASE_PATH . '/includes/auth_validate.php'; 
+require_once BASE_PATH . '/includes/auth_validate.php';
 
 // Get Input data from query string
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by');
 
-// Per page limit for pagination.
-$pagelimit = 15;
-
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');
 if (!$page) {
   $page = 1;
 }
- 
+
 if (!$filter_col) {
   $filter_col = 'package_code';
 }
@@ -27,7 +24,7 @@ if (!$order_by) {
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
 $select = array('id', 'package_code', 'package_name', 'permit', 'guide', 'duration',  'status', 'created_at', 'updated_at');
- 
+
 // If search string
 if ($search_string) {
   $db->where("$filter_col", '%' . $search_string . '%', 'like');
@@ -39,7 +36,7 @@ if ($order_by) {
 }
 
 // Set pagination limit
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 $db->where('status', 'Active');
 
 
@@ -85,13 +82,13 @@ include BASE_PATH . '/includes/header.php';
       </form>
     </div>
     <div class="row">
-    <div class="col">
+      <div class="col">
         <h4 class="py-3 mb-4">View All Packages</h4>
-    </div>
-    <div class="col-auto">
+      </div>
+      <div class="col-auto">
         <a href="add_package.php" class="btn btn-primary">Add Package</a>
       </div>
-  </div>
+    </div>
 
     <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
     <!-- Basic Layout -->
@@ -111,23 +108,24 @@ include BASE_PATH . '/includes/header.php';
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                  <?php 
-                 $k= ($page != 1)? (($page-1) * $pagelimit)+1:1;
+                  <?php
+                  $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                   foreach ($rows as $row) :
-                   
-                    ?>
+
+                  ?>
                     <tr>
-                    <td class="border-right-dark"><?=$k?></td>
+                      <td class="border-right-dark"><?= $k ?></td>
                       <td class="border-right-dark">TA0<?php echo xss_clean($row['package_code']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['package_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
                       <td class="border-right-dark"><a href="add_package.php?crm=<?php echo encryptId($row['id']); ?>">Edit</a>
-                     <a href="delete_package.php?crm=<?php echo encryptId($row['id']); ?>" onClick="return confirm('Are you sure you want to delete this record?')">Delete</a></td>
+                        <a href="delete_package.php?crm=<?php echo encryptId($row['id']); ?>" onClick="return confirm('Are you sure you want to delete this record?')">Delete</a>
+                      </td>
                     </tr>
                   <?php
-                $k++;
-                endforeach; 
-              ?>
+                    $k++;
+                  endforeach;
+                  ?>
 
                 </tbody>
               </table>

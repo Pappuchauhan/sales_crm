@@ -8,9 +8,6 @@ $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by');
 
-// Per page limit for pagination.
-$pagelimit = 15;
-
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');
 if (!$page) {
@@ -24,21 +21,21 @@ if (!$order_by) {
 }
 
 $db = getDbInstance();
-$select = array('id', 'email_id', 'full_name', 'mobile', 'created_at', 'updated_at','status');
+$select = array('id', 'email_id', 'full_name', 'mobile', 'created_at', 'updated_at', 'status');
 
 // If search string
 if ($search_string) {
     $db->where("$filter_col", '%' . $search_string . '%', 'like');
 }
 
-$db->where('status','Incomplete','!=');
+$db->where('status', 'Incomplete', '!=');
 
 //If order by option selected
 if ($order_by) {
     $db->orderBy($filter_col, $order_by);
 }
 
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 
 $rows = $db->arraybuilder()->paginate('agents', $page, $select);
 $total_pages = $db->totalPages;
@@ -105,7 +102,7 @@ include BASE_PATH . '/includes/header.php';
                                     </thead>
                                     <tbody class="table-border-bottom-0">
                                         <?php
-                                        $k = ($page != 1) ? (($page - 1) * $pagelimit) + 1 : 1;
+                                        $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                                         foreach ($rows as $row) : ?>
                                             <tr>
                                                 <td class="border-right-dark"><?= $k ?></td>
@@ -114,12 +111,12 @@ include BASE_PATH . '/includes/header.php';
                                                 <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
                                                 <td class="border-right-dark"><?php echo xss_clean($row['full_name']); ?></td>
                                                 <td class="border-right-dark">
-                                                <div class="form-check form-switch">
-                                                <input class="form-check-input" disabled type="checkbox" id="flexSwitchCheckChecked" <?= ($row['status']=='Active')? 'checked':'' ?>> 
-                                                </div>        
-                                            </td>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" disabled type="checkbox" id="flexSwitchCheckChecked" <?= ($row['status'] == 'Active') ? 'checked' : '' ?>>
+                                                    </div>
+                                                </td>
                                                 <td class="border-right-dark">
-                                                <a class="dropdown-item" href="edit_agent.php?crm=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> Edit Details</a>
+                                                    <a class="dropdown-item" href="edit_agent.php?crm=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> Edit Details</a>
                                                 </td>
                                             </tr>
                                         <?php

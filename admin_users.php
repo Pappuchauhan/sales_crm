@@ -1,15 +1,14 @@
 <?php
 session_start();
 require_once 'config/config.php';
-require_once BASE_PATH.'/includes/auth_validate.php';
+require_once BASE_PATH . '/includes/auth_validate.php';
 
 // Users class
-require_once BASE_PATH.'/lib/Users/Users.php';
+require_once BASE_PATH . '/lib/Users/Users.php';
 $users = new Users();
 
 // Only super admin is allowed to access this page
-if ($_SESSION['admin_type'] !== 'super')
-{
+if ($_SESSION['admin_type'] !== 'super') {
     // Show permission denied message
     header('HTTP/1.1 401 Unauthorized', true, 401);
     exit('401 Unauthorized');
@@ -21,23 +20,17 @@ $filter_col = filter_input(INPUT_GET, 'filter_col');
 $order_by = filter_input(INPUT_GET, 'order_by');
 $del_id = filter_input(INPUT_GET, 'del_id');
 
-// Per page limit for pagination.
-$pagelimit = 15;
-
 // Get current page.
 $page = filter_input(INPUT_GET, 'page');
-if (!$page)
-{
+if (!$page) {
     $page = 1;
 }
 
 // If filter types are not selected we show latest added data first
-if (!$filter_col)
-{
+if (!$filter_col) {
     $filter_col = 'id';
 }
-if (!$order_by)
-{
+if (!$order_by) {
     $order_by = 'Desc';
 }
 
@@ -47,25 +40,23 @@ $select = array('id', 'user_name', 'admin_type');
 
 //Start building query according to input parameters.
 // If search string
-if ($search_string)
-{
+if ($search_string) {
     $db->where('user_name', '%' . $search_string . '%', 'like');
 }
 
 //If order by option selected
-if ($order_by)
-{
+if ($order_by) {
     $db->orderBy($filter_col, $order_by);
 }
 
 // Set pagination limit
-$db->pageLimit = $pagelimit;
+$db->pageLimit = PAGE_LIMIT;
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('admin_accounts', $page, $select);
 $total_pages = $db->totalPages;
 
-include BASE_PATH.'/includes/header.php';
+include BASE_PATH . '/includes/header.php';
 ?>
 <!-- Main container -->
 <div id="page-wrapper">
@@ -79,15 +70,14 @@ include BASE_PATH.'/includes/header.php';
             </div>
         </div>
     </div>
-    <?php include BASE_PATH.'/includes/flash_messages.php'; ?>
+    <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
 
     <?php
-    if (isset($del_stat) && $del_stat == 1)
-    {
+    if (isset($del_stat) && $del_stat == 1) {
         echo '<div class="alert alert-info">Successfully deleted</div>';
     }
     ?>
-    
+
     <!-- Filters -->
     <div class="well text-center filter-form">
         <form class="form form-inline" action="">
@@ -96,23 +86,22 @@ include BASE_PATH.'/includes/header.php';
             <label for="input_order">Order By</label>
             <select name="filter_col" class="form-control">
                 <?php
-                foreach ($users->setOrderingValues() as $opt_value => $opt_name):
-                    ($order_by === $opt_value) ? $selected = 'selected' : $selected = '';
-                    echo ' <option value="'.$opt_value.'" '.$selected.'>'.$opt_name.'</option>';
+                foreach ($users->setOrderingValues() as $opt_value => $opt_name) : ($order_by === $opt_value) ? $selected = 'selected' : $selected = '';
+                    echo ' <option value="' . $opt_value . '" ' . $selected . '>' . $opt_name . '</option>';
                 endforeach;
                 ?>
             </select>
             <select name="order_by" class="form-control" id="input_order">
                 <option value="Asc" <?php
-                if ($order_by == 'Asc') {
-                    echo 'selected';
-                }
-                ?> >Asc</option>
+                                    if ($order_by == 'Asc') {
+                                        echo 'selected';
+                                    }
+                                    ?>>Asc</option>
                 <option value="Desc" <?php
-                if ($order_by == 'Desc') {
-                    echo 'selected';
-                }
-                ?>>Desc</option>
+                                        if ($order_by == 'Desc') {
+                                            echo 'selected';
+                                        }
+                                        ?>>Desc</option>
             </select>
             <input type="submit" value="Go" class="btn btn-primary">
         </form>
@@ -131,39 +120,39 @@ include BASE_PATH.'/includes/header.php';
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($rows as $row): ?>
-            <tr>
-                <td><?php echo $row['id']; ?></td>
-                <td><?php echo xss_clean($row['user_name']); ?></td>
-                <td><?php echo xss_clean($row['admin_type']); ?></td>
-                <td>
-                    <a href="edit_admin.php?admin_user_id=<?php echo $row['id']; ?>&operation=edit" class="btn btn-primary"><i class="glyphicon glyphicon-edit"></i></a>
-                    <a href="#" class="btn btn-danger delete_btn" data-toggle="modal" data-target="#confirm-delete-<?php echo $row['id']; ?>"><i class="glyphicon glyphicon-trash"></i></a>
-                </td>
-            </tr>
-            <!-- Delete Confirmation Modal -->
-            <div class="modal fade" id="confirm-delete-<?php echo $row['id']; ?>" role="dialog">
-                <div class="modal-dialog">
-                    <form action="delete_user.php" method="POST">
-                        <!-- Modal content -->
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title">Confirm</h4>
+            <?php foreach ($rows as $row) : ?>
+                <tr>
+                    <td><?php echo $row['id']; ?></td>
+                    <td><?php echo xss_clean($row['user_name']); ?></td>
+                    <td><?php echo xss_clean($row['admin_type']); ?></td>
+                    <td>
+                        <a href="edit_admin.php?admin_user_id=<?php echo $row['id']; ?>&operation=edit" class="btn btn-primary"><i class="glyphicon glyphicon-edit"></i></a>
+                        <a href="#" class="btn btn-danger delete_btn" data-toggle="modal" data-target="#confirm-delete-<?php echo $row['id']; ?>"><i class="glyphicon glyphicon-trash"></i></a>
+                    </td>
+                </tr>
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="confirm-delete-<?php echo $row['id']; ?>" role="dialog">
+                    <div class="modal-dialog">
+                        <form action="delete_user.php" method="POST">
+                            <!-- Modal content -->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Confirm</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="del_id" id="del_id" value="<?php echo $row['id']; ?>">
+                                    <p>Are you sure you want to delete this row?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-default pull-left">Yes</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <input type="hidden" name="del_id" id="del_id" value="<?php echo $row['id']; ?>">
-                                <p>Are you sure you want to delete this row?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-default pull-left">Yes</button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            <!-- //Delete Confirmation Modal -->
+                <!-- //Delete Confirmation Modal -->
             <?php endforeach; ?>
         </tbody>
     </table>
@@ -194,4 +183,4 @@ include BASE_PATH.'/includes/header.php';
     <!-- //Pagination -->
 </div>
 <!-- //Main container -->
-<?php include BASE_PATH.'/includes/footer.php'; ?>
+<?php include BASE_PATH . '/includes/footer.php'; ?>
