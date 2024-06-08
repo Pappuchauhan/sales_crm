@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $save_data['booking_code'] = sprintf("TA%04d",  1);
   }
   $inserted_id = $db->insert('agent_queries', $save_data);
+  $_SESSION['success'] = "The query has been generated successfully.";
 }
 
 

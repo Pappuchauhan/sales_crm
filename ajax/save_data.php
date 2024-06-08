@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&  isset($_POST['data_save_form']) &&
     $_POST['agent_query_id'];
     $db->where('id', $_POST['agent_query_id']);
     $last_id = $db->update('agent_queries', $save_data);
+    $_SESSION['success'] = "Hotels changed successfully.";
     echo "hotel saved";
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' &&  isset($_POST['data_save_form']) && $_POST['data_save_form'] == 'driver') {
     $data_to_store = array_filter($_POST);
@@ -20,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&  isset($_POST['data_save_form']) &&
     $_POST['agent_query_driver_id'];
     $db->where('id', $_POST['agent_query_driver_id']);
     $last_id = $db->update('agent_queries', $save_data);
+    $_SESSION['success'] = "Driver changed successfully.";
     echo "driver saved";
 } else {
     echo "404";

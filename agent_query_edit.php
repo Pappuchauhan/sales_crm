@@ -4,8 +4,16 @@ require_once './config/config.php';
 require_once 'includes/agent_header.php';
 $edit = false;
 $id = isset($_GET['ID']) && !empty($_GET['ID']) ? decryptId($_GET['ID']) : "";
-$disabled = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$disabled = 'disabled';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] =='Generate Booking') {   
+    $data_to_store = array_filter($_POST);
+    $save_data = [];
+    $save_data["type"] = "Booking";    
+    $db = getDbInstance();
+    $db->where('id', $id);
+    $last_id = $db->update('agent_queries', $save_data);
+    $_SESSION['success'] = "The booking has been generated successfully.";
+}else if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] =='Edit Quote') {   
     $data_to_store = array_filter($_POST);
     $save_data = [];
     $save_data["name"] = $data_to_store['name'];
@@ -21,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = getDbInstance();
     $db->where('id', $id);
     $last_id = $db->update('agent_queries', $save_data);
+    $_SESSION['success'] = "The query has been updated successfully.";
 }
 if (!empty($id)) {
     $db = getDbInstance();
@@ -46,12 +55,15 @@ $json_vehicle = json_encode($vehicleData);
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <div class="layout-page">
     <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
+    
+        <div class="container-xxl flex-grow-1 container-p-y">           
             <div class="front-body-content">
                 <form method="post" data-disable-inputs="true">
                     <div class="block">
                         <div class="left-part">
+                            
                             <div class="card">
+                                <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
                                 <h1>Quick Booking</h1>
 
                                 <div class="row mb-3">
@@ -191,10 +203,11 @@ $json_vehicle = json_encode($vehicleData);
                                                         <td>Maximum <span class="max-persons"></span> Persons</td>
                                                     </tr>
                                                 <?php endforeach; ?>
+                                                <?php if(empty($disabled)){ ?>
                                                 <tr>
                                                     <td colspan="3" style="text-align:right;"><a href="#" id="addMoreTransport">Add More</a></td>
                                                 </tr>
-
+                                                <?php } ?>
 
                                             </tbody>
                                         </table>
@@ -518,7 +531,9 @@ $json_vehicle = json_encode($vehicleData);
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                     <h3 class="mt-3 mb-3">Hotel Details</h3>
+                                    <?php if(!empty($disabled)){?>
                                     <button type="button" id="change-hotel" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Choose Hotel</button>
+                                    <?php } ?>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="table-responsive text-nowrap">
@@ -644,8 +659,9 @@ $json_vehicle = json_encode($vehicleData);
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                     <h3 class="mt-3 mb-3">Transport</h3>
-
+                                    <?php if(!empty($disabled)){?>
                                     <button type="button" id="driver-change" class="btn btn-primary" data-toggle="modal" data-target=".bd-transport-modal-xl">Choose Driver</button>
+                                    <?php } ?>
                                 </div>
 
                                 <div class="row mb-3">
@@ -750,16 +766,23 @@ $json_vehicle = json_encode($vehicleData);
                                     <div class="summary-detail">
                                         <div class="row mb-3">
                                             <div class="col-md text-bold"><label class="form-label"><strong>Your Budget</strong></label></div>
-                                            <div class="col-md" id="summary-duration"><input type="number" name="your_budget" value="<?= $queries['your_budget'] ?>" class="form-control"></div>
+                                            <div class="col-md" id="summary-duration"><input type="number" <?= $disabled ?> name="your_budget" value="<?= $queries['your_budget'] ?>" class="form-control"></div>
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
-
+                            <?php if(!empty($disabled)){ ?>
                             <div class="row get-quote-btn" style="margin-top: 10px;">
-                                <button type="submit" class="btn btn-primary">Generate Quote</button>
+                                <button type="submit" class="btn btn-primary">Generate Booking</button>
+                                <input type="hidden" name="form_submit_type" value="Generate Booking" />
                             </div>
+                            <?php }else{ ?>
+                            <div class="row get-quote-btn" style="margin-top: 10px;">
+                                <input type="hidden" name="form_submit_type" value="Edit Quote" />
+                                <button type="submit" class="btn btn-primary">Edit Quote</button>
+                            </div>
+                            <?php } ?>
                         </div>
                     </div>
                 </form>
@@ -924,6 +947,7 @@ $json_vehicle = json_encode($vehicleData);
                 success: function(response) {
                     // Handle success response
                     $('#response').html('<div class="alert alert-success">' + response.message + '</div>');
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -964,6 +988,7 @@ $json_vehicle = json_encode($vehicleData);
                 success: function(response) {
                     // Handle success response
                     $('#response').html('<div class="alert alert-success">' + response.message + '</div>');
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response

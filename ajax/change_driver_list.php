@@ -5,7 +5,7 @@ require_once BASE_PATH . '/includes/auth_validate.php';
 
 function getDriverDetails($data, $driver_name)
 { 
-    $driver_index = array_search($driver_name, $data["'driver'"]);
+    $driver_index = array_search($driver_name, $data["'driver'"]??[]);
 
     if ($driver_index !== false) { 
         return [

@@ -45,12 +45,12 @@ foreach ($results as $key => $result) :
         <label class="form-label"><?=str_replace("Fixed", "", $result['itineary']) ?></label>
         <!-- <small class="text-muted float-end set-padding-top">2 Pax</small>-->
         <div class="input-group">
-            <button disabled class="btn btn-outline-primary border-lighter add-custom-padding decrement" type="button" >-</button>
-            <input disabled
+            <button <?= $disabled ?> class="btn btn-outline-primary border-lighter add-custom-padding decrement" type="button" >-</button>
+            <input <?= $disabled ?>
             data-amount="<?=$amount?>"
             name="person[<?=str_replace("Fixed", "", $result['itineary']) ?>]"
             type="text" class="form-control text-center quantity" value="<?=$s_person[str_replace("Fixed", "", $result['itineary'])]?>">
-            <button disabled class="btn btn-outline-primary border-lighter add-custom-padding increment"  type="button">+</button>
+            <button <?= $disabled ?> class="btn btn-outline-primary border-lighter add-custom-padding increment"  type="button">+</button>
         </div>
     </div>
 <?php
