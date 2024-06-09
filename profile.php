@@ -82,7 +82,7 @@ require_once 'includes/agent_header.php';
                     <input type="text" class="form-control phone-mask" name="state" value="<?php echo xss_clean($edit ? $data['state'] : ''); ?>" />
                   </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Send</button>
+                <button type="submit" class="btn btn-primary">Save</button>
               </form>
             </div>
           </div>
