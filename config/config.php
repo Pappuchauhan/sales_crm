@@ -20,6 +20,7 @@ define('DB_HOST', "localhost");
 define('DB_USER', "root");
 define('DB_PASSWORD', "");
 define('DB_NAME', "sales_crm");
+define('BASE_URL', "http://localhost/goto/");
 
 /**
  * Get instance of DB object

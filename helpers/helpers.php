@@ -244,6 +244,74 @@ function is_admin_login(){
     } 
 }
 
+function uploadImage($file, $targetDir = 'uploads/', $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'], $maxSize = 2 * 1024 * 1024) {
+    // Check if file was uploaded without errors
+    $result =['success' => false];
+    if (isset($file) && $file['error'] == UPLOAD_ERR_OK) {
+        // Extract file information
+        $fileName = basename($file['name']);
+        $fileSize = $file['size'];
+        $fileTmpPath = $file['tmp_name'];
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        // Check file size       
+        if ($fileSize > $maxSize) {
+            $result['msg'] = 'Error: File size is larger than the allowed limit.'; 
+            return $result;
+        }
+
+        // Check file type
+        if (!in_array(strtolower($fileType), $allowedTypes)) {
+            $result['msg'] = "Error: Only " . implode(", ", $allowedTypes) . " file types are allowed.";
+            return $result;
+        }
+
+        // Generate a unique name for the file before saving it
+        $newFileName = uniqid('img_', true) . '.' . $fileType;
+
+        // Create target directory if it doesn't exist
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        // Define the target path
+        $targetFilePath = $targetDir . $newFileName;
+
+        // Move the file to the target directory
+        if (move_uploaded_file($fileTmpPath, $targetFilePath)) {
+            $result['success'] = true;
+            $result['msg'] = $targetFilePath;
+            return $result;
+        } else {
+            $result['msg'] = "Error: There was an error moving the uploaded file.";
+        }
+    } else {
+        $result['msg'] = "Error: No file uploaded or there was an upload error.";
+    }
+}
+
+function getGuestNo($json_data){
+    $guests =json_decode($json_data,true);
+    $total_no = 0;
+    foreach($guests as $key=>$guest){
+        switch(trim($key)){
+            case 'TWIN': 
+                $guest_no = $guest *2;
+            break;
+            case 'TRIPLE':
+                $guest_no = $guest *3;
+            break;
+            case 'QUAD SHARING':
+                $guest_no = $guest *4;
+            break;
+            default:
+                $guest_no = $guest;
+        }
+        $total_no = $total_no + $guest_no ;
+    }
+    return $total_no;
+}
+
 
 define("Bike", 2000);
 define("Mechanic", 500);

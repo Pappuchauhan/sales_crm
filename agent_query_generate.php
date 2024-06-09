@@ -29,9 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $booking_last = $db->getOne("agent_queries");
   //print_r($booking_last);
   if ($booking_last) {
-    $save_data['booking_code'] = sprintf("TA%04d", $booking_last['id'] + 1);
+    $save_data['booking_code'] = sprintf("GLB%04d", $booking_last['id'] + 1);
+    $save_data['query_code'] = sprintf("QG%04d", $booking_last['id'] + 1);
   } else {
-    $save_data['booking_code'] = sprintf("TA%04d",  1);
+    $save_data['booking_code'] = sprintf("GLB%04d",  1);
+    $save_data['query_code'] = sprintf("QG%04d",  1);
   }
   $inserted_id = $db->insert('agent_queries', $save_data);
   $_SESSION['success'] = "The query has been generated successfully.";

@@ -8,24 +8,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data_to_store = array_filter($_POST);
 
   $db = getDbInstance();
+  $uploadImage = ['success' => true, 'msg' => ''];
+  if (isset($_FILES['logo']) && $_FILES['logo']['error'] == UPLOAD_ERR_OK) { 
+    $uploadImage = uploadImage($_FILES['logo']);
+  }
 
-  $db->where('id', $_SESSION['user_id']);
-  $last_id = $db->update('agents', $data_to_store);
-  $msg = "edited";
+  if (isset($uploadImage['success']) && $uploadImage['success'] === true) {
 
+    if (!empty($uploadImage['msg'])) {
+      $data_to_store['logo'] = $uploadImage['msg'];
+    }
+    $db->where('id', $_SESSION['user_id']);
+    $last_id = $db->update('agents', $data_to_store);
+    $msg = "edited";
 
-  if ($last_id) {
-    $_SESSION['success'] = "User details $msg successfully!";
+    if ($last_id) {
+      $_SESSION['success'] = "User details $msg successfully!";
+    } else {
+      echo 'insert failed: ' . $db->getLastError();
+      exit();
+    }
   } else {
-    echo 'insert failed: ' . $db->getLastError();
-    exit();
+    $_SESSION['failure'] = $uploadImage['msg'];
   }
 }
 
 $edit = true;
 $db = getDbInstance();
 $db->where('id', $_SESSION['user_id']);
-$data = $db->getOne("agents"); 
+$data = $db->getOne("agents");
 
 require_once 'includes/agent_header.php';
 ?>
@@ -43,15 +54,15 @@ require_once 'includes/agent_header.php';
         <div class="col-xl">
           <div class="card mb-4">
             <div class="card-body">
-              <form  action="" method="post" id="hotel_form" enctype="multipart/form-data">
+              <form action="" method="post" id="hotel_form" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label class="form-label" for="basic-default-company">Full Name</label>
-                  <input type="text" disabled class="form-control"   value="<?php echo xss_clean($edit ? $data['full_name'] : ''); ?>" placeholder="Full name" />
+                  <input type="text" disabled class="form-control" value="<?php echo xss_clean($edit ? $data['full_name'] : ''); ?>" placeholder="Full name" />
                 </div>
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Email ID</label>
-                    <input type="text" disabled id="basic-default-phone"   value="<?php echo xss_clean($edit ? $data['email_id'] : ''); ?>" class="form-control phone-mask" value="emailid@gmail.com" />
+                    <input type="text" disabled id="basic-default-phone" value="<?php echo xss_clean($edit ? $data['email_id'] : ''); ?>" class="form-control phone-mask" value="emailid@gmail.com" />
                   </div>
                   <div class="col-md">
                     <label class="form-label" for="basic-default-phone">Mobile No.</label>
@@ -81,6 +92,18 @@ require_once 'includes/agent_header.php';
                     <label class="form-label" for="basic-default-phone">State</label>
                     <input type="text" class="form-control phone-mask" name="state" value="<?php echo xss_clean($edit ? $data['state'] : ''); ?>" />
                   </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md">
+                    <label class="form-label" for="basic-default-phone">Logo</label>
+                    <input type="file" class="form-control phone-mask" name="logo" />
+                  </div>
+                  <div class="col-md"> 
+                  <?php if(!empty($data['logo'])){ ?>
+                  <img width="200px" src="<?=BASE_URL.$data['logo']?>" ?>
+                  <?php } ?>
+                
+                </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
               </form>
