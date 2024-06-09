@@ -63,9 +63,8 @@ include BASE_PATH . '/includes/header.php';
                 <div class="input-group">
                   <label class="input-group-text">Options</label>
                   <select class="form-select" name="filter_col">
-                    <option selected="">Choose...</option>
-                    <option value="id" selected>Driver ID</option>
-                    <option value="driver_name">Driver Name</option>
+                    <option selected="">Choose...</option> 
+                    <option value="driver_name" selected>Driver Name</option>
                     <option value="vehicle_number">Mobile Number</option>
                   </select>
                 </div>

@@ -59,9 +59,8 @@ include BASE_PATH . '/includes/header.php';
                 <div class="input-group">
                   <label class="input-group-text">Options</label>
                   <select class="form-select" name="filter_col">
-                    <option selected="">Choose...</option>
-                    <option value="id" selected>Service ID</option>
-                    <option value="name">Service Name</option>
+                    <option selected="">Choose...</option> 
+                    <option value="name" selected>Service Name</option>
                     <option value="type">Service Type</option>
                   </select>
                 </div>

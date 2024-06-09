@@ -115,7 +115,7 @@ include BASE_PATH . '/includes/header.php';
                   ?>
                     <tr>
                       <td class="border-right-dark"><?= $k ?></td>
-                      <td class="border-right-dark">TA0<?php echo xss_clean($row['package_code']); ?></td>
+                      <td class="border-right-dark"><?php echo xss_clean($row['package_code']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['package_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
                       <td class="border-right-dark"><a href="add_package.php?crm=<?php echo encryptId($row['id']); ?>">Edit</a>

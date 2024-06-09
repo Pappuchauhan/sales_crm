@@ -58,9 +58,8 @@ include BASE_PATH . '/includes/header.php';
                                 <div class="input-group">
                                     <label class="input-group-text">Options</label>
                                     <select class="form-select" name="filter_col">
-                                        <option selected="">Choose...</option>
-                                        <option value="id" selected>Agent id</option>
-                                        <option value="email_id">Agent Email</option>
+                                        <option selected="">Choose...</option> 
+                                        <option value="email_id" selected>Agent Email</option>
                                         <option value="full_name">Agent Name</option>
                                         <option value="mobile">Agent Mobile no.</option>
                                     </select>
@@ -90,7 +89,7 @@ include BASE_PATH . '/includes/header.php';
                                 <table class="table">
                                     <thead>
                                         <tr class="text-nowrap bg-dark align-middle"> 
-                                            <th class="text-white border-right-white">Agent Code</th>
+                                            <th class="text-white border-right-white">#</th>
                                             <th class="text-white border-right-white">Email Id</th>
                                             <th class="text-white border-right-white">Mobile Number</th>
                                             <th class="text-white border-right-white">Agent Name</th>

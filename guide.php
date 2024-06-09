@@ -67,9 +67,8 @@ include BASE_PATH . '/includes/header.php';
                 <div class="input-group">
                   <label class="input-group-text">Options</label>
                   <select class="form-select" name="filter_col">
-                    <option selected="">Choose...</option>
-                    <option value="id" selected>Guide ID</option>
-                    <option value="guide_name">Guide Name</option>
+                    <option selected="">Choose...</option> 
+                    <option value="guide_name" selected>Guide Name</option>
                     <option value="mobile">Guide Mobile Number</option>
                   </select>
                 </div>
