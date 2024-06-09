@@ -109,7 +109,7 @@ $total_pages = $db->totalPages;
                     <th class="text-white border-right-white">ARRIVAL</th>
                     <th class="text-white border-right-white">DEPARTURE</th>
                     <th class="text-white border-right-white">TOTAL AMOUNT</th>
-                    <th class="text-white border-right-white">COMMISSION</th>
+                    <th class="text-white border-right-white">Budget</th>
                     <th class="text-white border-right-white">GST</th>
                     <th class="text-white border-right-white">Actions</th>
                   </tr>
