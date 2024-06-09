@@ -101,8 +101,7 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                    <th class="text-white border-right-white">#</th>
-                    <th class="text-white border-right-white">Hotel ID</th>
+                    <th class="text-white border-right-white">#</th> 
                     <th class="text-white border-right-white">Hotel Name</th>
                     <th class="text-white border-right-white">Owner Name</th>
                     <th class="text-white border-right-white">Email ID</th>
@@ -115,8 +114,7 @@ include BASE_PATH . '/includes/header.php';
                   $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                   foreach ($rows as $row) : ?>
                     <tr>
-                      <td class="border-right-dark"><?= $k ?></td>
-                      <td class="border-right-dark">#<?php echo $row['id']; ?></td>
+                      <td class="border-right-dark"><?= $k ?></td> 
                       <td class="border-right-dark"><?php echo xss_clean($row['hotel_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['owner_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['email_id']); ?></td>

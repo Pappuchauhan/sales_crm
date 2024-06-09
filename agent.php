@@ -89,8 +89,7 @@ include BASE_PATH . '/includes/header.php';
                             <div class="table-responsive text-nowrap border-light border-solid mb-3">
                                 <table class="table">
                                     <thead>
-                                        <tr class="text-nowrap bg-dark align-middle">
-                                            <th class="text-white border-right-white">#</th>
+                                        <tr class="text-nowrap bg-dark align-middle"> 
                                             <th class="text-white border-right-white">Agent Code</th>
                                             <th class="text-white border-right-white">Email Id</th>
                                             <th class="text-white border-right-white">Mobile Number</th>
@@ -105,8 +104,7 @@ include BASE_PATH . '/includes/header.php';
                                         $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                                         foreach ($rows as $row) : ?>
                                             <tr>
-                                                <td class="border-right-dark"><?= $k ?></td>
-                                                <td class="border-right-dark">#<?php echo $row['id']; ?></td>
+                                                <td class="border-right-dark"><?= $k ?></td> 
                                                 <td class="border-right-dark"><?php echo xss_clean($row['email_id']); ?></td>
                                                 <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
                                                 <td class="border-right-dark"><?php echo xss_clean($row['full_name']); ?></td>

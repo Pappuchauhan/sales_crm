@@ -134,18 +134,7 @@ $total_pages = $db->totalPages;
                       <td class="border-right-dark">10%</td>
                       <td class="border-right-dark">ABCDE0340404</td>
                       <td class="border-right-dark"><a href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>">Edit</a></td>
-                      <td class="border-right-dark">
-                        <div class="dropdown">
-                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                          </button>
-                          <div class="dropdown-menu" style="">
-                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Modify Booking</a>
-                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Confirm Booking</a>
-                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Cancel Booking</a>
-                          </div>
-                        </div>
-                      </td>
+                      
                       </tr>
                     <?php
                       $k++;

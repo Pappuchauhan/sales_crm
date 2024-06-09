@@ -97,8 +97,7 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                    <th class="text-white border-right-white">#</th>
-                    <th class="text-white border-right-white">Service ID</th>
+                    <th class="text-white border-right-white">#</th> 
                     <th class="text-white border-right-white">Service Name</th>
                     <th class="text-white border-right-white">Service Type</th>
                     <th class="text-white border-right-white">Amount</th>
@@ -110,8 +109,7 @@ include BASE_PATH . '/includes/header.php';
                   $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                   foreach ($rows as $row) : ?>
                     <tr>
-                      <td class="border-right-dark"><?= $k ?></td>
-                      <td class="border-right-dark">#<?php echo $row['id']; ?></td>
+                      <td class="border-right-dark"><?= $k ?></td> 
                       <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['type']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['amount']); ?></td>
