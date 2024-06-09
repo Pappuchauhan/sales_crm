@@ -25,7 +25,7 @@ if (!$order_by) {
  
 $db = getDbInstance();
 $db->join('agents', 'agents.id = agent_queries.created_by', 'LEFT');
-$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount');
+$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount','total_pax');
 $db->where('agent_queries.type', 'Booking');
 
 
@@ -117,8 +117,7 @@ $total_pages = $db->totalPages;
                 <tbody class="table-border-bottom-0">
                   <?php
                   $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
-                  foreach ($rows as $row) :
-                    $pax = getGuestNo($row['person'])
+                  foreach ($rows as $row) :                     
                   ?>
                     <tr>
                       <td class="border-right-dark"><?= $k ?></td>
@@ -126,7 +125,7 @@ $total_pages = $db->totalPages;
                       <td class="border-right-dark"><?php echo xss_clean($row['booking_code']); ?></td>
                       <td class="border-right-dark">Group Booking</td>
                       <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
-                      <td class="border-right-dark"><?=$pax?></td>
+                      <td class="border-right-dark"><?=$row['total_pax']?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['category']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['tour_start_date']); ?></td>

@@ -24,6 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $save_data["guide"] = $data_to_store['guide'] ?? "off";
   $save_data["created_by"] = $_SESSION['user_id'];
   $save_data["updated_by"] = $_SESSION['user_id']; 
+
+  $save_data["total_amount"] = $data_to_store['total_amount']; 
+  $save_data["total_pax"] = $data_to_store['total_pax']; 
+  $save_data["tour_end_date"] = $data_to_store['tour_end_date']; 
+
   $db = getDbInstance();
   $db->orderBy('id', 'desc');
   $booking_last = $db->getOne("agent_queries");
@@ -86,7 +91,7 @@ $json_vehicle = json_encode($vehicleData);
                   </div>
                   <div class="col-md">
                     <label class="form-label">Select Date</label>
-                    <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="2024-04-18">
+                    <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?=date('Y-m-d')?>">
                   </div>
                 </div>
 
@@ -112,6 +117,9 @@ $json_vehicle = json_encode($vehicleData);
                 </div>
                 <input type="hidden" name="package_id">
                 <input type="hidden" name="category">
+                <input type="hidden" name="total_amount">
+                <input type="hidden" name="total_pax">
+                <input type="hidden" name="tour_end_date">
 
                 <div class="row mb-3" id="package-other-details">
 
@@ -433,7 +441,20 @@ $json_vehicle = json_encode($vehicleData);
       alert("Please select package name")
     }
   }
-
+  function calculateTourEndDate() {
+    const startDate = $('input[name="tour_start_date"]').val();
+    const string = $("#duration").val();
+    const pattern = /(\d+)\s*Days?\s*(\d+)\s*Nights?/i;
+    const matches = string.match(pattern); 
+    nights =  parseInt(matches[2], 10);
+     
+    const startDateTime = new Date(startDate);
+ 
+    startDateTime.setDate(startDateTime.getDate() + nights);
+ 
+    const endDate = startDateTime.toISOString().split('T')[0];
+    $('input[name="tour_end_date"]').val(endDate);
+}
   function itinerary_list() {
     let tour_date = $('input[name="tour_start_date"]').val()
     let package_id = $('input[name="package_id"]').val()
@@ -888,7 +909,9 @@ $json_vehicle = json_encode($vehicleData);
             <td>${finalPrice}</td>
         </tr>
     `;
-
+    $('input[name="total_amount"]').val(finalPrice);
+    $('input[name="total_pax"]').val(totalPax);
+    calculateTourEndDate();
     targetTableBody.insertAdjacentHTML('beforeend', totalRows);
 
     document.getElementById('summary-duration').innerHTML = document.getElementById('duration').value;

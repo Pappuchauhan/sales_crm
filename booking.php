@@ -15,7 +15,7 @@ if (!$page) {
 }
 
 if (!$filter_col) {
-  $filter_col = 'id';
+  $filter_col = 'agent_queries.id';
 }
 if (!$order_by) {
   $order_by = 'asc';
@@ -23,8 +23,9 @@ if (!$order_by) {
 
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
-$select = array('id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'type', 'created_at', 'updated_at');
-$db->where('type', 'Booking');
+$db->join('agents', 'agents.id = agent_queries.created_by', 'LEFT');
+$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount','total_pax','full_name');
+$db->where('agent_queries.type', 'Booking');
 
 
 // If search string
@@ -91,10 +92,9 @@ $total_pages = $db->totalPages;
                 <table class="table">
                   <thead>
                     <tr class="text-nowrap bg-dark align-middle">
-                      <th class="text-white border-right-white">Query No</th>
-                      <th class="text-white border-right-white">Booking No</th>
-                      <th class="text-white border-right-white">Booking Date</th>
-                      <th class="text-white border-right-white">Agent Code</th>
+                      <th class="text-white border-right-white">#</th>
+                      <th class="text-white border-right-white">Booking Code</th>
+                      <th class="text-white border-right-white">Booking Date</th>  
                       <th class="text-white border-right-white">Agent Name</th>
                       <th class="text-white border-right-white">Package Type</th>
                       <th class="text-white border-right-white">Guest Name</th>
@@ -104,7 +104,7 @@ $total_pages = $db->totalPages;
                       <th class="text-white border-right-white">Arrival</th>
                       <th class="text-white border-right-white">Departure</th>
                       <th class="text-white border-right-white">Total Amount</th>
-                      <th class="text-white border-right-white">Commission</th>
+                      <th class="text-white border-right-white">Budget</th>
                       <th class="text-white border-right-white">GST</th>
                       <th class="text-white border-right-white">Actions</th>
                     </tr>
@@ -118,19 +118,18 @@ $total_pages = $db->totalPages;
                       <td class="border-right-dark"><?= $k ?></td>
 
                       <td class="border-right-dark"><?php echo xss_clean($row['booking_code']); ?></td>
-                      <td class="border-right-dark"><?php echo xss_clean($row['tour_start_date']); ?></td>
+                      <td class="border-right-dark"><?php echo xss_clean(date("Y-m-d",strtotime($row['created_at']))); ?></td> 
+                      <td class="border-right-dark"><?php echo xss_clean($row['full_name']); ?></td>
                       <td class="border-right-dark">Group Booking</td>
                       <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
-                      <td class="border-right-dark">Group Booking</td>
-                      <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
-                      <td class="border-right-dark">12</td>
+                      <td class="border-right-dark"><?=$row['total_pax']?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['category']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['tour_start_date']); ?></td>
-                      <td class="border-right-dark">.....</td>
-                      <td class="border-right-dark">₹23500</td>
-                      <td class="border-right-dark">10%</td>
-                      <td class="border-right-dark">ABCDE0340404</td>
+                      <td class="border-right-dark"><?=$row['tour_end_date']?></td>
+                      <td class="border-right-dark">₹<?=$row['total_amount']?></td>
+                      <td class="border-right-dark">₹<?=$row['your_budget']?></td>
+                      <td class="border-right-dark"><?=$row['gst_no']?></td>
                       <td class="border-right-dark"><a href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>">Edit</a></td>
                       
                       </tr>
