@@ -1,5 +1,9 @@
 <?php
 
+define("GMAIL_USER", 'agent@go2ladakh.in');
+define("GMAIL_PASSWORD", 'uyxh thzu huwg sleq');
+define("GMAIL_FROM", 'agent@go2ladakh.in');
+
 /**
  * Function to generate random string.
  */
@@ -215,6 +219,10 @@ function sendEmail($otp, $to)
     
     <p>Thank you,</p>
     <p>Ladakh DMC</p>";
+   $result =  $mail->send();
+    if(!$result){
+        echo $mail->ErrorInfo;
+    }
 
     return $mail->send();
 }
@@ -323,6 +331,3 @@ define("PAGE_LIMIT", 15);
 
 //mail details
 
-define("GMAIL_USER", 'agent@go2ladakh.in');
-define("GMAIL_PASSWORD", 'uyxh thzu huwg sleq');
-define("GMAIL_FROM", 'agent@go2ladakh.in');

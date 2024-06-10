@@ -17,18 +17,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Conf
     $_SESSION['success'] = "The booking has been generated successfully.";
 
     //PDF send to Mail
-    $pdfObj = new PDFGenerate; 
+   
     $db = getDbInstance();
     $db->where('id', $id);
     $queries = $db->getOne("agent_queries");
     $hotel_details = !empty($queries['hotel_details']) ? json_decode($queries['hotel_details'], true) : [];
-    
+    sendEmail('12345', 'pappuchauhan3391@gmail.com');
+    die;
+    $pdfObj1 = new PDFGenerate; 
+   echo   $pdfObj1->transport_booking($queries);
+      $pdfObj1->generatePDF();
+    echo '<br>'; die;
+    $pdfObj2 = new PDFGenerate;
     foreach ($hotel_details["'name'"] as $hkey => $hname) {
-    $pdfObj->hotel_voucher(['query_id'=>$id,'index'=>$hkey]);
-     
-   echo  $pdfObj->generatePDF();
+    $pdfObj2->hotel_voucher(['query_id'=>$id,'index'=>$hkey]);     
+    $pdfObj2->generatePDF();
     die;
     }
+
+
     //
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Edit Quote') {
     $data_to_store = array_filter($_POST);

@@ -23,30 +23,30 @@ class PDFGenerate
     {
         // Set the HTML content
         $finalHtml = $this->setHtml();
-    
+
         // Load the HTML into Dompdf
         $this->dompdf->loadHtml($finalHtml);
-    
+
         // (Optional) Set up the paper size and orientation
         $this->dompdf->setPaper('A4', 'portrait'); // 'portrait' or 'landscape'
-    
+
         // Render the HTML as PDF
         $this->dompdf->render();
-    
+
         // Get the generated PDF content
         $pdfOutput = $this->dompdf->output();
         $timestamp = time();
         $dynamicFileName = "document_{$timestamp}.pdf";
         // Define the file path and name
-        $filePath = 'uploads/'.$dynamicFileName;
-    
+        $filePath = 'uploads/' . $dynamicFileName;
+
         // Save the PDF file to the specified path
         file_put_contents($filePath, $pdfOutput);
-    
+
         // Optionally, you can return the file path or any other relevant information
         return $filePath;
     }
-    
+
 
     public function setHtml()
     {
@@ -90,15 +90,15 @@ class PDFGenerate
         </div>
     </body>
     </html>';
-    return $headHtml;
+        return $headHtml;
     }
     /**
      * generate hotel voucher HTML
      */
-    public function hotel_voucher($data=[])
+    public function hotel_voucher($data = [])
     {
-        $result =  $this->getVoucherData($data['query_id'],$data['index']);
-        $this->html ='<table cellpadding="0" cellspacing="0" style="width: 100%;">
+        $result =  $this->getVoucherData($data['query_id'], $data['index']);
+        $this->html = '<table cellpadding="0" cellspacing="0" style="width: 100%;">
         <tr>
             <td style="border-right: solid 1px #333; padding: 10px; width: 70%;">
                 <h3 style="margin-bottom: 8px;">Hotel Voucher</h3>
@@ -121,9 +121,9 @@ class PDFGenerate
             <td style="width: 33%; font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Meal Request</td>
         </tr>
         <tr>
-            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">'.$result['group_name'].'</td>
-            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">'.$result['no_of_guest'].'</td>
-            <td style="width: 33%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">'.$result['meal_request'].'</td>
+            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">' . $result['group_name'] . '</td>
+            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">' . $result['no_of_guest'] . '</td>
+            <td style="width: 33%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $result['meal_request'] . '</td>
         </tr>
     </table>
 </div>
@@ -139,12 +139,12 @@ class PDFGenerate
             <td style="border-right: solid 1px #333; width: 14%; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">QUAD SHARING</td> 
         </tr>
         <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">'.$result['rooming']['TWIN'].'</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">'.$result['rooming']['CWB'].'</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">'.$result['rooming']['CNB'].'</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">'.$result['rooming']['TRIPLE'].'</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">'.$result['rooming']['SINGLE'].'</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">'.$result['rooming']['QUAD SHARING'].'</td> 
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">' . $result['rooming']['TWIN'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">' . $result['rooming']['CWB'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">' . $result['rooming']['CNB'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">' . $result['rooming']['TRIPLE'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">' . $result['rooming']['SINGLE'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 14%;">' . $result['rooming']['QUAD SHARING'] . '</td> 
         </tr>
     </table>
 </div>
@@ -170,47 +170,31 @@ class PDFGenerate
     </table>';
     }
 
-    private function getGuestNo($json_data){
-        $guests =json_decode($json_data,true);
-        $total_no = 0;
-        foreach($guests as $key=>$guest){
-            switch(trim($key)){
-                case 'TWIN': 
-                    $guest_no = $guest *2;
-                break;
-                case 'TRIPLE':
-                    $guest_no = $guest *3;
-                break;
-                case 'QUAD SHARING':
-                    $guest_no = $guest *4;
-                break;
-                default:
-                    $guest_no = $guest;
-            }
-            $total_no = $total_no + $guest_no ;
-        }
-        return $total_no;
-    }
-    private function roomingDetails($json_data){
-        $guests =json_decode($json_data,true);
+    private function roomingDetails($json_data)
+    {
+        $guests = json_decode($json_data, true);
         $rooming = [];
-        foreach($guests as $key=>$guest){
+        foreach ($guests as $key => $guest) {
             $key = trim($key);
             $rooming["$key"] = $guest;
         }
-       return $rooming;
+        return $rooming;
     }
-    private function calculateNights($checkIn, $checkOut) {
+
+    private function calculateNights($checkIn, $checkOut)
+    {
         $checkInDate = new DateTime($checkIn);
-        $checkOutDate = new DateTime($checkOut); 
-        $interval = $checkOutDate->diff($checkInDate); 
+        $checkOutDate = new DateTime($checkOut);
+        $interval = $checkOutDate->diff($checkInDate);
         $nights = $interval->days;
-    
+
         return $nights;
     }
-    private function getHotelDetails($data, $hotel_index) {
-        
-        if(isset($data["'night'"][$hotel_index])){
+
+    private function getHotelDetails($data, $hotel_index)
+    {
+
+        if (isset($data["'night'"][$hotel_index])) {
             return [
                 'night' => $this->calculateNights($data["'check_in'"][$hotel_index], $data["'check_out'"][$hotel_index]),
                 'amount' => $data["'amount'"][$hotel_index],
@@ -218,44 +202,55 @@ class PDFGenerate
                 'check_in' => $data["'check_in'"][$hotel_index],
                 'check_out' => $data["'check_out'"][$hotel_index],
                 'mobile' => $data["'mobile'"][$hotel_index],
-                'meal_plan'=>'Half Board',
-                'lunch'=>'Not included',
-                'status'=>'CNF', 
+                'meal_plan' => 'Half Board',
+                'lunch' => 'Not included',
+                'status' => 'CNF',
             ];
-        }else{
+        } else {
             return [
-                'night' =>0,
+                'night' => 0,
                 'amount' => 0,
                 'name' => '',
                 'check_in' => '',
                 'check_out' => '',
                 'mobile' => '',
-                'meal_plan'=>'',
-                'lunch'=>'',
-                'status'=>'', 
-            ]; 
+                'meal_plan' => '',
+                'lunch' => '',
+                'status' => '',
+            ];
         }
-         
     }
-    private function getVoucherData($query_id,$index){
-        
+
+    private function getVoucherData($query_id, $index)
+    {
+
         $db = getDbInstance();
         $db->where('id', $query_id);
         $result = $db->getOne("agent_queries");
-       // print_r( $result );
+        // print_r( $result );
         $data = [];
         $data['group_name'] =  $result['name'];
-        $data['no_of_guest'] = $this->getGuestNo($result['person']);
+        $data['no_of_guest'] = $result['total_pax'];
         $data['meal_request'] = 'No';
         $data['rooming'] = $this->roomingDetails($result['person']);
         //print_r( $data['rooming']);
-        $data['hotel'] = $this->getHotelDetails($result['hotel_details'],$index);
+        $data['hotel'] = $this->getHotelDetails($result['hotel_details'], $index);
         return $data;
     }
-/**
- * generate hotel booking HTML
- */
-    public function transport_booking($data=[])
+
+    private function getPackageData($package_id)
+    {
+
+        $db = getDbInstance();
+        $db->where('package_id', $package_id);
+        $db->where('itineary', ['TWIN Fixed', 'CWB Fixed', 'CNB Fixed', 'TRIPLE Fixed', 'SINGLE Fixed', 'QUAD SHARING Fixed'], "NOT IN");
+        $result = $db->get("package_details");
+        return $result;
+    }
+    /**
+     * generate hotel booking HTML
+     */
+    public function transport_booking($data = [])
     {
         $this->html = '<table cellpadding="0" cellspacing="0" style="width: 100%;">
         <tr>
@@ -280,8 +275,8 @@ class PDFGenerate
             <td style="width: 33%; font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Meal Request</td>
         </tr>
         <tr>
-            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">Arvind Family</td>
-            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">10</td>
+            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">' . $data['name'] . '</td>
+            <td style="border-right: solid 1px #333; border-bottom: solid 1px #333; padding: 5px; padding-left: 10px; width: 33%;">' . $data['total_pax'] . '</td>
             <td style="width: 33%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">No</td>
         </tr>
     </table>
@@ -291,23 +286,23 @@ class PDFGenerate
     <table cellpadding="0" cellspacing="0" style="width: 100%; border-top: solid 1px #333;">
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Duration:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">6 Days 5 Nights</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $data['duration'] . '</td>
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Travel Date:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">6 6 October 2024</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $data['tour_start_date'] . '</td>
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">No. of Pax:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">15</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $data['total_pax'] . '</td>
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Per Person Cost:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">₹23,500</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">₹'. round(($data['total_amount'] / $data['total_pax'])) . '</td>
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Total Cost:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">₹2,23,500</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">₹' . $data['total_pax'] . '</td>
         </tr>
     </table>
 </div>
@@ -323,28 +318,21 @@ class PDFGenerate
             <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold; width: 60px;">Meal Plan</td>
             <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">Location</td>
             <td style="font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Contact</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">1</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Hotel Radison Large hotel name</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">04-05-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">06-05-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">2</td>
+        </tr>';
+        $h_details =  json_decode($data["hotel_details"], true);
+        foreach ($h_details["'name'"] as $key => $name) {
+            $this->html .= ' <tr>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">'.($key+1).'</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $name . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $h_details["'check_in'"][$key] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $h_details["'check_out'"][$key] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $this->calculateNights($h_details["'check_in'"][$key], $h_details["'check_out'"][$key]) . '</td>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">MAP</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Leh</td>
-            <td style="padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">9999999999</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">2</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Hotel Radison</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">04-05-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">06-05-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">2</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">MAP</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Leh</td>
-            <td style="padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">9999999999</td>
-        </tr>
-       
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $h_details["'location'"][$key] . '</td>
+            <td style="padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $h_details["'mobile'"][$key] . '</td>
+        </tr>';
+        }
+        $this->html .= '        
     </table>
 </div>
 <div class="itineary-details">
@@ -355,39 +343,23 @@ class PDFGenerate
             <td style="border-right: solid 1px #333; width: 13%; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">Date</td>
             <td style="border-right: solid 1px #333; width: 13%; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">Day</td>
             <td style="width: 61%; font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Short Itineary</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Day 1</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">30-08-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Friday</td>
-            <td style="width: 61%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Arrive In Srinagar</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Day 2</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">31-08-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Saturday</td>
-            <td style="width: 61%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">You might have a brilliant tour plan in mind, but is it realistic? When creating a tour from scratch it’s wise to understand your competition and whether your ideas are realistic. So while the possibilities are endless, building sustainable tour business needs to look at the competition in your area.</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Day 3</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">01-09-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Sunday</td>
-            <td style="width: 61%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">You might have a brilliant tour plan in mind, but is it realistic? When creating a tour from scratch it’s wise to understand your competition and whether your ideas are realistic. So while the possibilities are endless, building sustainable tour business needs to look at the competition in your area.</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Day 4</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">02-09-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Monday</td>
-            <td style="width: 61%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">You might have a brilliant tour plan in mind, but is it realistic? When creating a tour from scratch it’s wise to understand your competition and whether your ideas are realistic. So while the possibilities are endless, building sustainable tour business needs to look at the competition in your area.</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Day 5</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">03-09-2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Tuesday</td>
-            <td style="width: 61%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">You might have a brilliant tour plan in mind, but is it realistic? When creating a tour from scratch it’s wise to understand your competition and whether your ideas are realistic. So while the possibilities are endless, building sustainable tour business needs to look at the competition in your area.</td>
-        </tr>
+        </tr>';
+        $results =  $this->getPackageData($data['package_id']);
+       
+        foreach ($results as $key => $result) {
+            $this->html .= '<tr>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Day ' . $result['day'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">' . $h_details["'check_in'"][$key] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">' . date('l', strtotime($h_details["'check_in'"][$key])) . '</td>
+            <td style="width: 61%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $result['itineary'] . '</td>
+        </tr>';
+        }
+        $this->html .= ' 
+         
+         
     </table>
-</div>
+</div>';
+        /*
 <div class="inclusion-exclusion-details">
     <h3 style="padding: 10px; background: #dfdfd5;">Inclusions & Exclusions</h3>
     <table cellpadding="0" cellspacing="0" style="width: 100%; border-top: solid 1px #333;">
@@ -408,31 +380,29 @@ class PDFGenerate
             <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Water Bottles</td>
         </tr>
     </table>
-</div>
-<div class="itineary-details">
+</div>'
+*/
+        $this->html .= '<div class="itineary-details">
     <h3 style="padding: 10px; background: #dfdfd5;">Transport Details</h3>
     <table cellpadding="0" cellspacing="0" style="width: 100%; border-top: solid 1px #333;">
         <tr style="border-bottom: solid 1px #333;">
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%; font-weight: bold;">Category</td>
             <td style="border-right: solid 1px #333; width: 20%; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">No. of Vehicle</td>
             <td style="border-right: solid 1px #333; width: 20%; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">Driver Name</td>
-            <td style="border-right: solid 1px #333; width: 20%; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">Mobile No.</td>
-            <td style="width: 20%; font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Region</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">Innova</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">2</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">Kumer</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">9999999999</td>
-            <td style="width: 20%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Leh</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">Innova</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">2</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">Kumer</td>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">9999999999</td>
-            <td style="width: 20%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Leh</td>
-        </tr>
-    </table>';
+            <td style="border-right: solid 1px #333; width: 20%; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">Mobile No.</td>            
+        </tr>';
+        $dr_details = json_decode($data['driver_details'], true);
+        foreach ($dr_details["'driver'"] as $key => $driver) {
+            $this->html .= '<tr>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">' . $dr_details["'type'"][$key] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">1</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">' . $driver . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 20%;">' . $dr_details["'mobile'"][$key] . '</td>
+             
+        </tr>';
+        }
+
+
+        $this->html .= ' </table>';
     }
 }
