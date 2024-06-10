@@ -22,17 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Conf
     $db->where('id', $id);
     $queries = $db->getOne("agent_queries");
     $hotel_details = !empty($queries['hotel_details']) ? json_decode($queries['hotel_details'], true) : [];
-    sendEmail('12345', 'pappuchauhan3391@gmail.com');
-    die;
+     
     $pdfObj1 = new PDFGenerate; 
-   echo   $pdfObj1->transport_booking($queries);
-      $pdfObj1->generatePDF();
-    echo '<br>'; die;
+    $pdfObj1->transport_booking($queries);
+    $pdfObj1->generatePDF(); 
+    // send mail here for first PDF
     $pdfObj2 = new PDFGenerate;
     foreach ($hotel_details["'name'"] as $hkey => $hname) {
     $pdfObj2->hotel_voucher(['query_id'=>$id,'index'=>$hkey]);     
     $pdfObj2->generatePDF();
-    die;
+    //send mail here for the all hotels 
+    //die;
     }
 
 
