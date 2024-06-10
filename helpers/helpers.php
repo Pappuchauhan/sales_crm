@@ -198,11 +198,11 @@ function sendEmail($otp, $to)
     $mail->SMTPSecure = 'tls';
     $mail->Port = 587;
     $mail->isHTML(true);
-    $mail->Username = 'agent@go2ladakh.in';
-    $mail->Password = 'uyxh thzu huwg sleq';
+    $mail->Username = GMAIL_USER;
+    $mail->Password = GMAIL_PASSWORD;
 
     // Set sender and recipient
-    $mail->setFrom('agent@go2ladakh.in', "Ladakh DMC");
+    $mail->setFrom(GMAIL_FROM, "Ladakh DMC");
     $mail->addAddress($to);
 
     // Set email subject and body
@@ -320,3 +320,9 @@ define("Fuel", 500);
 define("Backup", 500);
 
 define("PAGE_LIMIT", 15);
+
+//mail details
+
+define("GMAIL_USER", 'agent@go2ladakh.in');
+define("GMAIL_PASSWORD", 'uyxh thzu huwg sleq');
+define("GMAIL_FROM", 'agent@go2ladakh.in');

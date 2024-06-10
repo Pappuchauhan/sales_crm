@@ -2,10 +2,11 @@
 session_start();
 require_once './config/config.php';
 require_once 'includes/agent_header.php'; 
+require_once 'PDFGenerate.php';
 $edit = false;
 $id = isset($_GET['ID']) && !empty($_GET['ID']) ? decryptId($_GET['ID']) : "";
 $disabled = $_SESSION['admin_type']=='Admin'?'disabled':'';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Generate Booking') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Confirm Booking') {
     $data_to_store = array_filter($_POST);
     $save_data = [];
     $save_data["type"] = "Booking";
@@ -14,6 +15,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Gene
     $db->where('id', $id);
     $last_id = $db->update('agent_queries', $save_data);
     $_SESSION['success'] = "The booking has been generated successfully.";
+
+    //PDF send to Mail
+    $pdfObj = new PDFGenerate; 
+    $db = getDbInstance();
+    $db->where('id', $id);
+    $queries = $db->getOne("agent_queries");
+    $hotel_details = !empty($queries['hotel_details']) ? json_decode($queries['hotel_details'], true) : [];
+    
+    foreach ($hotel_details["'name'"] as $hkey => $hname) {
+    $pdfObj->hotel_voucher(['query_id'=>$id,'index'=>$hkey]);
+     
+   echo  $pdfObj->generatePDF();
+    die;
+    }
+    //
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Edit Quote') {
     $data_to_store = array_filter($_POST);
     $save_data = [];
@@ -154,6 +170,9 @@ $json_vehicle = json_encode($vehicleData);
                                 </div>
                                 <input type="hidden" name="package_id" value="<?php echo $queries['package_id'] ?? ''; ?>">
                                 <input type="hidden" name="category" value="<?php echo $queries['category'] ?? ''; ?>">
+                                <input type="hidden" name="total_amount" value="<?php echo $queries['total_amount'] ?? ''; ?>">
+                                <input type="hidden" name="total_pax" value="<?php echo $queries['total_pax'] ?? ''; ?>">
+                                <input type="hidden" name="tour_end_date" value="<?php echo $queries['tour_end_date'] ?? ''; ?>">
 
                                 <div class="row mb-3" id="package-other-details">
                                     <?php include("./ajax/package_other_details_edit.php") ?>
@@ -775,8 +794,8 @@ $json_vehicle = json_encode($vehicleData);
                             </div>
                             <?php if (!empty($disabled)) { ?>
                                 <div class="row get-quote-btn" style="margin-top: 10px;">
-                                    <button type="submit" class="btn btn-primary">Generate Booking</button>
-                                    <input type="hidden" name="form_submit_type" value="Generate Booking" />
+                                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                                    <input type="hidden" name="form_submit_type" value="Confirm Booking" />
                                 </div>
                             <?php } else { ?>
                                 <div class="row get-quote-btn" style="margin-top: 10px;">
@@ -1019,6 +1038,21 @@ $json_vehicle = json_encode($vehicleData);
         } else {
             alert("Please select package name")
         }
+    }
+
+    function calculateTourEndDate() {
+        const startDate = $('input[name="tour_start_date"]').val();
+        const string = $("#duration").val();
+        const pattern = /(\d+)\s*Days?\s*(\d+)\s*Nights?/i;
+        const matches = string.match(pattern); 
+        nights =  parseInt(matches[2], 10);
+        
+        const startDateTime = new Date(startDate);
+    
+        startDateTime.setDate(startDateTime.getDate() + nights);
+    
+        const endDate = startDateTime.toISOString().split('T')[0];
+        $('input[name="tour_end_date"]').val(endDate);
     }
 
     function itinerary_list() {
@@ -1476,6 +1510,9 @@ $json_vehicle = json_encode($vehicleData);
             <td>${finalPrice}</td>
         </tr>
     `;
+    $('input[name="total_amount"]').val(finalPrice);
+    $('input[name="total_pax"]').val(totalPax);
+    calculateTourEndDate();
 
         targetTableBody.insertAdjacentHTML('beforeend', totalRows);
 

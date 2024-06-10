@@ -1,5 +1,5 @@
 <?php
-require '/Dompdf/vendor/autoload.php';
+require './Dompdf/vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -21,21 +21,32 @@ class PDFGenerate
 
     public function generatePDF()
     {
+        // Set the HTML content
         $finalHtml = $this->setHtml();
+    
         // Load the HTML into Dompdf
         $this->dompdf->loadHtml($finalHtml);
-
+    
         // (Optional) Set up the paper size and orientation
         $this->dompdf->setPaper('A4', 'portrait'); // 'portrait' or 'landscape'
-
+    
         // Render the HTML as PDF
         $this->dompdf->render();
-
-        // Output the generated PDF to Browser
-        $this->dompdf->stream('document.pdf', [
-            'Attachment' => false // Set to true to download the PDF file, false to display in the browser
-        ]);
+    
+        // Get the generated PDF content
+        $pdfOutput = $this->dompdf->output();
+        $timestamp = time();
+        $dynamicFileName = "document_{$timestamp}.pdf";
+        // Define the file path and name
+        $filePath = 'uploads/'.$dynamicFileName;
+    
+        // Save the PDF file to the specified path
+        file_put_contents($filePath, $pdfOutput);
+    
+        // Optionally, you can return the file path or any other relevant information
+        return $filePath;
     }
+    
 
     public function setHtml()
     {
@@ -187,7 +198,7 @@ class PDFGenerate
             $key = trim($key);
             $rooming["$key"] = $guest;
         }
-        $rooming;
+       return $rooming;
     }
     private function calculateNights($checkIn, $checkOut) {
         $checkInDate = new DateTime($checkIn);
@@ -231,11 +242,13 @@ class PDFGenerate
         $db = getDbInstance();
         $db->where('id', $query_id);
         $result = $db->getOne("agent_queries");
+       // print_r( $result );
         $data = [];
         $data['group_name'] =  $result['name'];
         $data['no_of_guest'] = $this->getGuestNo($result['person']);
         $data['meal_request'] = 'No';
         $data['rooming'] = $this->roomingDetails($result['person']);
+        //print_r( $data['rooming']);
         $data['hotel'] = $this->getHotelDetails($result['hotel_details'],$index);
         return $data;
     }
