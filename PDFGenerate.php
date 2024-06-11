@@ -19,7 +19,7 @@ class PDFGenerate
     }
 
 
-    public function generatePDF()
+    public function generatePDF($file_name)
     {
         // Set the HTML content
         $finalHtml = $this->setHtml();
@@ -32,14 +32,11 @@ class PDFGenerate
 
         // Render the HTML as PDF
         $this->dompdf->render();
-
         // Get the generated PDF content
-        $pdfOutput = $this->dompdf->output();
-        $timestamp = time();
-        $dynamicFileName = "document_{$timestamp}.pdf";
+        $pdfOutput = $this->dompdf->output(); 
+        $dynamicFileName = "{$file_name}.pdf";
         // Define the file path and name
         $filePath = 'uploads/' . $dynamicFileName;
-
         // Save the PDF file to the specified path
         file_put_contents($filePath, $pdfOutput);
 
@@ -98,16 +95,17 @@ class PDFGenerate
     public function hotel_voucher($data = [])
     {
         $result =  $this->getVoucherData($data['query_id'], $data['index']);
+        $logo = $this->getLogo($result['agent_id']);
         $this->html = '<table cellpadding="0" cellspacing="0" style="width: 100%;">
         <tr>
             <td style="border-right: solid 1px #333; padding: 10px; width: 70%;">
                 <h3 style="margin-bottom: 8px;">Hotel Voucher</h3>
-                <p style="margin-bottom: 3px;">Go2ladakh Booking ID: <strong>GLKH209301</strong></p>
-                <p style="margin-bottom: 3px;">Hotel ID or Name: <strong>Taj Hotel</strong></p>
-                <p style="margin-bottom: 3px;">Booking Date: <strong>20 June 2024</strong></p>
+                <p style="margin-bottom: 3px;">Go2ladakh Booking ID: <strong>'.$result['booking_code'].'</strong></p>
+                <p style="margin-bottom: 3px;">Hotel ID or Name: <strong>'.$result['hotel']['name'].'</strong></p>
+                <p style="margin-bottom: 3px;">Booking Date: <strong>'.date("d-m-Y",strtotime($result['booking_date'])).'</strong></p>
             </td>
             <td style="text-align: right; width: 30%; padding: 10px;">
-                <img src="black-logo.png" alt="go2ladakh-logo" width="150px" />
+                <img src="'.$logo.'" alt="go2ladakh-logo" width="150px" />
             </td>
         </tr>
     </table>
@@ -160,12 +158,12 @@ class PDFGenerate
             <td style="width: 14%; font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Status</td>
         </tr>
         <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">12/02/2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">12/03/2024</td>
-            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">30</td>
-            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">Half Board</td>
-            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">Not included</td>
-            <td style="width: 14%; padding: 5px; padding-left: 10px;">CNF</td>
+            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">' . $result['hotel']['check_in'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">' . $result['hotel']['check_out'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">' . $this->calculateNights($result['hotel']['check_in'], $result['hotel']['check_out']) . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">' . $result['hotel']['meal_plan'] . '</td>
+            <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; width: 14%;">' . $result['hotel']['lunch'] . '</td>
+            <td style="width: 14%; padding: 5px; padding-left: 10px;">' . $result['hotel']['status'] . '</td>
         </tr>
     </table>';
     }
@@ -193,7 +191,7 @@ class PDFGenerate
 
     private function getHotelDetails($data, $hotel_index)
     {
-
+        $data = json_decode($data, true); 
         if (isset($data["'night'"][$hotel_index])) {
             return [
                 'night' => $this->calculateNights($data["'check_in'"][$hotel_index], $data["'check_out'"][$hotel_index]),
@@ -232,7 +230,11 @@ class PDFGenerate
         $data['group_name'] =  $result['name'];
         $data['no_of_guest'] = $result['total_pax'];
         $data['meal_request'] = 'No';
+        $data['agent_id'] = $result['created_by'];
+        $data['booking_date'] = $result['created_at'];
+        $data['booking_code'] = $result['booking_code'];
         $data['rooming'] = $this->roomingDetails($result['person']);
+        
         //print_r( $data['rooming']);
         $data['hotel'] = $this->getHotelDetails($result['hotel_details'], $index);
         return $data;
@@ -252,16 +254,17 @@ class PDFGenerate
      */
     public function transport_booking($data = [])
     {
+       $logo = $this->getLogo($data['created_by']); 
         $this->html = '<table cellpadding="0" cellspacing="0" style="width: 100%;">
         <tr>
             <td style="border-right: solid 1px #333; padding: 10px; width: 70%;">
                 <h3 style="margin-bottom: 8px;">Hotel Voucher</h3>
-                <p style="margin-bottom: 3px;">Go2ladakh Booking ID: <strong>GLKH209301</strong></p>
-                <p style="margin-bottom: 3px;">Hotel ID or Name: <strong>Taj Hotel</strong></p>
-                <p style="margin-bottom: 3px;">Booking Date: <strong>20 June 2024</strong></p>
+                <p style="margin-bottom: 3px;">Go2ladakh Booking ID: <strong>'.$data['booking_code'].'</strong></p>
+                <p style="margin-bottom: 3px;">Duration: <strong>'.$data['duration'].'</strong></p>
+                <p style="margin-bottom: 3px;">Tour Start Date: <strong>'.date("d-m-Y",strtotime($data['tour_start_date'])).'</strong></p>
             </td>
             <td style="text-align: right; width: 30%; padding: 10px;">
-                <img src="black-logo.png" alt="go2ladakh-logo" width="150px" />
+                <img src="'.$logo.'" alt="go2ladakh-logo" width="150px" />
             </td>
         </tr>
     </table>
@@ -290,7 +293,7 @@ class PDFGenerate
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Travel Date:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $data['tour_start_date'] . '</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . date("d-m-Y",strtotime($data['tour_start_date'])) . '</td>
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">No. of Pax:</td>
@@ -298,11 +301,11 @@ class PDFGenerate
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Per Person Cost:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">₹'. round(($data['total_amount'] / $data['total_pax'])) . '</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Rs.' . round(($data['total_amount'] / $data['total_pax'])) . '</td>
         </tr>
         <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Total Cost:</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">₹' . $data['total_pax'] . '</td>
+            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Rs.' . $data['total_amount'] . '</td>
         </tr>
     </table>
 </div>
@@ -322,7 +325,7 @@ class PDFGenerate
         $h_details =  json_decode($data["hotel_details"], true);
         foreach ($h_details["'name'"] as $key => $name) {
             $this->html .= ' <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">'.($key+1).'</td>
+            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . ($key + 1) . '</td>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $name . '</td>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $h_details["'check_in'"][$key] . '</td>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . $h_details["'check_out'"][$key] . '</td>
@@ -345,7 +348,7 @@ class PDFGenerate
             <td style="width: 61%; font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Short Itineary</td>
         </tr>';
         $results =  $this->getPackageData($data['package_id']);
-       
+
         foreach ($results as $key => $result) {
             $this->html .= '<tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 13%;">Day ' . $result['day'] . '</td>
@@ -404,5 +407,71 @@ class PDFGenerate
 
 
         $this->html .= ' </table>';
+    }
+
+
+    public function sendMailToClient($to, $data = [], $imagePath = '')
+    {
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
+        $mail->SMTPDebug = 0;
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+        $mail->isHTML(true);
+        $mail->Username = GMAIL_USER;
+        $mail->Password = GMAIL_PASSWORD;
+
+        // Set sender and recipient
+        $mail->setFrom(GMAIL_FROM, "Ladakh DMC");
+        $mail->addAddress($to);
+        if ($data['type'] == 'voucher') {
+            $mail->Subject = 'Go2 find voucher details';
+            $mail->Body = "<p>Dear Agent,</p>
+            <p>Please find the attachment</p>         
+            <p>Thank you,</p>
+            <p>Ladakh DMC</p>";
+        } elseif ($data['type'] == 'transport') {
+            $mail->Subject = 'Go2 find transport details';
+            $mail->Body = "<p>Dear Agent,</p>
+        <p>Please find the attachment</p>         
+        <p>Thank you,</p>
+        <p>Ladakh DMC</p>";
+        }
+        // Set email subject and body
+
+
+        // Add the image attachment
+        if (!empty($imagePath)) {
+            $mail->addAttachment($imagePath); // The second parameter is optional and sets the name of the attachment
+        }
+
+        $result = $mail->send();
+        if (!$result) {
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        }
+
+        return $result;
+    }
+    public function getLogo($agentId)
+    {
+        if (empty($agentId)) {
+            $logo = "uploads/black-logo.png";
+        } else {
+            $db = getDbInstance();
+            $db->where('id', $agentId);
+            $result = $db->getOne("agents"); 
+            if (isset($result['logo']) && !empty($result['logo'])) {
+                $logo =  $result['logo'];
+            } else {
+                $logo = "uploads/black-logo.png";
+            }            
+        }
+       // echo $logo; die;
+       //$imageData;
+       $img  = base64_encode(file_get_contents($logo));
+        return  'data:image/jpeg;base64,' . $img;
+       // return $logoEncode = 
     }
 }

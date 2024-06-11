@@ -5,8 +5,43 @@ require_once 'includes/agent_header.php';
 require_once 'PDFGenerate.php';
 $edit = false;
 $id = isset($_GET['ID']) && !empty($_GET['ID']) ? decryptId($_GET['ID']) : "";
-$disabled = $_SESSION['admin_type']=='Admin'?'disabled':'';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Confirm Booking') {
+ 
+if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Accept Booking'){
+
+    $data_to_store = array_filter($_POST);
+    $save_data = [];
+    $save_data["is_accept"] = "Yes";
+    $save_data["updated_by"] = $_SESSION['user_id']; 
+    $db = getDbInstance();
+    $db->where('id', $id);
+    $last_id = $db->update('agent_queries', $save_data);
+    $_SESSION['success'] = "The booking has been accepted successfully.";
+
+    //PDF send to Mail 
+    $file_name = "transport_booking_{$id}_".uniqid();
+    $db = getDbInstance();
+    $db->where('id', $id);
+    $queries = $db->getOne("agent_queries");
+    $hotel_details = !empty($queries['hotel_details']) ? json_decode($queries['hotel_details'], true) : [];
+     
+    $pdfObj1 = new PDFGenerate; 
+    $pdfObj1->transport_booking($queries);
+    $filePath = $pdfObj1->generatePDF($file_name);  
+   // $pdfObj1->sendMailToClient("pappuchauhan68@gmail.com", ['type'=>'transport'],  $filePath);
+    // send mail here for first PDF
+   
+    foreach ($hotel_details["'name'"] as $hkey => $hname) {
+        $pdfObj2 = new PDFGenerate; 
+        $file_name = "hotel_voucher_{$hname}_{$id}_".uniqid();
+        $pdfObj2->hotel_voucher(['query_id'=>$id,'index'=>$hkey]);     
+        $filePath =  $pdfObj2->generatePDF($file_name);
+       // $pdfObj2->sendMailToClient("pappuchauhan68@gmail.com", ['type'=>'voucher'],  $filePath);
+    //send mail here for the all hotels 
+    //die;
+    }
+
+
+}else if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Confirm Booking') {
     $data_to_store = array_filter($_POST);
     $save_data = [];
     $save_data["type"] = "Booking";
@@ -15,28 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Conf
     $db->where('id', $id);
     $last_id = $db->update('agent_queries', $save_data);
     $_SESSION['success'] = "The booking has been generated successfully.";
-
-    //PDF send to Mail
-   
-    $db = getDbInstance();
-    $db->where('id', $id);
-    $queries = $db->getOne("agent_queries");
-    $hotel_details = !empty($queries['hotel_details']) ? json_decode($queries['hotel_details'], true) : [];
-     
-    $pdfObj1 = new PDFGenerate; 
-    $pdfObj1->transport_booking($queries);
-    $pdfObj1->generatePDF(); 
-    // send mail here for first PDF
-    $pdfObj2 = new PDFGenerate;
-    foreach ($hotel_details["'name'"] as $hkey => $hname) {
-    $pdfObj2->hotel_voucher(['query_id'=>$id,'index'=>$hkey]);     
-    $pdfObj2->generatePDF();
-    //send mail here for the all hotels 
-    //die;
-    }
-
-
-    //
+ 
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Edit Quote') {
     $data_to_store = array_filter($_POST);
     $save_data = [];
@@ -74,6 +88,8 @@ foreach ($vehicles as $vehicle) {
     $vehicleData[$vehicle['vehicle_type']] = $vehicle;
 }
 $json_vehicle = json_encode($vehicleData);
+
+$disabled = $queries['type']=='Booking'?'disabled':'';
 ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -558,7 +574,7 @@ $json_vehicle = json_encode($vehicleData);
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                     <h3 class="mt-3 mb-3">Hotel Details</h3>
-                                    <?php if (!empty($disabled)) { ?>
+                                    <?php if ($_SESSION['admin_type'] == 'Admin' && $queries['is_accept']=='No') { ?>
                                         <button type="button" id="change-hotel" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Choose Hotel</button>
                                     <?php } ?>
                                 </div>
@@ -686,7 +702,7 @@ $json_vehicle = json_encode($vehicleData);
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                     <h3 class="mt-3 mb-3">Transport</h3>
-                                    <?php if (!empty($disabled)) { ?>
+                                    <?php if ($_SESSION['admin_type'] == 'Admin' && $queries['is_accept']=='No') { ?>
                                         <button type="button" id="driver-change" class="btn btn-primary" data-toggle="modal" data-target=".bd-transport-modal-xl">Choose Driver</button>
                                     <?php } ?>
                                 </div>
@@ -799,16 +815,28 @@ $json_vehicle = json_encode($vehicleData);
                                     </div>
                                 </div>
                             </div>
-                            <?php if (!empty($disabled)) { ?>
+                            <?php if ($_SESSION['admin_type'] == 'Agent' && empty($disabled)) { ?>
                                 <div class="row get-quote-btn" style="margin-top: 10px;">
-                                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
-                                    <input type="hidden" name="form_submit_type" value="Confirm Booking" />
-                                </div>
-                            <?php } else { ?>
+                                <div  class="d-flex justify-content-between">
+                                    <button type="submit" name="form_submit_type" value="Edit Quote" class="btn btn-primary">Edit Quote</button>
+                                    <button type="submit" class="btn btn-primary"  name="form_submit_type" value="Confirm Booking">Confirm Booking</button>
+                                    
+                                    </div>
+                                </div>                             
+                            <?php } ?>
+
+                            <?php if ($_SESSION['admin_type'] == 'Admin') { ?>
                                 <div class="row get-quote-btn" style="margin-top: 10px;">
-                                    <input type="hidden" name="form_submit_type" value="Edit Quote" />
-                                    <button type="submit" class="btn btn-primary">Edit Quote</button>
-                                </div>
+                                <div  class="d-flex justify-content-between">
+                                    <?php if(empty($disabled)){?>
+                                    <button type="submit" name="form_submit_type" value="Edit Quote" class="btn btn-primary">Edit Quote</button>
+                                    <?php } 
+                                    if(!empty($disabled) && $queries['is_accept']=='No'){
+                                    ?>
+                                    <button type="submit" class="btn btn-primary"  name="form_submit_type" value="Accept Booking">Accept Booking</button>
+                                    <?php } ?>
+                                    </div>
+                                </div>                             
                             <?php } ?>
                         </div>
                     </div>

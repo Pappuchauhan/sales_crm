@@ -130,7 +130,7 @@ $total_pages = $db->totalPages;
                       <td class="border-right-dark">₹<?=$row['total_amount']?></td>
                       <td class="border-right-dark">₹<?=$row['your_budget']?></td>
                       <td class="border-right-dark"><?=$row['gst_no']?></td>
-                      <td class="border-right-dark"><a href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>">Edit</a></td>
+                      <td class="border-right-dark"><a href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>">View</a></td>
                       
                       </tr>
                     <?php

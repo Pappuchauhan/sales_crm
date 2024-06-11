@@ -1,8 +1,8 @@
 <?php
 
-define("GMAIL_USER", 'agent@go2ladakh.in');
-define("GMAIL_PASSWORD", 'uyxh thzu huwg sleq');
-define("GMAIL_FROM", 'agent@go2ladakh.in');
+define("GMAIL_USER", 'pappuchauhan3391@gmail.com');
+define("GMAIL_PASSWORD", 'fgas ugdq spbl pbpm');
+define("GMAIL_FROM", 'pappuchauhan3391@gmail.com');
 
 /**
  * Function to generate random string.
