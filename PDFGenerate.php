@@ -60,8 +60,7 @@ class PDFGenerate
                     padding: 0;
                 }
                 .wrapper{
-                    width: 620px;
-                    height: 100%;
+                    width: 620px; 
                     border: solid 1px #333;
                     margin: 0 auto;
                     margin-top: 10px;
