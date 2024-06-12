@@ -24,7 +24,7 @@ if (!$order_by) {
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
 $db->join('agents', 'agents.id = agent_queries.created_by', 'LEFT');
-$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount','total_pax','full_name');
+$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount','total_pax','full_name','is_accept');
 $db->where('agent_queries.type', 'Booking');
 
 
@@ -50,7 +50,12 @@ $total_pages = $db->totalPages;
   <!-- Content wrapper -->
   <div class="content-wrapper">
     <!-- Content -->
-
+<style>
+  .style{
+    color:red !important;
+    font-weight: bold;
+  }
+</style>
     <div class="container-xxl flex-grow-1 container-p-y">
       <form>
         <div class="card mb-4">
@@ -94,6 +99,7 @@ $total_pages = $db->totalPages;
                     <tr class="text-nowrap bg-dark align-middle">
                       <th class="text-white border-right-white">#</th>
                       <th class="text-white border-right-white">Booking Code</th>
+                      <th class="text-white border-right-white">Booking Accepted</th>
                       <th class="text-white border-right-white">Booking Date</th>  
                       <th class="text-white border-right-white">Agent Name</th>
                       <th class="text-white border-right-white">Package Type</th>
@@ -113,11 +119,12 @@ $total_pages = $db->totalPages;
                     <?php
                     $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                     foreach ($rows as $row) :
-
+                     $class =  $row['is_accept'] =='No'?"style":'';
                     ?>
                       <td class="border-right-dark"><?= $k ?></td>
 
-                      <td class="border-right-dark"><?php echo xss_clean($row['booking_code']); ?></td>
+                      <td class="border-right-dark <?=$class?>"><?php echo xss_clean($row['booking_code']); ?></td>
+                      <td class="border-right-dark"><?=$row['is_accept'] ?></td>
                       <td class="border-right-dark"><?php echo xss_clean(date("Y-m-d",strtotime($row['created_at']))); ?></td> 
                       <td class="border-right-dark"><?php echo xss_clean($row['full_name']); ?></td>
                       <td class="border-right-dark">Group Booking</td>

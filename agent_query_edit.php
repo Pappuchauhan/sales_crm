@@ -23,21 +23,41 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Accep
     $db->where('id', $id);
     $queries = $db->getOne("agent_queries");
     $hotel_details = !empty($queries['hotel_details']) ? json_decode($queries['hotel_details'], true) : [];
-     
+    
+   // get agent email
+    $db = getDbInstance();
+    $db->where('id', $queries['created_by']);
+    $agent_detail = $db->getOne("agents",['email_id']);
+    $agent_email = $agent_detail['email_id'];
+    // get Logged in admin email
+    $db = getDbInstance();
+    $db->where('id', $_SESSION['user_id']);
+    $admin_detail = $db->getOne("agents",['email_id']);
+    $admin_email = $admin_detail['email_id'];
+
     $pdfObj1 = new PDFGenerate; 
     $pdfObj1->transport_booking($queries);
     $filePath = $pdfObj1->generatePDF($file_name);  
-   // $pdfObj1->sendMailToClient("pappuchauhan68@gmail.com", ['type'=>'transport'],  $filePath);
+    $pdfObj1->sendMailToClient( $agent_email, ['type'=>'transport'],  $filePath);
+    $pdfObj1->sendMailToClient( $admin_email, ['type'=>'transport'],  $filePath);
     // send mail here for first PDF
+
    
     foreach ($hotel_details["'name'"] as $hkey => $hname) {
         $pdfObj2 = new PDFGenerate; 
         $file_name = "hotel_voucher_{$hname}_{$id}_".uniqid();
         $pdfObj2->hotel_voucher(['query_id'=>$id,'index'=>$hkey]);     
         $filePath =  $pdfObj2->generatePDF($file_name);
-       // $pdfObj2->sendMailToClient("pappuchauhan68@gmail.com", ['type'=>'voucher'],  $filePath);
-    //send mail here for the all hotels 
-    //die;
+        $pdfObj2->sendMailToClient($agent_email, ['type'=>'voucher'],  $filePath);
+        $pdfObj2->sendMailToClient($admin_email, ['type'=>'voucher'],  $filePath);
+
+        $db = getDbInstance();
+        $db->where('hotel_name', $hname);
+        $hotel_detail = $db->getOne("hotels",['email_id']);
+        $hotel_email = $hotel_detail['email_id'];
+
+        $pdfObj2->sendMailToClient($hotel_email, ['type'=>'voucher'],  $filePath);
+     
     }
 
 

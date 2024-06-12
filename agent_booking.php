@@ -25,7 +25,7 @@ if (!$order_by) {
  
 $db = getDbInstance();
 $db->join('agents', 'agents.id = agent_queries.created_by', 'LEFT');
-$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount','total_pax');
+$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount','total_pax','is_accept');
 $db->where('agent_queries.type', 'Booking');
 
 
@@ -51,7 +51,12 @@ $total_pages = $db->totalPages;
 
 <div class="content-wrapper">
 
-
+<style>
+  .style{
+    color:red !important;
+    font-weight: bold;
+  }
+</style>
   <div class="container-xxl flex-grow-1 container-p-y">
     <form>
       <div class="card mb-4">
@@ -101,6 +106,7 @@ $total_pages = $db->totalPages;
                     <th class="text-white border-right-white">#</th>
  
                     <th class="text-white border-right-white">BOOKING NO</th>
+                    <th class="text-white border-right-white">Booking Accepted</th>
                     <th class="text-white border-right-white">PACKAGE TYPE</th>
                     <th class="text-white border-right-white">GUEST NAME</th>
                     <th class="text-white border-right-white">NO OF PAX</th>
@@ -117,12 +123,14 @@ $total_pages = $db->totalPages;
                 <tbody class="table-border-bottom-0">
                   <?php
                   $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
-                  foreach ($rows as $row) :                     
+                  foreach ($rows as $row) : 
+                    $class =  $row['is_accept'] =='No'?"style":'';                    
                   ?>
                     <tr>
                       <td class="border-right-dark"><?= $k ?></td>
  
-                      <td class="border-right-dark"><?php echo xss_clean($row['booking_code']); ?></td>
+                      <td class="border-right-dark <?=$class?>"><?php echo xss_clean($row['booking_code']); ?></td>
+                      <td class="border-right-dark"><?=$row['is_accept'] ?></td>
                       <td class="border-right-dark">Group Booking</td>
                       <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
                       <td class="border-right-dark"><?=$row['total_pax']?></td>
