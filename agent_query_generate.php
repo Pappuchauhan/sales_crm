@@ -17,18 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
   $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
   $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []);
-
   $save_data["person"] = json_encode($data_to_store['person'] ?? []);
   $save_data["transport"] = json_encode($data_to_store['transport'] ?? []);
   $save_data["permit"] = $data_to_store['permit'] ?? "off";
   $save_data["guide"] = $data_to_store['guide'] ?? "off";
   $save_data["created_by"] = $_SESSION['user_id'];
-  $save_data["updated_by"] = $_SESSION['user_id']; 
-
-  $save_data["total_amount"] = $data_to_store['total_amount']; 
-  $save_data["without_gst"] = $data_to_store['without_gst'];   
-  $save_data["total_pax"] = $data_to_store['total_pax']; 
-  $save_data["tour_end_date"] = $data_to_store['tour_end_date']; 
+  $save_data["updated_by"] = $_SESSION['user_id'];
+  $save_data["inclusive"] = !empty($data_to_store['inclusive'])?$data_to_store['inclusive']:json_encode([]);
+  $save_data["exclusive"] = !empty($data_to_store['exclusive'])?$data_to_store['exclusive']:json_encode([]);
+  $save_data["total_amount"] = $data_to_store['total_amount'];
+  $save_data["without_gst"] = $data_to_store['without_gst'];
+  $save_data["total_pax"] = $data_to_store['total_pax'];
+  $save_data["tour_end_date"] = $data_to_store['tour_end_date'];
 
   $db = getDbInstance();
   $db->orderBy('id', 'desc');
@@ -43,8 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   $inserted_id = $db->insert('agent_queries', $save_data);
   $_SESSION['success'] = "The query has been generated successfully.";
-  header("Location: agent_query_edit.php?ID=".encryptId($inserted_id));
- 
+  header("Location: agent_query_edit.php?ID=" . encryptId($inserted_id));
 }
 
 
@@ -94,7 +93,7 @@ $json_vehicle = json_encode($vehicleData);
                   </div>
                   <div class="col-md">
                     <label class="form-label">Select Date</label>
-                    <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?=date('Y-m-d')?>">
+                    <input class="form-control" type="date" name="tour_start_date" onChange="return itinerary_list()" value="<?= date('Y-m-d') ?>">
                   </div>
                 </div>
 
@@ -124,6 +123,8 @@ $json_vehicle = json_encode($vehicleData);
                 <input type="hidden" name="without_gst">
                 <input type="hidden" name="total_pax">
                 <input type="hidden" name="tour_end_date">
+                <input type="hidden" name="exclusive">
+                <input type="hidden" name="inclusive">
 
                 <div class="row mb-3" id="package-other-details">
 
@@ -303,6 +304,21 @@ $json_vehicle = json_encode($vehicleData);
                     </table>
                   </div>
                 </div>
+                <h3 class="mt-3 mb-3">Exclusive / Inclusive</h3>
+
+                <div class="row mb-3">
+                  <div class="col">
+                    <h3 class="mt-3 mb-3 text-center" style="background-color: #233446; padding: 10px;   color: white;">Exclusive</h3>
+                    <ul class="list-group" id="exclusive"> 
+                    </ul>
+                  </div>
+                  <div class="col">
+                    <h3 class="mt-3 mb-3 text-center" style="background-color: #233446; padding: 10px;  color: white;">Inclusive</h3>
+                    <ul class="list-group" id="inclusive"> 
+                    </ul>
+                  </div>
+                </div>
+
                 <!--<h3 class="mt-3 mb-3">Emergency Contact Details</h3>
                 <div class="row mb-3">
                   <div class="table-responsive">
@@ -381,14 +397,14 @@ $json_vehicle = json_encode($vehicleData);
                 </div>
                 <div class="card" style="margin-top: 10px;height: 50px ! IMPORTANT;">
 
-              <div class="summary-detail">
-                  <div class="row mb-3" >
+                  <div class="summary-detail">
+                    <div class="row mb-3">
                       <div class="col-md text-bold"><label class="form-label"><strong>Your Budget</strong></label></div>
-                      <div class="col-md" id="summary-duration"><input type="number" name="your_budget"  class="form-control" ></div>
-                  </div>
+                      <div class="col-md" id="summary-duration"><input type="number" name="your_budget" class="form-control"></div>
+                    </div>
 
-              </div>
-              </div>
+                  </div>
+                </div>
               </div>
               <div class="row get-quote-btn" style="margin-top: 10px;">
                 <button type="submit" class="btn btn-primary">Generate Quote</button>
@@ -404,6 +420,8 @@ $json_vehicle = json_encode($vehicleData);
 </div>
 
 <script>
+  var inclusive = [];
+  var exclusive = [];
   $(document).ready(function() {
     $('#duration').change(function() {
       var duration = $('#duration').val();
@@ -445,20 +463,22 @@ $json_vehicle = json_encode($vehicleData);
       alert("Please select package name")
     }
   }
+
   function calculateTourEndDate() {
     const startDate = $('input[name="tour_start_date"]').val();
     const string = $("#duration").val();
     const pattern = /(\d+)\s*Days?\s*(\d+)\s*Nights?/i;
-    const matches = string.match(pattern); 
-    nights =  parseInt(matches[2], 10);
-     
+    const matches = string.match(pattern);
+    nights = parseInt(matches[2], 10);
+
     const startDateTime = new Date(startDate);
- 
+
     startDateTime.setDate(startDateTime.getDate() + nights);
- 
+
     const endDate = startDateTime.toISOString().split('T')[0];
     $('input[name="tour_end_date"]').val(endDate);
-}
+  }
+
   function itinerary_list() {
     let tour_date = $('input[name="tour_start_date"]').val()
     let package_id = $('input[name="package_id"]').val()
@@ -585,7 +605,6 @@ $json_vehicle = json_encode($vehicleData);
   document.addEventListener('DOMContentLoaded', function() {
     // Function to update maximum number of persons
     function updateMaxPersons() {
-      // console.log( $(this))
       const selectedTransport = $(this).find('option:selected').data('trans');
       $(this).closest('.transport-row').find('.max-persons').text(selectedTransport);
       $(this).closest('.transport-row').find('.num-persons-select').empty();
@@ -685,8 +704,7 @@ $json_vehicle = json_encode($vehicleData);
       }
     });
     //Extra Services 
-    //permit
-    console.log(rowData)
+    //permit 
     let totalPax = rowData.totalMember;
     let permitElement = document.getElementById("permit");
     if (permitElement) {
@@ -710,6 +728,7 @@ $json_vehicle = json_encode($vehicleData);
     document.querySelectorAll('#service-list input[type="checkbox"]').forEach(function(checkbox) {
       if (checkbox.checked) {
         const serviceName = checkbox.closest('tr').querySelector('label').textContent.trim();
+
         const amount = parseFloat(checkbox.getAttribute('amount-cumulative') || checkbox.getAttribute('amount-per-person'));
         const date = checkbox.value;
         let service_type = ""
@@ -731,6 +750,9 @@ $json_vehicle = json_encode($vehicleData);
             type: service_type
           };
         }
+      } else {
+        const serviceName = checkbox.closest('tr').querySelector('label').textContent.trim();
+        addExclusive(serviceName);
       }
     });
 
@@ -747,6 +769,7 @@ $json_vehicle = json_encode($vehicleData);
         } else if (type == "Per Person") {
           total_per_person = total_per_person + (amount * quantity);
         }
+        addInclusive(serviceName);
 
       }
     }
@@ -760,7 +783,10 @@ $json_vehicle = json_encode($vehicleData);
       const amount = input.getAttribute('amount-per-service')
       const quantity = parseInt(input.value) || 0;
       if (quantity > 0) {
+        addInclusive(label);
         total_per_person = total_per_person + ((amount * quantity) / totalPax);
+      } else {
+        addExclusive(label);
       }
     });
 
@@ -768,13 +794,11 @@ $json_vehicle = json_encode($vehicleData);
     //Transportation 
     const driverTableBody = document.querySelector('#driver_list tbody');
     const driverDetails = <?= $json_vehicle ?>;
-    console.log(driverDetails);
     const existingDriver = driverTableBody.querySelectorAll('tr');
     existingDriver.forEach(row => row.remove());
     const transportationSelects = document.querySelectorAll('.transportation-select');
     transportationSelects.forEach(select => {
       const detailId = 'detail_' + select.value.replace(' / ', '_');
-      console.log(detailId)
       if (document.getElementById(detailId)) {
         const label = select.value;
 
@@ -917,7 +941,30 @@ $json_vehicle = json_encode($vehicleData);
     $('input[name="without_gst"]').val(totalAmount);
     $('input[name="total_pax"]').val(totalPax);
     calculateTourEndDate();
-    targetTableBody.insertAdjacentHTML('beforeend', totalRows);
+    targetTableBody.insertAdjacentHTML('beforeend', totalRows); 
+
+    var exclusiveList = document.getElementById('exclusive');
+    exclusiveList.innerHTML = '';
+    exclusive.forEach(function(value) {
+        var li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = value;
+        exclusiveList.appendChild(li);
+    });
+
+
+    var inclusiveList = document.getElementById('inclusive');
+    inclusiveList.innerHTML = '';
+    inclusive.forEach(function(value) {
+        var li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = value;
+        inclusiveList.appendChild(li);
+    });
+
+    $('input[name="exclusive"]').val(JSON.stringify(exclusive)); 
+    $('input[name="inclusive"]').val(JSON.stringify(inclusive)); 
+
 
     document.getElementById('summary-duration').innerHTML = document.getElementById('duration').value;
     document.getElementById('summary-travel-date').innerHTML = $('input[name="tour_start_date"]').val();
@@ -928,6 +975,27 @@ $json_vehicle = json_encode($vehicleData);
 
   function round(number) {
     return Math.round(number * 100) / 100;
+  }
+
+  function addExclusive(value) {
+    if (!exclusive.includes(value)) {
+      exclusive.push(value);
+    }
+    var index = inclusive.indexOf(value);
+    if (index !== -1) {
+      inclusive.splice(index, 1);
+    }
+
+  }
+
+  function addInclusive(value) {
+    if (!inclusive.includes(value)) {
+      inclusive.push(value);
+    }
+    var index = exclusive.indexOf(value);
+    if (index !== -1) {
+      exclusive.splice(index, 1);
+    }
   }
 
 

@@ -1,5 +1,5 @@
 <?php
-
+set_time_limit(300);
 //Note: This file should be included first in every php page.
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');

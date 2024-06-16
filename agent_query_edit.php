@@ -1,7 +1,11 @@
 <?php
 session_start();
 require_once './config/config.php';
+if($_SESSION['admin_type']=='Admin'){
+require_once 'includes/header.php'; 
+}else{
 require_once 'includes/agent_header.php'; 
+}
 require_once 'PDFGenerate.php';
 $edit = false;
 $id = isset($_GET['ID']) && !empty($_GET['ID']) ? decryptId($_GET['ID']) : "";
@@ -79,7 +83,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Accep
     $save_data["tour_start_date"] = $data_to_store['tour_start_date'];
     $save_data["package_id"] = $data_to_store['package_id'];
     $save_data["category"] = $data_to_store['category'];
-    $save_data["your_budget"] = $data_to_store['your_budget'];
+    $save_data["your_budget"] = $data_to_store['your_budget']??0;
     $save_data["total_amount"] = $data_to_store['total_amount']; 
     $save_data["without_gst"] = $data_to_store['without_gst'];   
     $save_data["total_pax"] = $data_to_store['total_pax']; 
@@ -87,6 +91,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Accep
     $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
     $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
     $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []); 
+    $save_data["inclusive"] = !empty($data_to_store['inclusive'])?$data_to_store['inclusive']:json_encode([]);
+    $save_data["exclusive"] = !empty($data_to_store['exclusive'])?$data_to_store['exclusive']:json_encode([]);
     $save_data["person"] = json_encode($data_to_store['person'] ?? []);
     $save_data["transport"] = json_encode($data_to_store['transport'] ?? []);
     $save_data["updated_by"] = $_SESSION['user_id']; 
@@ -119,12 +125,30 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
 ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<style>
+        .btn-loading {
+            position: relative;
+        }
+        .btn-loading .spinner-border {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            position: absolute;
+            right: 0.5em;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .btn-loading.loading .spinner-border {
+            display: inline-block;
+        }
+    </style>
 <div class="layout-page">
     <div class="content-wrapper">
 
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="front-body-content">
-                <form method="post" data-disable-inputs="true">
+                <form method="post" id="edit-query" data-disable-inputs="true">
                     <div class="block">
                         <div class="left-part">
 
@@ -224,7 +248,9 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                 
                                 <input type="hidden" name="total_pax" value="<?php echo $queries['total_pax'] ?? ''; ?>">
                                 <input type="hidden" name="tour_end_date" value="<?php echo $queries['tour_end_date'] ?? ''; ?>">
-
+                                
+                                <input type="hidden" name="exclusive" value="<?php echo $queries['exclusive'] ?? ''; ?>">
+                                <input type="hidden" name="inclusive" value="<?php echo $queries['inclusive'] ?? ''; ?>">
                                 <div class="row mb-3" id="package-other-details">
                                     <?php include("./ajax/package_other_details_edit.php") ?>
                                 </div>
@@ -390,8 +416,10 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                 </div>
 
                                 <h3 class="mt-3 mb-3">Per Service</h3>
+                                <div class="table-responsive" id="service-per-service">
                                 <?php foreach ($per_services as $per_service) : ?>
-                                    <div class="row mb-3 align-items-top" id="service-per-service">
+                                   
+                                    <div class="row mb-3 align-items-top" >
                                         <div class="col-md-3">
                                             <div class="form-check mt-b">
                                                 <label class="form-check-label" for="<?= $per_service['name'] ?>"><?= $per_service['name'] ?> </label>
@@ -406,6 +434,7 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                         </div>
                                     </div>
                                 <?php endforeach ?>
+                                </div>
 
 
 
@@ -740,7 +769,7 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
 
                                 <div class="row mb-3">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="driver_list">
+                                        <table class="table table-bordered" id="driver_list_name">
                                             <thead class="table-dark">
                                                 <tr>
                                                     <th class="text-white">Vehicle Type</th>
@@ -750,8 +779,8 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                                 </tr>
                                             </thead>
                                             <tbody class=" table-border-bottom-0">
-                                                <?php
-                                                if (count($driver_details) > 0) {
+                                                <?php 
+                                                if (count($driver_details) > 0) { 
                                                     foreach ($driver_details["'driver'"] as $dkey => $dname) :
                                                 ?>
 
@@ -764,9 +793,11 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
 
                                                     <?php
                                                     endforeach;
-                                                } else {
-
-                                                    foreach ($save_transport["'name'"] as $trans) : ?>
+                                                } else { 
+                                                 
+                                                    foreach ($save_transport["'name'"] as $trans) :
+                                                       
+                                                    ?>
                                                         <tr>
                                                             <td><?= $trans ?></td>
                                                             <td>1</td>
@@ -780,6 +811,20 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                     </div>
                                 </div>
 
+                                <h3 class="mt-3 mb-3">Exclusive / Inclusive</h3>
+
+                                <div class="row mb-3">
+                                <div class="col">
+                                    <h3 class="mt-3 mb-3 text-center" style="background-color: #233446; padding: 10px;   color: white;">Exclusive</h3>
+                                    <ul class="list-group" id="exclusive"> 
+                                    </ul>
+                                </div>
+                                <div class="col">
+                                    <h3 class="mt-3 mb-3 text-center" style="background-color: #233446; padding: 10px;  color: white;">Inclusive</h3>
+                                    <ul class="list-group" id="inclusive"> 
+                                    </ul>
+                                </div>
+                                </div>
 
                                 <h3 class="mt-3 mb-3">Final Quotation</h3>
                                 <div class="row mb-3">
@@ -975,6 +1020,9 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
 </div>
 
 <script>
+    var inclusive = [];
+    var exclusive = [];
+    var isEdit = false;
     $(document).ready(function() {
         $('#duration').change(function() {
             var duration = $('#duration').val();
@@ -1254,6 +1302,7 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
             for (let i = 0; i <= 5; i++) {
                 $(this).closest('.transport-row').find('.num-persons-select').append(`<option value="${i}">${i}</option>`);
             }
+            isEdit = true;
         }
 
         function removeAllBelowElement() {
@@ -1393,6 +1442,9 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                         type: service_type
                     };
                 }
+            } else {
+                const serviceName = checkbox.closest('tr').querySelector('label').textContent.trim();
+                addExclusive(serviceName);
             }
         });
 
@@ -1409,30 +1461,39 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                 } else if (type == "Per Person") {
                     total_per_person = total_per_person + (amount * quantity);
                 }
-
+                addInclusive(serviceName);
             }
         }
 
 
         // Service Per Service
+        
         const perService = document.getElementById('service-per-service');
+        console.log(perService)
         perService.querySelectorAll('.row.mb-3.align-items-top').forEach(row => {
             const input = row.querySelector('input[type="number"]');
             const label = row.querySelector('.form-check-label').textContent.trim();
+            
+            console.log("herer");
             const amount = input.getAttribute('amount-per-service')
             const quantity = parseInt(input.value) || 0;
             if (quantity > 0) {
-                total_per_person = total_per_person + ((amount * quantity) / totalPax);
+                addInclusive(label);
+                total_per_person = total_per_person + ((amount * quantity) / totalPax);                
+            }else {
+                addExclusive(label);
             }
         });
 
 
         //Transportation 
         
-        const driverTableBody = document.querySelector('#driver_list tbody');
+        const driverTableBody = document.querySelector('#driver_list_name tbody');
         const driverDetails = <?= $json_vehicle ?>; 
         const existingDriver = driverTableBody.querySelectorAll('tr');
-        existingDriver.forEach(row => row.remove());
+        if(isEdit){
+            existingDriver.forEach(row => row.remove());
+        }
         const transportationSelects = document.querySelectorAll('.transportation-select');
         transportationSelects.forEach(select => {
           const detailId = 'detail_' + select.value.replace(' / ', '_');
@@ -1445,21 +1506,30 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
             const total = amount * quantity;
             // Append to the table
             total_per_person = total_per_person + ((amount * quantity) / totalPax)
-
-/*
-            let driver_name = driverDetails[label].driver_name;
-            let mobile = driverDetails[label].mobile;
-            const driverRow = document.createElement('tr');
-            driverRow.innerHTML = `
+       
+            if(isEdit){
+           
+                let driver_name = driverDetails[label].driver_name;
+                let mobile = driverDetails[label].mobile;
+                const driverRow = document.createElement('tr');
+                <?php if($_SESSION['admin_type']=='Admin'){ ?>
+                    driverRow.innerHTML = `
+                    <td>${label}</td>
+                    <td>${quantity}</td>
+                    <td>${driver_name}</td>
+                    <td>${mobile}</td> 
+                `;
+                <?php }else{ ?>
+                driverRow.innerHTML = `
                 <td>${label}</td>
-                <td>${quantity}</td>
-               <!-- <td>${driver_name}</td>
-                <td>${mobile}</td>-->
+                <td>${quantity}</td> 
                 <td>Pending</td>
                 <td>Pending</td>
-            `;
-            driverTableBody.appendChild(driverRow);
-            */
+            `;   
+            <?php  } ?> 
+                driverTableBody.appendChild(driverRow);
+            }
+            
           }
         }); 
 
@@ -1581,6 +1651,29 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
 
         targetTableBody.insertAdjacentHTML('beforeend', totalRows);
 
+        
+        var exclusiveList = document.getElementById('exclusive');
+        exclusiveList.innerHTML = '';
+        exclusive.forEach(function(value) {
+            var li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = value;
+            exclusiveList.appendChild(li);
+        });
+
+
+        var inclusiveList = document.getElementById('inclusive');
+        inclusiveList.innerHTML = '';
+        inclusive.forEach(function(value) {
+            var li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = value;
+            inclusiveList.appendChild(li);
+        });
+
+        $('input[name="exclusive"]').val(JSON.stringify(exclusive)); 
+        $('input[name="inclusive"]').val(JSON.stringify(inclusive)); 
+
         document.getElementById('summary-duration').innerHTML = document.getElementById('duration').value;
         document.getElementById('summary-travel-date').innerHTML = $('input[name="tour_start_date"]').val();
         document.getElementById('summary-no-of-pax').innerHTML = totalPax;
@@ -1620,6 +1713,34 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
         hiddenInput.value = driverPhone;
         phoneSpan.textContent = driverPhone;
     }
+
+    
+    function addExclusive(value) {
+        if (!exclusive.includes(value)) {
+        exclusive.push(value);
+        }
+        var index = inclusive.indexOf(value);
+        if (index !== -1) {
+        inclusive.splice(index, 1);
+        }
+
+    }
+
+    function addInclusive(value) {
+        if (!inclusive.includes(value)) {
+        inclusive.push(value);
+        }
+        var index = exclusive.indexOf(value);
+        if (index !== -1) {
+        exclusive.splice(index, 1);
+        }
+    }
+
+    document.getElementById('edit-query').addEventListener('submit', function(e) {
+        var submitButton = document.getElementById('submitButton');
+        submitButton.classList.add('loading');
+        submitButton.disabled = true; // Optional: Disable the button to prevent multiple submissions
+    });
     //calculateTotal();
     /*
 document.addEventListener('input', function(event) { 
@@ -1629,4 +1750,10 @@ document.addEventListener('input', function(event) {
 });
 */
 </script>
-<?php include  'includes/agent_footer.php'; ?>
+<?php
+if($_SESSION['admin_type']=='Admin'){
+    include  'includes/footer.php';
+}else{
+    include  'includes/agent_footer.php';
+}
+?>
