@@ -321,7 +321,7 @@ class PDFGenerate
             <td style="border-right: solid 1px #333; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333; font-weight: bold;">Location</td>
             <td style="font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Contact</td>
         </tr>';
-        $h_details =  json_decode($data["hotel_details"], true);
+        $h_details =  json_decode($data["hotel_details"], true); 
         foreach ($h_details["'name'"] as $key => $name) {
             $this->html .= ' <tr>
             <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">' . ($key + 1) . '</td>
@@ -361,29 +361,7 @@ class PDFGenerate
          
     </table>
 </div>';
-        /*
-<div class="inclusion-exclusion-details">
-    <h3 style="padding: 10px; background: #dfdfd5;">Inclusions & Exclusions</h3>
-    <table cellpadding="0" cellspacing="0" style="width: 100%; border-top: solid 1px #333;">
-        <tr style="border-bottom: solid 1px #333;">
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%; font-weight: bold;">Inclusions</td>
-            <td style="width: 50%; font-weight: bold; padding: 5px; padding-left: 10px; border-bottom: solid 1px #333;">Exclusions</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%;">Permit</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Bike</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%;">Guide</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Lunch</td>
-        </tr>
-        <tr>
-            <td style="border-right: solid 1px #333; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px; width: 50%;">Bonfire</td>
-            <td style="width: 50%; padding: 5px; border-bottom: solid 1px #333; padding-left: 10px;">Water Bottles</td>
-        </tr>
-    </table>
-</div>'
-*/
+        
         $this->html .= '<div class="itineary-details">
     <h3 style="padding: 10px; background: #dfdfd5;">Transport Details</h3>
     <table cellpadding="0" cellspacing="0" style="width: 100%; border-top: solid 1px #333;">
@@ -406,6 +384,184 @@ class PDFGenerate
 
 
         $this->html .= ' </table>';
+    }
+    public function generate_invoice($data = [])
+    { 
+        $u_id = $_SESSION['user_id'];
+        $db = getDbInstance();
+$db->where('id', $u_id);
+$result = $db->getOne('agents');
+
+$db->where('id', $data['created_by']);
+$results = $db->getOne('agents');
+
+       //$logo = $this->getLogo($data['created_by']); 
+        $this->html = '
+        <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+          <!-- Menu -->
+  
+          <!-- Layout container -->
+          <div class="layout-page">
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+              <!-- Content -->
+  
+              <div class="container-xxl flex-grow-1 container-p-y">
+                <h4 class="py-3 mb-4">Invoice</h4>
+                <!-- Basic Layout -->
+                <div class="row">
+                  <div class="col-xl">
+                    <div class="card mb-4">
+                      <div class="card-body">
+                        <div class="invoice-table" style="margin-top: 30px;">
+                            <table cellpadding="0" cellspacing="0" class="custom-table">
+                                <tr>
+                                    <td colspan="4" style="padding-top: 30px; padding-bottom:30px;"><img src="" alt="go2ladakh-logo" width="150px" /></td>
+                                    <td colspan="4" style="font-size: 24px; text-align:center; font-weight: bold;">TAX INVOICE</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" style="font-size:16px; font-weight:bold; color:#696cff">Seller</td>
+                                    <td colspan="3" style="font-size:16px; font-weight:bold; color:#696cff">Buyer</td>
+                                    <td colspan="2" style="font-size:16px; font-weight:bold; color:#696cff"><strong>ADDITIONAL DETAILS</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="switch-seller">
+                                            Go2Ladakh<br>
+                                           '.$result['complete_address'].'<br>
+                                            Leh Ladakh<br>
+                                            GSTIN/UIN: 38APUPT3344P1ZQ<br>
+                                            State Name: '.$result['state'].', Code: 38<br>
+                                            E-Mail: '.$result['email_id'].'
+                                        </div>
+                                        <div class="edit-btn"><a href="#">Switch to Ctour</a></div>
+                                    </td>
+                                    <td colspan="3">
+                                        <div class="edit-buyer-info">
+                                            TC Tours Ltd.<br>'.$results['complete_address'].'.<br>
+                                            GSTIN/UIN: 27AABCT5333R1ZT<br>
+                                            State Name: '.$results['state'].' 27<br>
+                                            Place of Supply: Ladakh
+                                        </div>
+                                        <div class="edit-btn"><a href="#">Edit details</a></div>
+                                        
+                                    </td>
+                                    <td colspan="2" style="padding: 0;">
+                                        <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                            <tr>
+                                                <td colspan="2"><strong>MLSBTP270523</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Travel Date</strong></td>
+                                                <td>'.$data['tour_start_date'].'</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>No of Travel Day</strong></td>
+                                                <td>'.$data['duration'].'</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Invoice Date</strong></td>
+                                                <td>'.date("d-m-y").'</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Due Date</strong></td>
+                                                <td>'.$data['tour_start_date'].'</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Place of Supply</strong></td>
+                                                <td>Ladakh</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6"></td>
+                                    <td><strong>Invoice No</strong></td>
+                                    <td><strong>'.$data['invoice_no'].'</strong></td>
+                                </tr>
+                                <tr class="blue-bg">
+                                    <td class="align-center">S.No.</td>
+                                    <td colspan="2" style="width:40%;">Name/Description/Services</td>
+                                    <td class="align-center" style="width: 10%;">No of pax</td>
+                                    <td style="width: 20%;" colspan="2">Per Person Rate in INR</td>
+                                    <td>DISCOUNT</td>
+                                    <td>TOTAL</td>
+                                </tr>
+                                <tr>
+                                    <td class="align-center"><strong>1</strong></td>
+                                    <td colspan="2">Double Occupancy with one Bike</td>
+                                    <td class="align-center">'.$data['total_pax'].'</td>
+                                    <td colspan="2">₹' . round(($data['total_amount'] / $data['total_pax'])) . '</td>
+                                    <td>₹0</td>
+                                    <td>₹'.$data['without_gst'].'</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td style="color: #696cff"><strong>BANK DETAILS</strong></td>
+                                    <td colspan="2"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>SUB TOTAL</td>
+                                    <td>₹71,600</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Account Name</strong></td>
+                                    <td colspan="2">CHUMIK TOUR AND TRAVEL</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>DISCOUNT</td>
+                                    <td>₹0</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Account No</strong></td>
+                                    <td colspan="2">*0069010100002805</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>IGST 5%</td>
+                                    <td>₹0</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>IFSC Code</strong></td>
+                                    <td colspan="2">JAKA0PRIEST</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>TOTAL TAX 5%</td>
+                                    <td>₹3,580</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Branch</strong></td>
+                                    <td colspan="2">Leh main market</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>ADDITIONAL CHARGES</td>
+                                    <td>₹0</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #696cff"><strong>TERMS & NOTES</strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="color: #696cff; font-size: 18px;"><strong>GRAND TOTAL</strong></td>
+                                    <td style="font-size: 18px"><strong>₹75,180</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- / Content -->
+            </div>
+          </div>';
     }
 
 

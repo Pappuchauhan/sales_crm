@@ -137,7 +137,25 @@ $total_pages = $db->totalPages;
                       <td class="border-right-dark">₹<?=$row['total_amount']?></td>
                       <td class="border-right-dark">₹<?=$row['your_budget']?></td>
                       <td class="border-right-dark"><?=$row['gst_no']?></td>
-                      <td class="border-right-dark"><a href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>">View</a></td>
+                      <td class="border-right-dark">
+
+                      <div class="dropdown pos-relative">
+                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow toggle-options">
+                            <i class="bx bx-dots-vertical-rounded"><span></span></i>
+                          </button>
+                          <div class="dropdown-menu custom-dd-menu">
+                            <a class="dropdown-item" href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> View Booking</a>
+                            <?php if($row['is_accept'] =='Yes'){ ?>
+                            <a class="dropdown-item" href="generate_invoice.php?ID=<?php echo encryptId($row['id']); ?>"><i class="bx bx-trash me-1"></i> Generate Invoice</a>
+                            <?php } ?>
+                          </div>
+                        </div>
+
+                      <!-- <a href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>">View</a> 
+                     <?php if($row['is_accept'] =='Yes'){ ?> / 
+                      <a href="generate_invoice.php?ID=<?php echo encryptId($row['id']); ?>">Invoice</a>
+                      <?php } ?>
+                    </td> -->
                       
                       </tr>
                     <?php

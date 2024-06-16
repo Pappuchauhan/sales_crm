@@ -16,6 +16,7 @@
   <!-- Core CSS -->
   <link rel="stylesheet" href="assets/vendor/css/core.css" />
   <link rel="stylesheet" href="assets/css/style.min.css" />
+  <link rel="stylesheet" href="assets/css/front.min.css" />
   <link rel="stylesheet" href="assets/vendor/css/theme-default.css" />
 </head>
 <?php

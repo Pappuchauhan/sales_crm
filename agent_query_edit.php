@@ -80,9 +80,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['form_submit_type'] == 'Accep
     $save_data["package_id"] = $data_to_store['package_id'];
     $save_data["category"] = $data_to_store['category'];
     $save_data["your_budget"] = $data_to_store['your_budget'];
+    $save_data["total_amount"] = $data_to_store['total_amount']; 
+    $save_data["without_gst"] = $data_to_store['without_gst'];   
+    $save_data["total_pax"] = $data_to_store['total_pax']; 
+    $save_data["tour_end_date"] = $data_to_store['tour_end_date']; 
     $save_data["cumulative"] = json_encode($data_to_store['cumulative'] ?? []);
     $save_data["per_person"] = json_encode($data_to_store['per_person'] ?? []);
     $save_data["per_service"] = json_encode($data_to_store['per_service'] ?? []); 
+    $save_data["person"] = json_encode($data_to_store['person'] ?? []);
+    $save_data["transport"] = json_encode($data_to_store['transport'] ?? []);
     $save_data["updated_by"] = $_SESSION['user_id']; 
     $db = getDbInstance();
     $db->where('id', $id);
@@ -214,6 +220,8 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                 <input type="hidden" name="package_id" value="<?php echo $queries['package_id'] ?? ''; ?>">
                                 <input type="hidden" name="category" value="<?php echo $queries['category'] ?? ''; ?>">
                                 <input type="hidden" name="total_amount" value="<?php echo $queries['total_amount'] ?? ''; ?>">
+                                <input type="hidden" name="without_gst" value="<?php echo $queries['without_gst'] ?? ''; ?>">
+                                
                                 <input type="hidden" name="total_pax" value="<?php echo $queries['total_pax'] ?? ''; ?>">
                                 <input type="hidden" name="tour_end_date" value="<?php echo $queries['tour_end_date'] ?? ''; ?>">
 
@@ -237,7 +245,7 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                                 <?php if ($save_transport["'name'"] < 1) { ?>
                                                     <tr class="transport-row">
                                                         <td>
-                                                            <select <?= $disabled ?> class="form-select transportation-select" onChange="return calculateTotal();">
+                                                            <select name="transport['name'][]" <?= $disabled ?> class="form-select transportation-select" onChange="return calculateTotal();">
                                                                 <option>Select Transport</option>
                                                                 <?php foreach ($transportations as $name => $val) : ?>
                                                                     <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
@@ -250,20 +258,23 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                                                 <?php
                                                 }
                                                 foreach ($save_transport["'name'"] as $key => $sname) :
+                                                    $per_person= '';
                                                 ?>
                                                     <tr class="transport-row">
                                                         <td>
-                                                            <select <?= $disabled ?> class="form-select transportation-select" onChange="return calculateTotal();">
+                                                            <select select name="transport['name'][]" <?= $disabled ?> class="form-select transportation-select" onChange="return calculateTotal();">
                                                                 <option>Select Transport</option>
                                                                 <?php foreach ($transportations as $name => $val) :
-                                                                    $selected = $name == $sname ? "selected" : ""
+                                                                    $selected = $name == $sname ? "selected" : "";
+
+                                                                    $per_person = !empty($selected)?$val:$per_person;
                                                                 ?>
                                                                     <option <?= $selected ?> value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
                                                                 <?php endforeach; ?>
                                                             </select>
                                                         </td>
 
-                                                        <td>Maximum <span class="max-persons"></span> Persons</td>
+                                                        <td>Maximum <span class="max-persons"><?=$per_person?></span> Persons</td>
                                                     </tr>
                                                 <?php endforeach; ?>
                                                 <?php if (empty($disabled)) { ?>
@@ -1417,10 +1428,9 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
 
 
         //Transportation 
-        /*
+        
         const driverTableBody = document.querySelector('#driver_list tbody');
-        const driverDetails = <?= $json_vehicle ?>;
-        console.log(driverDetails);
+        const driverDetails = <?= $json_vehicle ?>; 
         const existingDriver = driverTableBody.querySelectorAll('tr');
         existingDriver.forEach(row => row.remove());
         const transportationSelects = document.querySelectorAll('.transportation-select');
@@ -1436,7 +1446,7 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
             // Append to the table
             total_per_person = total_per_person + ((amount * quantity) / totalPax)
 
-
+/*
             let driver_name = driverDetails[label].driver_name;
             let mobile = driverDetails[label].mobile;
             const driverRow = document.createElement('tr');
@@ -1449,10 +1459,9 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
                 <td>Pending</td>
             `;
             driverTableBody.appendChild(driverRow);
-
+            */
           }
-        });
-        */
+        }); 
 
         // Get Bike Details
         const numberOfBike = document.querySelector('input[name="number_of_bike"]').value;
@@ -1566,6 +1575,7 @@ $disabled = $queries['type']=='Booking'?'disabled':'';
         </tr>
     `;
     $('input[name="total_amount"]').val(finalPrice);
+    $('input[name="without_gst"]').val(totalAmount);
     $('input[name="total_pax"]').val(totalPax);
     calculateTourEndDate();
 

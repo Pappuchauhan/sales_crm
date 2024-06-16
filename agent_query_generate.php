@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $save_data["updated_by"] = $_SESSION['user_id']; 
 
   $save_data["total_amount"] = $data_to_store['total_amount']; 
+  $save_data["without_gst"] = $data_to_store['without_gst'];   
   $save_data["total_pax"] = $data_to_store['total_pax']; 
   $save_data["tour_end_date"] = $data_to_store['tour_end_date']; 
 
@@ -42,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   $inserted_id = $db->insert('agent_queries', $save_data);
   $_SESSION['success'] = "The query has been generated successfully.";
+  header("Location: agent_query_edit.php?ID=".encryptId($inserted_id));
+ 
 }
 
 
@@ -68,7 +71,7 @@ $json_vehicle = json_encode($vehicleData);
                 <div class="row mb-3">
                   <div class="col-md">
                     <label class="form-label">Guest Name</label>
-                    <input type="text" class="form-control" name="name" placeholder="">
+                    <input type="text" class="form-control" name="name" placeholder="" required>
                   </div>
 
 
@@ -77,8 +80,8 @@ $json_vehicle = json_encode($vehicleData);
                     <label class="form-label">Select Duration</label>
                     <div class="input-group">
                       <label class="input-group-text">Options</label>
-                      <select class="form-select" name="duration" id="duration">
-                        <option>Choose...</option>
+                      <select class="form-select" name="duration" id="duration" required>
+                        <option value="" disabled selected>Choose...</option>
                         <option value="2 Days 1 Nights" <?php echo ($edit &&  $data['duration'] == "2 Days 1 Nights") ? 'selected' : '' ?>>2 Days 1 Nights</option>
                         <option value="3 Days 2 Nights" <?php echo ($edit &&  $data['duration'] == "3 Days 2 Nights") ? 'selected' : '' ?>>3 Days 2 Nights</option>
                         <option value="4 Days 3 Nights" <?php echo ($edit &&  $data['duration'] == "4 Days 3 Nights") ? 'selected' : '' ?>>4 Days 3 Nights</option>
@@ -109,7 +112,7 @@ $json_vehicle = json_encode($vehicleData);
                           <th class="text-white px-2">Hotel Category</th>
                         </tr>
                       </thead>
-                      <tbody class="table-border-bottom-0" id="package_list">
+                      <tbody class="table-border-bottom-0" id="package_list" required>
 
                       </tbody>
                     </table>
@@ -118,6 +121,7 @@ $json_vehicle = json_encode($vehicleData);
                 <input type="hidden" name="package_id">
                 <input type="hidden" name="category">
                 <input type="hidden" name="total_amount">
+                <input type="hidden" name="without_gst">
                 <input type="hidden" name="total_pax">
                 <input type="hidden" name="tour_end_date">
 
@@ -140,8 +144,8 @@ $json_vehicle = json_encode($vehicleData);
                       <tbody class="table-border-bottom-0">
                         <tr class="transport-row">
                           <td>
-                            <select name="transport['name'][]" class="form-select transportation-select" onChange="return calculateTotal();">
-                              <option>Select Transport</option>
+                            <select name="transport['name'][]" class="form-select transportation-select" onChange="return calculateTotal();" required>
+                              <option value="" disabled selected>Select Transport</option>
                               <?php foreach ($transportations as $name => $val) : ?>
                                 <option value="<?php echo $name; ?>" data-trans="<?php echo $val; ?>"><?php echo $name; ?></option>
                               <?php endforeach; ?>
@@ -380,7 +384,7 @@ $json_vehicle = json_encode($vehicleData);
               <div class="summary-detail">
                   <div class="row mb-3" >
                       <div class="col-md text-bold"><label class="form-label"><strong>Your Budget</strong></label></div>
-                      <div class="col-md" id="summary-duration"><input type="number" name="your_budget"  class="form-control"></div>
+                      <div class="col-md" id="summary-duration"><input type="number" name="your_budget"  class="form-control" ></div>
                   </div>
 
               </div>
@@ -910,6 +914,7 @@ $json_vehicle = json_encode($vehicleData);
         </tr>
     `;
     $('input[name="total_amount"]').val(finalPrice);
+    $('input[name="without_gst"]').val(totalAmount);
     $('input[name="total_pax"]').val(totalPax);
     calculateTourEndDate();
     targetTableBody.insertAdjacentHTML('beforeend', totalRows);
