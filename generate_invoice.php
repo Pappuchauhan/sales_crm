@@ -136,13 +136,18 @@ include BASE_PATH . '/includes/header.php';
                       <td class="align-center"><?= $rows['total_pax'] ?></td>
                       <?php
                       $other_charge = isset($rows['other_charge']) ? $rows['other_charge'] : '0';
+                      $other_charge_2 = isset($rows['other_charge_2']) ? $rows['other_charge_2'] : '0';
+                      $other_charge_3 = isset($rows['other_charge_3']) ? $rows['other_charge_3'] : '0';
+                      $other_charge_4 = isset($rows['other_charge_4']) ? $rows['other_charge_4'] : '0';
 
-                      $tatal_price = $rows['without_gst'] + $other_charge;
+                      $charge = $other_charge + $other_charge_2 + $other_charge_3 + $other_charge_4;
+
+                      $tatal_price = $rows['without_gst'] + $charge;
                       //print_r($tatal_price );
-                      $igstPrice = round(($rows['without_gst'] * 0.025));
-                      $taxPrice = round(($rows['without_gst'] * 0.025));
+                      $igstPrice = round(($rows['without_gst'] * 0.025),2);
+                      $taxPrice = round(($rows['without_gst'] * 0.025),2);
                       $finalPrice = ($tatal_price + $igstPrice + $taxPrice);
-                      $perPerson = round(($finalPrice / $rows['total_pax']));
+                      $perPerson = round(($finalPrice / $rows['total_pax']),2);
 
                       ?>
                       <td colspan="2"><?= $perPerson ?></td>
@@ -208,8 +213,32 @@ include BASE_PATH . '/includes/header.php';
                   </table>
 
                   <div class="row mb-3" style="margin-top: 10px;">
-                    <div class="col-md text-bold"><label class="form-label"><strong>Other Charge</strong></label></div>
+                  <div class="row mb-3">
+                  <div class="col-md text-bold">
+                    <label class="form-label" for="basic-default-phone"><strong>Other Charge 1</strong></label>
+                    <input type="number"class="form-control" name="other_charge" value="<?= $rows['other_charge'] ?>" />
+                  </div>
+                  <div class="col-md text-bold">
+                    <label class="form-label" for="basic-default-phone"><strong>Other Charge 2</strong></label>
+                    <input type="number" class="form-control" name="other_charge_2" value="<?= $rows['other_charge_2'] ?>" />
+                  </div>
+                  
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md text-bold">
+                    <label class="form-label" for="basic-default-phone"><strong>Other Charge 3</strong></label>
+                    <input type="number" class="form-control" name="other_charge_3" value="<?= $rows['other_charge_3'] ?>" />
+                  </div>
+                  <div class="col-md text-bold">
+                    <label class="form-label" for="basic-default-phone"><strong>Other Charge 4</strong></label>
+                    <input type="number" class="form-control" name="other_charge_4" value="<?= $rows['other_charge_4'] ?>" />
+                  </div>
+                  
+                </div>
+
+                    <!-- <div class="col-md text-bold"><label class="form-label"><strong>Other Charge</strong></label></div>
                     <div class="col-md" id="summary-duration"><input type="number" name="other_charge" class="form-control" value="<?= $rows['other_charge'] ?>"></div>
+                     -->
                     <input type="hidden" name="invoice_date" value="<?= !empty($rows['invoice_date'])?$rows['invoice_date']:date("Y-m-d") ?>">
                     <input type="hidden" name="due_date" value="<?= !empty($rows['due_date'])?$rows['due_date']:date("Y-m-d") ?>">
 
