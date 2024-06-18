@@ -63,7 +63,7 @@ include BASE_PATH . '/includes/header.php';
                 <div class="input-group">
                   <label class="input-group-text">Options</label>
                   <select class="form-select" name="filter_col">
-                    <option selected="">Choose...</option> 
+                    <option selected="">Choose...</option>
                     <option value="driver_name" selected>Driver Name</option>
                     <option value="vehicle_number">Mobile Number</option>
                   </select>
@@ -105,7 +105,7 @@ include BASE_PATH . '/includes/header.php';
                     <th class="text-white border-right-white">Vehicle Number</th>
                     <th class="text-white border-right-white">Mobile Number</th>
                     <th class="text-white border-right-white">Vehicle Type</th>
-                    <th class="text-white border-right-white">Edit Details</th>
+                    <th class="text-white border-right-white">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
@@ -118,7 +118,17 @@ include BASE_PATH . '/includes/header.php';
                       <td class="border-right-dark"><?php echo xss_clean($row['vehicle_number']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['mobile']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['vehicle_type']); ?></td>
-                      <td class="border-right-dark"><a href="add_vehicle.php?crm=<?php echo encryptId($row['id']); ?>">Edit Details</a></td>
+                      <td class="border-right-dark">
+                        <div class="dropdown pos-relative">
+                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow toggle-options">
+                            <i class="bx bx-dots-vertical-rounded"><span></span></i>
+                          </button>
+                          <div class="dropdown-menu custom-dd-menu">
+                            <a class="dropdown-item" href="add_vehicle.php?crm=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> Edit </a>
+                            <a class="dropdown-item" href="delete_vehicle.php?crm=<?php echo encryptId($row['id']); ?>" onClick="return confirm('Are you sure you want to delete this record?')"><i class="bx bx-trash me-1"></i> Delete </a>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                   <?php
                     $k++;

@@ -59,7 +59,7 @@ include BASE_PATH . '/includes/header.php';
                 <div class="input-group">
                   <label class="input-group-text">Options</label>
                   <select class="form-select" name="filter_col">
-                    <option selected="">Choose...</option> 
+                    <option selected="">Choose...</option>
                     <option value="name" selected>Service Name</option>
                     <option value="type">Service Type</option>
                   </select>
@@ -96,11 +96,11 @@ include BASE_PATH . '/includes/header.php';
               <table class="table">
                 <thead>
                   <tr class="text-nowrap bg-dark align-middle">
-                    <th class="text-white border-right-white">#</th> 
+                    <th class="text-white border-right-white">#</th>
                     <th class="text-white border-right-white">Service Name</th>
                     <th class="text-white border-right-white">Service Type</th>
                     <th class="text-white border-right-white">Amount</th>
-                    <th class="text-white border-right-white">Edit Details</th>
+                    <th class="text-white border-right-white">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
@@ -108,11 +108,21 @@ include BASE_PATH . '/includes/header.php';
                   $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                   foreach ($rows as $row) : ?>
                     <tr>
-                      <td class="border-right-dark"><?= $k ?></td> 
+                      <td class="border-right-dark"><?= $k ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['type']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['amount']); ?></td>
-                      <td class="border-right-dark"><a href="add_service.php?crm=<?php echo encryptId($row['id']); ?>">Edit Details</a></td>
+                      <td class="border-right-dark">
+                        <div class="dropdown pos-relative">
+                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow toggle-options">
+                            <i class="bx bx-dots-vertical-rounded"><span></span></i>
+                          </button>
+                          <div class="dropdown-menu custom-dd-menu">
+                            <a class="dropdown-item" href="add_service.php?crm=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> Edit </a>
+                            <a class="dropdown-item" href="delete_service.php?crm=<?php echo encryptId($row['id']); ?>" onClick="return confirm('Are you sure you want to delete this record?')"><i class="bx bx-trash me-1"></i> Delete </a>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                   <?php
                     $k++;

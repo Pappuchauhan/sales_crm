@@ -2,7 +2,7 @@
 session_start();
 require_once 'config/config.php';
 require_once BASE_PATH . '/includes/auth_validate.php';
-require_once 'includes/header.php'; 
+require_once 'includes/header.php';
 // Get Input data from query string
 $search_string = filter_input(INPUT_GET, 'search_string');
 $filter_col = filter_input(INPUT_GET, 'filter_col');
@@ -24,7 +24,7 @@ if (!$order_by) {
 //Get DB instance. i.e instance of MYSQLiDB Library
 $db = getDbInstance();
 $db->join('agents', 'agents.id = agent_queries.created_by', 'LEFT');
-$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at','query_code','your_budget','gst_no','tour_end_date','total_amount','total_pax','full_name','is_accept');
+$select = array('agent_queries.id', 'name', 'tour_start_date', 'duration', 'package_id', 'category',  'cumulative', 'per_person', 'per_service', 'person',  'permit', 'guide',  'transport', 'booking_code', 'agent_queries.type', 'agent_queries.created_at', 'agent_queries.updated_at', 'query_code', 'your_budget', 'gst_no', 'tour_end_date', 'total_amount', 'total_pax', 'full_name', 'is_accept');
 $db->where('agent_queries.type', 'Booking');
 
 
@@ -43,19 +43,19 @@ $db->pageLimit = PAGE_LIMIT;
 
 // Get result of the query.
 $rows = $db->arraybuilder()->paginate('agent_queries', $page, $select);
-$total_pages = $db->totalPages; 
+$total_pages = $db->totalPages;
 ?>
 <div class="layout-page">
 
   <!-- Content wrapper -->
   <div class="content-wrapper">
     <!-- Content -->
-<style>
-  .style{
-    color:red !important;
-    font-weight: bold;
-  }
-</style>
+    <style>
+      .style {
+        color: red !important;
+        font-weight: bold;
+      }
+    </style>
     <div class="container-xxl flex-grow-1 container-p-y">
       <form>
         <div class="card mb-4">
@@ -100,7 +100,7 @@ $total_pages = $db->totalPages;
                       <th class="text-white border-right-white">#</th>
                       <th class="text-white border-right-white">Booking Code</th>
                       <th class="text-white border-right-white">Booking Accepted</th>
-                      <th class="text-white border-right-white">Booking Date</th>  
+                      <th class="text-white border-right-white">Booking Date</th>
                       <th class="text-white border-right-white">Agent Name</th>
                       <th class="text-white border-right-white">Package Type</th>
                       <th class="text-white border-right-white">Guest Name</th>
@@ -119,49 +119,43 @@ $total_pages = $db->totalPages;
                     <?php
                     $k = ($page != 1) ? (($page - 1) * PAGE_LIMIT) + 1 : 1;
                     foreach ($rows as $row) :
-                     $class =  $row['is_accept'] =='No'?"style":'';
+                      $class =  $row['is_accept'] == 'No' ? "style" : '';
                     ?>
                       <td class="border-right-dark"><?= $k ?></td>
 
-                      <td class="border-right-dark <?=$class?>"><?php echo xss_clean($row['booking_code']); ?></td>
-                      <td class="border-right-dark"><?=$row['is_accept'] ?></td>
-                      <td class="border-right-dark"><?php echo xss_clean(date("Y-m-d",strtotime($row['created_at']))); ?></td> 
+                      <td class="border-right-dark <?= $class ?>"><?php echo xss_clean($row['booking_code']); ?></td>
+                      <td class="border-right-dark"><?= $row['is_accept'] ?></td>
+                      <td class="border-right-dark"><?php echo xss_clean(date("Y-m-d", strtotime($row['created_at']))); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['full_name']); ?></td>
                       <td class="border-right-dark">Group Booking</td>
                       <td class="border-right-dark"><?php echo xss_clean($row['name']); ?></td>
-                      <td class="border-right-dark"><?=$row['total_pax']?></td>
+                      <td class="border-right-dark"><?= $row['total_pax'] ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['category']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['tour_start_date']); ?></td>
-                      <td class="border-right-dark"><?=$row['tour_end_date']?></td>
-                      <td class="border-right-dark">₹<?=$row['total_amount']?></td>
-                      <td class="border-right-dark">₹<?=$row['your_budget']?></td>
-                      <td class="border-right-dark"><?=$row['gst_no']?></td>
+                      <td class="border-right-dark"><?= $row['tour_end_date'] ?></td>
+                      <td class="border-right-dark">₹<?= $row['total_amount'] ?></td>
+                      <td class="border-right-dark">₹<?= $row['your_budget'] ?></td>
+                      <td class="border-right-dark"><?= $row['gst_no'] ?></td>
                       <td class="border-right-dark">
 
-                      <div class="dropdown pos-relative">
+                        <div class="dropdown pos-relative">
                           <button type="button" class="btn p-0 dropdown-toggle hide-arrow toggle-options">
                             <i class="bx bx-dots-vertical-rounded"><span></span></i>
                           </button>
                           <div class="dropdown-menu custom-dd-menu">
                             <a class="dropdown-item" href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> View Booking</a>
-                            <?php if($row['is_accept'] =='Yes'){ ?>
-                            <a class="dropdown-item" href="generate_invoice.php?ID=<?php echo encryptId($row['id']); ?>"><i class="bx bx-trash me-1"></i> Generate Invoice</a>
+                            <?php if ($row['is_accept'] == 'Yes') { ?>
+                              <a class="dropdown-item" href="generate_invoice.php?ID=<?php echo encryptId($row['id']); ?>"><i class="bx bx-trash me-1"></i> Generate Invoice</a>
                             <?php } ?>
                           </div>
                         </div>
 
-                      <!-- <a href="agent_query_edit.php?ID=<?php echo encryptId($row['id']); ?>">View</a> 
-                     <?php if($row['is_accept'] =='Yes'){ ?> / 
-                      <a href="generate_invoice.php?ID=<?php echo encryptId($row['id']); ?>">Invoice</a>
-                      <?php } ?>
-                    </td> -->
-                      
-                      </tr>
-                    <?php
+                        </tr>
+                      <?php
                       $k++;
                     endforeach;
-                    ?>
+                      ?>
 
                   </tbody>
                 </table>

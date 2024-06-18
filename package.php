@@ -104,7 +104,7 @@ include BASE_PATH . '/includes/header.php';
                     <th class="text-white border-right-white">Package Code</th>
                     <th class="text-white border-right-white">Package Name</th>
                     <th class="text-white border-right-white">Duration</th>
-                    <th class="text-white border-right-white">Edit Package</th>
+                    <th class="text-white border-right-white">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
@@ -118,8 +118,16 @@ include BASE_PATH . '/includes/header.php';
                       <td class="border-right-dark"><?php echo xss_clean($row['package_code']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['package_name']); ?></td>
                       <td class="border-right-dark"><?php echo xss_clean($row['duration']); ?></td>
-                      <td class="border-right-dark"><a href="add_package.php?crm=<?php echo encryptId($row['id']); ?>">Edit</a>
-                        <a href="delete_package.php?crm=<?php echo encryptId($row['id']); ?>" onClick="return confirm('Are you sure you want to delete this record?')">Delete</a>
+                      <td class="border-right-dark">
+                      <div class="dropdown pos-relative">
+                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow toggle-options">
+                            <i class="bx bx-dots-vertical-rounded"><span></span></i>
+                          </button>
+                          <div class="dropdown-menu custom-dd-menu">
+                            <a class="dropdown-item" href="add_package.php?crm=<?php echo encryptId($row['id']); ?>"><i class="bx bx-edit-alt me-1"></i> Edit Package</a>
+                            <a class="dropdown-item" href="delete_package.php?crm=<?php echo encryptId($row['id']); ?>" onClick="return confirm('Are you sure you want to delete this record?')"><i class="bx bx-trash me-1"></i> delete Package</a>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   <?php

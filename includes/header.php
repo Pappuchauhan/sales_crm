@@ -46,49 +46,49 @@ is_admin_login();
           <li class="menu-item active open">
             <ul class="menu-sub">
               
-              <li class="menu-item <?php echo $filename == 'package.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo  stripos($filename, 'package.php') !== false ? 'active' : '' ?>">
                 <a href="package.php" class="menu-link">
                   <div data-i18n="Basic Inputs">View Package</div>
                 </a>
               </li>
-              <li class="menu-item <?php echo $filename == 'booking.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo strpos($filename, 'booking.php') !== false ? 'active' : '' ?>">
                 <a href="booking.php" class="menu-link">
                   <div data-i18n="Input groups">All Booking Summary</div>
                 </a>
               </li>
-              <li class="menu-item <?php echo $filename == 'query.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo  strpos($filename, 'query.php') !== false ? 'active' : '' ?>">
                 <a href="query.php" class="menu-link">
                   <div data-i18n="Input groups">All Query Summary</div>
                 </a>
               </li>
-              <li class="menu-item <?php echo $filename == 'invoice.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo  strpos($filename, 'invoice.php') !== false ? 'active' : '' ?>">
                 <a href="invoice.php" class="menu-link">
                   <div data-i18n="Input groups">All Invoices</div>
                 </a>
               </li>
-              <li class="menu-item <?php echo $filename == 'agent.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo  strpos($filename, 'agent.php') !== false ? 'active' : '' ?>">
                 <a href="agent.php" class="menu-link">
                   <div data-i18n="Input groups">Agent Information</div>
                 </a>
               </li>
               
-              <li class="menu-item <?php echo $filename == 'hotel.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo  strpos($filename, 'hotel.php') !== false ? 'active' : '' ?>">
                 <a href="hotel.php" class="menu-link">
                   <div data-i18n="Input groups">View Hotel Information</div>
                 </a>
               </li> 
-              <li class="menu-item <?php echo $filename == 'vehicle.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo  strpos($filename, 'vehicle.php') !== false ? 'active' : '' ?>">
                 <a href="vehicle.php" class="menu-link">
-                  <div data-i18n="Input groups">View vehicle details</div>
+                  <div data-i18n="Input groups">View Vehicle Details</div>
                 </a>
               </li>
                
-              <li class="menu-item <?php echo $filename == 'guide.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo  strpos($filename, 'guide.php') !== false ? 'active' : '' ?>">
                 <a href="guide.php" class="menu-link">
                   <div data-i18n="Input groups">View Guide details</div>
                 </a>
               </li>
-              <li class="menu-item <?php echo $filename == 'service.php' ? 'active' : '' ?>">
+              <li class="menu-item <?php echo strpos($filename, 'service.php') !== false ? 'active' : '' ?>">
                 <a href="service.php" class="menu-link">
                   <div data-i18n="Input groups">View Service details</div>
                 </a>

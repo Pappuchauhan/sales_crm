@@ -161,7 +161,7 @@ include BASE_PATH . '/includes/header.php';
                       <td></td>
                       <td></td>
                       <td>OTHER CHARGE</td>
-                      <td>Rs.<?= $rows['other_charge'] ?></td>
+                      <td>Rs.<?= $charge ?></td>
                     </tr>
                     <tr>
                       <td><strong>Account Name</strong></td>
