@@ -241,12 +241,18 @@ function setTransportation()
     //return ["Tempo"=>"12","Cryista"=>"5","Innova"=>"5","Zylo"=>"5","Scorpeior"=>"5","Coach"=>"25","Large Coach"=>"30"];
 }
 function is_agent_login(){
+    if(!isset($_SESSION['admin_type'])){
+         header('Location:login.php');
+    }
     if($_SESSION['admin_type'] == 'Admin'){
         header('Location:index.php');
     } 
 }
 
 function is_admin_login(){
+     if(!isset($_SESSION['admin_type'])){
+         header('Location:login.php');
+    }
     if($_SESSION['admin_type']!=='Admin'){
         header('Location:agent_query_generate.php');
     } 

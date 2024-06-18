@@ -135,14 +135,16 @@ include BASE_PATH . '/includes/header.php';
                       <td colspan="2"><?= $row['package_name'] ?></td>
                       <td class="align-center"><?= $rows['total_pax'] ?></td>
                       <?php
-                      $other_charge = isset($rows['other_charge']) ? $rows['other_charge'] : '0';
-                      $other_charge_2 = isset($rows['other_charge_2']) ? $rows['other_charge_2'] : '0';
-                      $other_charge_3 = isset($rows['other_charge_3']) ? $rows['other_charge_3'] : '0';
-                      $other_charge_4 = isset($rows['other_charge_4']) ? $rows['other_charge_4'] : '0';
+                      $other_charge = isset($rows['other_charge']) ? $rows['other_charge'] : 0;
+                      $other_charge_2 = isset($rows['other_charge_2']) ? $rows['other_charge_2'] : 0;
+                      $other_charge_3 = isset($rows['other_charge_3']) ? $rows['other_charge_3'] : 0;
+                      $other_charge_4 = isset($rows['other_charge_4']) ? $rows['other_charge_4'] : 0;
 
                       $charge = $other_charge + $other_charge_2 + $other_charge_3 + $other_charge_4;
 
-                      $tatal_price = $rows['without_gst'] + $charge;
+                      $discount = ($rows['your_budget']>0 && $rows['without_gst']> $rows['your_budget'])? ($rows['without_gst']-$rows['your_budget']):$rows['without_gst'];
+                      $change_price = ($rows['your_budget']>0)?$rows['your_budget']:$rows['without_gst'] ;
+                      $tatal_price = $change_price  + $charge; 
                       //print_r($tatal_price );
                       $igstPrice = round(($rows['without_gst'] * 0.025),2);
                       $taxPrice = round(($rows['without_gst'] * 0.025),2);
@@ -151,8 +153,8 @@ include BASE_PATH . '/includes/header.php';
 
                       ?>
                       <td colspan="2"><?= $perPerson ?></td>
-                      <td>Rs.0</td>
-                      <td>Rs.<?= $rows['without_gst'] ?></td>
+                      <td>Rs.<?=$discount?></td>
+                      <td>Rs.<?=$change_price ?></td>
                     </tr>
                     <tr>
                       <td style="color: #696cff"><strong>BANK DETAILS</strong></td>
